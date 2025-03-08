@@ -15,7 +15,7 @@ defineProps<{
 }>();
 
 const form = useForm({
-    email: '',
+    name: '',
     password: '',
     remember: false,
 });
@@ -28,7 +28,7 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthBase title="Inicie sesión en su cuenta" description="Ingrese su correo electrónico y contraseña a continuación para iniciar sesión">
+    <AuthBase title="Inicie sesión en su cuenta" description="Ingrese su usuario y contraseña a continuación para iniciar sesión">
         <Head title="Iniciar Sesión" />
 
         <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
@@ -38,18 +38,18 @@ const submit = () => {
         <form @submit.prevent="submit" class="flex flex-col gap-6">
             <div class="grid gap-6">
                 <div class="grid gap-2">
-                    <Label for="email">Dirección de correo electrónico</Label>
+                    <Label for="name">Nombre de usuario</Label>
                     <Input
-                        id="email"
-                        type="email"
+                        id="name"
+                        type="text"
                         required
                         autofocus
                         :tabindex="1"
-                        autocomplete="email"
-                        v-model="form.email"
-                        placeholder="micorreo@ejemplo.com"
+                        autocomplete="username"
+                        v-model="form.name"
+                        placeholder="juan.perez"
                     />
-                    <InputError :message="form.errors.email" />
+                    <InputError :message="form.errors.name" />
                 </div>
 
                 <div class="grid gap-2">
