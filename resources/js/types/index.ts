@@ -3,6 +3,7 @@ import type { LucideIcon } from 'lucide-vue-next';
 
 export interface Auth {
     user: User;
+    menu: Array<string>;
 }
 
 export interface BreadcrumbItem {
@@ -15,6 +16,7 @@ export interface NavItem {
     href: string;
     icon?: LucideIcon;
     isActive?: boolean;
+    hasPermission?: boolean;
 }
 
 export interface SharedData extends PageProps {
@@ -31,6 +33,22 @@ export interface User {
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
+}
+
+export interface Permission {
+  id: number;
+  name: string;
+  guard_name: string;
+  set_menu: boolean;
+  description: string;
+}
+
+export interface Can {
+  create: string,
+  read: string,
+  update: string,
+  delete: string,
+  export?: string,
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
