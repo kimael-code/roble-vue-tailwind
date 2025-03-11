@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { valueUpdater } from '@/lib/utils';
-import { Can, Permission } from '@/types';
+import { Can, Pagination, Permission } from '@/types';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -10,13 +10,11 @@ import {
   FlexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
+  // getSortedRowModel,
   SortingState,
   useVueTable,
-  VisibilityState,
 } from '@tanstack/vue-table';
-import { ArrowUpDown } from 'lucide-vue-next';
+import { ArrowUpDown, ChevronDown } from 'lucide-vue-next';
 import { h, ref } from 'vue';
 import DropdownAction from './DropdownAction.vue';
 import { Input } from '@/components/ui/input';
@@ -25,7 +23,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 interface Props {
   can: Can;
-  permissions: Permission[];
+  paginatedData: Pagination<Permission>;
 }
 const props = defineProps<Props>();
 
@@ -91,20 +89,22 @@ const columns: ColumnDef<Permission>[] = [
 
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
-const columnVisibility = ref<VisibilityState>({});
+const globalFilter = ref('');
 const rowSelection = ref({});
 const expanded = ref<ExpandedState>({});
 
 const table = useVueTable({
-  data: props.permissions,
+  data: props.paginatedData.data,
   columns,
   getCoreRowModel: getCoreRowModel(),
-  getPaginationRowModel: getPaginationRowModel(),
-  getSortedRowModel: getSortedRowModel(),
+  manualPagination: true,
+  manualSorting: true,
+  pageCount: props.paginatedData.per_page,
+  // getSortedRowModel: getSortedRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
   onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
   onColumnFiltersChange: (updaterOrValue) => valueUpdater(updaterOrValue, columnFilters),
-  onColumnVisibilityChange: (updaterOrValue) => valueUpdater(updaterOrValue, columnVisibility),
+  onGlobalFilterChange: (updaterOrValue) => valueUpdater(updaterOrValue, globalFilter),
   onRowSelectionChange: (updaterOrValue) => valueUpdater(updaterOrValue, rowSelection),
   state: {
     get sorting() {
@@ -113,8 +113,8 @@ const table = useVueTable({
     get columnFilters() {
       return columnFilters.value;
     },
-    get columnVisibility() {
-      return columnVisibility.value;
+    get globalFilter() {
+      return globalFilter.value;
     },
     get rowSelection() {
       return rowSelection.value;
@@ -132,8 +132,8 @@ const table = useVueTable({
       <Input
         class="max-w-sm"
         placeholder="Filter emails..."
-        :model-value="table.getColumn('email')?.getFilterValue() as string"
-        @update:model-value="table.getColumn('email')?.setFilterValue($event)"
+        :model-value="globalFilter ?? ''"
+        @update:model-value="value => (globalFilter = String(value))"
       />
       <DropdownMenu>
         <DropdownMenuTrigger as-child>
@@ -190,11 +190,11 @@ const table = useVueTable({
 
     <div class="flex items-center justify-end space-x-2 py-4">
       <div class="flex-1 text-sm text-muted-foreground">
-        {{ table.getFilteredSelectedRowModel().rows.length }} of {{ table.getFilteredRowModel().rows.length }} row(s) selected.
+        {{ table.getFilteredSelectedRowModel().rows.length }} de {{ table.getFilteredRowModel().rows.length }} fila(s) seleccionadas.
       </div>
       <div class="space-x-2">
-        <Button variant="outline" size="sm" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()"> Previous </Button>
-        <Button variant="outline" size="sm" :disabled="!table.getCanNextPage()" @click="table.nextPage()"> Next </Button>
+        <Button variant="outline" size="sm" :disabled="!table.getCanPreviousPage()" @click="table.previousPage()"> Anterior </Button>
+        <Button variant="outline" size="sm" :disabled="!table.getCanNextPage()" @click="table.nextPage()"> Siguiente </Button>
       </div>
     </div>
   </div>
