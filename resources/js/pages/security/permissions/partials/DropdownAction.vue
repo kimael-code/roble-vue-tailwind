@@ -8,19 +8,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Can } from '@/types';
 import { MoreHorizontal } from 'lucide-vue-next';
 
 defineProps<{
-  permission: {
-    id: number;
-  };
-  can: {
-    create: string;
-    read: string;
-    update: string;
-    delete: string;
-    export?: string;
-  };
+  id: string | number;
+  can: Can;
 }>();
 </script>
 

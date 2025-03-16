@@ -2,6 +2,7 @@
 
 namespace App\Support\Props\Security;
 
+use App\Http\Resources\Security\PermissionCollection;
 use App\Models\Security\Permission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -23,22 +24,12 @@ class PermissionProps
     {
         return [
             'can' => self::getPermissions(),
-            'columns' => [
-                [
-                    'name' => 'name',
-                    'value' => __('model.field.name'),
-                    'way' => '',
-                ],
-                [
-                    'name' => 'description',
-                    'value' => __('model.field.description'),
-                    'way' => '',
-                ],
-            ],
-            'filters' => Request::all(['search', 'name', 'description',]),
-            'permissions' => fn() => Permission::filter(Request::only(['search', 'name', 'description',]))
-                    ->paginate()
-                    ->withQueryString(),
+            'filters' => Request::all(['search', 'name', 'description']),
+            'permissions' => fn() => new PermissionCollection(
+                Permission::filter(Request::only(['search', 'name', 'description']))
+                    ->paginate(10)
+                    ->withQueryString()
+            ),
         ];
     }
 }

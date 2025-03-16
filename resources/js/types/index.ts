@@ -36,7 +36,7 @@ export interface User {
 }
 
 export interface Permission {
-  id: number;
+  id: string;
   name: string;
   guard_name: string;
   created_at?: string;
@@ -46,11 +46,17 @@ export interface Permission {
 }
 
 export interface Can {
-  create: string;
-  read: string;
-  update: string;
-  delete: string;
-  export?: string;
+  create: boolean;
+  read: boolean;
+  update: boolean;
+  delete: boolean;
+  export?: boolean;
+}
+
+export interface PaginatedLink {
+    url: string | URL,
+    label: number;
+    active: boolean;
 }
 
 export interface Pagination<T> {
@@ -60,13 +66,37 @@ export interface Pagination<T> {
     from: number;
     last_page: number;
     last_page_url: string;
-    links: Array<object>;
+    links: Array<PaginatedLink>;
     next_page_url: string;
     path: string;
     per_page: number;
     prev_page_url: string;
     to: number;
     total: number;
+}
+
+export interface PaginatedCollectionLinks {
+    first: string;
+    last: string;
+    prev: string;
+    next: string;
+}
+
+export interface PaginatedCollectionMeta {
+    current_page: number;
+    from: number;
+    last_page: number;
+    links: Array<PaginatedLink>;
+    path: string;
+    per_page: number;
+    to: number;
+    total: number;
+}
+
+export interface PaginatedCollection<T> {
+    data: Array<T>;
+    links: PaginatedCollectionLinks;
+    meta: PaginatedCollectionMeta;
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;

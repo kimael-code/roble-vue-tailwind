@@ -51,6 +51,9 @@ class HandleInertiaRequests extends Middleware
                     ->pluck('name')
                     ->all() ?? [],
             ],
+            'flash' => [
+                'msg' => fn() => $request->session()->get('msg'),
+            ],
         ];
     }
 }
