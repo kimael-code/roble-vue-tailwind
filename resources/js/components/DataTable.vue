@@ -28,7 +28,7 @@ interface Props {
   table: TanstackTable<any>;
 }
 const props = defineProps<Props>();
-const emit = defineEmits(['bulkDelete', 'export', 'search']);
+const emit = defineEmits(['bulkDelete', 'export', 'search', 'new']);
 
 const form = useForm({
   search: props.filters?.search || undefined,
@@ -81,7 +81,7 @@ watchDebounced(
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Button class="ml-3">
+      <Button class="ml-3" @click="$emit('new')">
         <Plus class="mr-2 h-4 w-4" />
         Nuevo
       </Button>
@@ -90,7 +90,7 @@ watchDebounced(
       <Table>
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id">
+            <TableHead v-for="header in headerGroup.headers" :key="header.id" @click="header.column.getToggleSortingHandler()?.($event)">
               <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
             </TableHead>
           </TableRow>
