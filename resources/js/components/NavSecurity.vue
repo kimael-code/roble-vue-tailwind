@@ -18,7 +18,7 @@ const show = computed(() => props.items.some((it) => it.hasPermission === true))
     <SidebarMenu>
       <template v-for="item in items" :key="item.title">
         <SidebarMenuItem v-if="item.hasPermission">
-          <SidebarMenuButton as-child :is-active="item.href === page.url">
+          <SidebarMenuButton as-child :is-active="page.url.startsWith(item.href)">
             <Link :href="item.href">
               <component :is="item.icon" />
               <span>{{ item.title }}</span>

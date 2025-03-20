@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DataTable from '@/components/DataTable.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import IndexLayout from '@/layouts/IndexLayout.vue';
+import ContentLayout from '@/layouts/ContentLayout.vue';
 import { valueUpdater } from '@/lib/utils';
 import { BreadcrumbItem, Can, PaginatedCollection, Permission } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
@@ -42,11 +42,15 @@ const expanded = ref<ExpandedState>({});
 
 function handleSortingChange(item: any) {
   if (typeof item === 'function') {
-    const sortValue = item();
-    const sortBy = sortValue[0]?.id ? sortValue[0].id : '';
-    const sortDirection = sortBy ? (sortValue[0]?.desc ? 'desc' : 'asc') : '';
+    const sortValue = item(sorting.value);
     const data: { [index: string]: any } = {};
-    data[sortBy] = sortDirection;
+
+    sortValue.forEach((element:any) => {
+      const sortBy = element?.id ? element.id : '';
+      const sortDirection = sortBy ? (element?.desc ? 'desc' : 'asc') : '';
+      data[sortBy] = sortDirection;
+    });
+
     router.visit(route('permissions.index'), {
       data,
       only: ['permissions'],
@@ -68,7 +72,6 @@ const table = useVueTable({
   columns: cols,
   manualPagination: true,
   pageCount: props.permissions.meta.per_page,
-  enableRowSelection: true,
   getCoreRowModel: getCoreRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
   getSortedRowModel: getSortedRowModel(),
@@ -106,7 +109,7 @@ watch(
   <AppLayout :breadcrumbs="breadcrumbs">
     <Head title="Permisos" />
 
-    <IndexLayout title="Permisos">
+    <ContentLayout title="Permisos">
       <template #icon>
         <KeySquare />
       </template>
@@ -119,8 +122,9 @@ watch(
         :search-route="route('permissions.index')"
         :table="table"
         @bulk-delete="handleBulkDeletion"
-        @search="(s) => globalFilter = s"
+        @search="(s) => (globalFilter = s)"
+        @new="router.get(route('permissions.create'))"
       />
-    </IndexLayout>
+    </ContentLayout>
   </AppLayout>
 </template>

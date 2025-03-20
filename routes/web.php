@@ -4,6 +4,7 @@ use App\Http\Controllers\{
     BulkDeletionController,
     Security\PermissionController,
 };
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -16,6 +17,8 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
 
     Route::resources([
         'permissions' => PermissionController::class,
+    ], [
+        'middleware' => [HandlePrecognitiveRequests::class],
     ]);
 });
 

@@ -27,7 +27,9 @@ class PermissionController extends Controller
      */
     public function create()
     {
-        //
+        Gate::authorize('create', Permission::class);
+
+        return Inertia::render('security/permissions/Create');
     }
 
     /**
