@@ -15,6 +15,13 @@ defineProps<{
   id: string | number;
   can: Can;
 }>();
+
+defineEmits<{
+  read   : [id: string | number],
+  update : [id: string | number],
+  destroy: [id: string | number],
+  export : [id: string | number],
+}>();
 </script>
 
 <template>
@@ -27,11 +34,11 @@ defineProps<{
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-      <DropdownMenuItem v-if="can.read"> Ver </DropdownMenuItem>
-      <DropdownMenuItem v-if="can.update"> Editar </DropdownMenuItem>
-      <DropdownMenuItem v-if="can.delete"> Eliminar </DropdownMenuItem>
+      <DropdownMenuItem v-if="can.read" @click="$emit('read', id)"> Ver </DropdownMenuItem>
+      <DropdownMenuItem v-if="can.update" @click="$emit('update', id)"> Editar </DropdownMenuItem>
+      <DropdownMenuItem v-if="can.delete" @click="$emit('destroy', id)"> Eliminar </DropdownMenuItem>
       <DropdownMenuSeparator v-if="can.export" />
-      <DropdownMenuItem v-if="can.export">Exportar</DropdownMenuItem>
+      <DropdownMenuItem v-if="can.export" @click="$emit('export', id)">Exportar</DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>

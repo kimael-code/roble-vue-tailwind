@@ -11,7 +11,7 @@ class StorePermissionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('create permissions');
     }
 
     /**
@@ -22,7 +22,10 @@ class StorePermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name'        => ['required', 'string', 'lowercase', 'max:255', 'unique:permissions',],
+            'description' => ['required', 'string', 'max:255',],
+            'guard_name'  => ['required', 'string', 'lowercase' , 'regex:/^(web)$/',],
+            'set_menu'    => ['nullable', 'boolean',],
         ];
     }
 }

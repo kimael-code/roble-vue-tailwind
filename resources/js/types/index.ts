@@ -35,19 +35,22 @@ export interface User {
     updated_at: string;
 }
 
-export interface Permission {
+export interface Role {
   id: string;
   name: string;
   guard_name: string;
   created_at?: string;
   updated_at?: string;
-  set_menu: boolean;
   description: string;
+}
+
+export interface Permission extends Role {
+  set_menu: boolean;
 }
 
 export interface Can {
   create: boolean;
-  read: boolean;
+  read?: boolean;
   update: boolean;
   delete: boolean;
   export?: boolean;

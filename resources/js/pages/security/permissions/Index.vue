@@ -45,7 +45,7 @@ function handleSortingChange(item: any) {
     const sortValue = item(sorting.value);
     const data: { [index: string]: any } = {};
 
-    sortValue.forEach((element:any) => {
+    sortValue.forEach((element: any) => {
       const sortBy = element?.id ? element.id : '';
       const sortDirection = sortBy ? (element?.desc ? 'desc' : 'asc') : '';
       data[sortBy] = sortDirection;
@@ -109,22 +109,25 @@ watch(
   <AppLayout :breadcrumbs="breadcrumbs">
     <Head title="Permisos" />
 
-    <ContentLayout title="Permisos">
-      <template #icon>
-        <KeySquare />
-      </template>
-      <DataTable
-        :can="can"
-        :columns="cols"
-        :data="permissions"
-        :filters="filters"
-        :search-only="['permissions']"
-        :search-route="route('permissions.index')"
-        :table="table"
-        @bulk-delete="handleBulkDeletion"
-        @search="(s) => (globalFilter = s)"
-        @new="router.get(route('permissions.create'))"
-      />
-    </ContentLayout>
+    <section class="mx-auto w-full max-w-4xl">
+      <ContentLayout title="Permisos">
+        <template #icon>
+          <KeySquare />
+        </template>
+        <DataTable
+          :can="can"
+          :columns="cols"
+          :data="permissions"
+          :filters="filters"
+          :search-only="['permissions']"
+          :search-route="route('permissions.index')"
+          :table="table"
+          @bulk-delete="handleBulkDeletion"
+          @search="(s) => (globalFilter = s)"
+          @new="router.get(route('permissions.create'))"
+          @read="(id) => router.get(route('permissions.show', { permission: id }))"
+        />
+      </ContentLayout>
+    </section>
   </AppLayout>
 </template>

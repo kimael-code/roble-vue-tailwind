@@ -28,7 +28,7 @@ interface Props {
   table: TanstackTable<any>;
 }
 const props = defineProps<Props>();
-const emit = defineEmits(['bulkDelete', 'export', 'search', 'new']);
+const emit = defineEmits(['bulkDelete', 'export', 'search', 'new', 'read', 'update', 'destroy', 'export']);
 
 const form = useForm({
   search: props.filters?.search || undefined,
@@ -100,7 +100,14 @@ watchDebounced(
             <template v-for="row in table.getRowModel().rows" :key="row.id">
               <TableRow :data-state="row.getIsSelected() && 'selected'">
                 <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
-                  <FlexRender :render="cell.column.columnDef.cell" :props="cell.getContext()" />
+                  <FlexRender
+                    :render="cell.column.columnDef.cell"
+                    :props="cell.getContext()"
+                    @read="(id) => $emit('read', id)"
+                    @update="(id) => $emit('update', id)"
+                    @destroy="(id) => $emit('destroy', id)"
+                    @export="(id) => $emit('export', id)"
+                  />
                 </TableCell>
               </TableRow>
               <TableRow v-if="row.getIsExpanded()">
