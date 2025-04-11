@@ -29,7 +29,7 @@ const props = defineProps<Props>();
 const breadcrumbs: BreadcrumbItem[] = [
   {
     title: 'Permisos',
-    href: '/dashboard',
+    href: '/permissions',
   },
 ];
 
@@ -109,25 +109,23 @@ watch(
   <AppLayout :breadcrumbs="breadcrumbs">
     <Head title="Permisos" />
 
-    <section class="mx-auto w-full max-w-4xl">
-      <ContentLayout title="Permisos">
-        <template #icon>
-          <KeySquare />
-        </template>
-        <DataTable
-          :can="can"
-          :columns="cols"
-          :data="permissions"
-          :filters="filters"
-          :search-only="['permissions']"
-          :search-route="route('permissions.index')"
-          :table="table"
-          @bulk-delete="handleBulkDeletion"
-          @search="(s) => (globalFilter = s)"
-          @new="router.get(route('permissions.create'))"
-          @read="(id) => router.get(route('permissions.show', { permission: id }))"
-        />
-      </ContentLayout>
-    </section>
+    <ContentLayout title="Permisos">
+      <template #icon>
+        <KeySquare />
+      </template>
+      <DataTable
+        :can="can"
+        :columns="cols"
+        :data="permissions"
+        :filters="filters"
+        :search-only="['permissions']"
+        :search-route="route('permissions.index')"
+        :table="table"
+        @bulk-delete="handleBulkDeletion"
+        @search="(s) => (globalFilter = s)"
+        @new="router.get(route('permissions.create'))"
+        @read="(id) => router.get(route('permissions.show', { permission: id }))"
+      />
+    </ContentLayout>
   </AppLayout>
 </template>

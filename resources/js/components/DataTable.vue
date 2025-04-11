@@ -18,7 +18,7 @@ import { Pagination, PaginationFirst, PaginationLast, PaginationList, Pagination
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 
 interface Props {
-  can: Can;
+  can?: Can;
   columns: ColumnDef<any>[];
   data: PaginatedCollection<any>;
   filters: { [key: string]: any };
@@ -26,8 +26,13 @@ interface Props {
   searchRoute: string;
   searchRouteData?: { [key: string]: any };
   table: TanstackTable<any>;
+  hasNewButton?: boolean;
+  hasBatchActionsButton?: boolean;
 }
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  hasNewButton: true,
+  hasBatchActionsButton: true,
+});
 const emit = defineEmits(['bulkDelete', 'export', 'search', 'new', 'read', 'update', 'destroy', 'export']);
 
 const form = useForm({
@@ -67,7 +72,7 @@ watchDebounced(
         </Transition>
         <Input id="search" type="text" class="max-w-xs pr-10" placeholder="Buscar rápido..." v-model:model-value="form.search" />
       </div>
-      <DropdownMenu v-if="can.delete || can.export">
+      <DropdownMenu v-if="(can && (can.delete || can.export)) && hasBatchActionsButton">
         <DropdownMenuTrigger as-child>
           <Button variant="outline" class="ml-auto"> ... </Button>
         </DropdownMenuTrigger>
@@ -81,7 +86,7 @@ watchDebounced(
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Button class="ml-3" @click="$emit('new')">
+      <Button v-if="can && can.create && hasNewButton" class="ml-3" @click="$emit('new')">
         <Plus class="mr-2 h-4 w-4" />
         Nuevo
       </Button>

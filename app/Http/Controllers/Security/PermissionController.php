@@ -74,6 +74,10 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        //
+        Gate::authorize('delete', $permission);
+
+        $permission->delete();
+
+        return redirect()->route('permissions.index');
     }
 }

@@ -41,15 +41,15 @@ class PermissionProps
     {
         return [
             'can'        => Arr::except(self::getPermissions(), 'read'),
-            'filters'    => Request::only(['search']),
+            'filters'    => Request::only(['search', 'name']),
             'permission' => $permission,
             'roles'      => fn() => new RoleCollection(
-                $permission->roles()->filter(Request::only(['search']))
+                $permission->roles()->filter(Request::only(['search', 'name']))
                     ->latest()
                     ->paginate(10)
             ),
             'users'      => fn() => new UserCollection(
-                User::filter(Request::only(['search']))
+                User::filter(Request::only(['search', 'name']))
                     ->permission($permission->name)
                     ->latest()
                     ->paginate(10)

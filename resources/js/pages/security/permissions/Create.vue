@@ -16,7 +16,11 @@ import { ref } from 'vue';
 const breadcrumbs: BreadcrumbItem[] = [
   {
     title: 'Permisos',
-    href: '/dashboard',
+    href: '/permissions',
+  },
+  {
+    title: 'Nuevo',
+    href: '',
   },
 ];
 
