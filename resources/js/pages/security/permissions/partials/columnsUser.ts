@@ -5,8 +5,7 @@ import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { h } from 'vue';
 
 /**
- * Definiciones de las columnas para la tabla de roles en la pestaña roles.
- * @param permissions Acciones que se puden ejecutar.
+ * Definiciones de las columnas para la tabla de usuarios en la pestaña usuarios.
  * @returns Arreglo de objetos.
  */
 export const columns = (): ColumnDef<User>[] => [

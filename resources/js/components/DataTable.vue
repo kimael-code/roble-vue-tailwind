@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<Props>(), {
   hasNewButton: true,
   hasBatchActionsButton: true,
 });
-const emit = defineEmits(['bulkDelete', 'export', 'search', 'new', 'read', 'update', 'destroy', 'export']);
+const emit = defineEmits(['batchDestroy', 'export', 'search', 'new', 'read', 'update', 'destroy', 'export']);
 
 const form = useForm({
   search: props.filters?.search || undefined,
@@ -72,7 +72,7 @@ watchDebounced(
         </Transition>
         <Input id="search" type="text" class="max-w-xs pr-10" placeholder="Buscar rápido..." v-model:model-value="form.search" />
       </div>
-      <DropdownMenu v-if="(can && (can.delete || can.export)) && hasBatchActionsButton">
+      <DropdownMenu v-if="can && (can.delete || can.export)">
         <DropdownMenuTrigger as-child>
           <Button variant="outline" class="ml-auto"> ... </Button>
         </DropdownMenuTrigger>
@@ -82,11 +82,11 @@ watchDebounced(
           </DropdownMenuGroup>
           <DropdownMenuSeparator v-if="can.delete && table.getFilteredSelectedRowModel().rows.length > 1" />
           <DropdownMenuGroup v-if="can.delete && table.getFilteredSelectedRowModel().rows.length > 1">
-            <DropdownMenuItem @click="$emit('bulkDelete')">Eliminar</DropdownMenuItem>
+            <DropdownMenuItem @click="$emit('batchDestroy')">Eliminar</DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <Button v-if="can && can.create && hasNewButton" class="ml-3" @click="$emit('new')">
+      <Button v-if="can && can.create" class="ml-3" @click="$emit('new')">
         <Plus class="mr-2 h-4 w-4" />
         Nuevo
       </Button>
@@ -131,7 +131,7 @@ watchDebounced(
     </div>
 
     <div class="flex items-center justify-end space-x-2 py-4">
-      <div class="flex-1 text-sm text-muted-foreground">
+      <div v-if="table.getFilteredSelectedRowModel().rows.length" class="flex-1 text-sm text-muted-foreground">
         {{ table.getFilteredSelectedRowModel().rows.length }} de {{ table.getFilteredRowModel().rows.length }} fila(s) seleccionadas.
       </div>
       <div class="space-x-2">
@@ -141,7 +141,11 @@ watchDebounced(
             <PaginationPrev @click="router.visit(data.links.prev, { preserveScroll: true })" />
             <template v-for="(item, i) in data.meta.links" :key="i">
               <PaginationListItem :value="item.label" as-child>
-                <Button class="h-10 w-10 p-0" :variant="item?.active ? 'default' : 'outline'" @click="router.visit(item.url, { preserveScroll: true })">
+                <Button
+                  class="h-10 w-10 p-0"
+                  :variant="item?.active ? 'default' : 'outline'"
+                  @click="router.visit(item.url, { preserveScroll: true })"
+                >
                   {{ item?.label }}
                 </Button>
               </PaginationListItem>

@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\{
-    BulkDeletionController,
+    BatchDeletionController,
     Security\PermissionController,
 };
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
@@ -13,7 +13,7 @@ Route::get('/', fn () => Inertia::render('Welcome'))->name('home');
 Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
 {
     Route::get('dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
-    Route::post('/bulk-deletion/{resource}', BulkDeletionController::class)->name('bulk-deletion');
+    Route::post('/batch-deletion/{resource}', BatchDeletionController::class)->name('batch-deletion');
 
     Route::resources([
         'permissions' => PermissionController::class,

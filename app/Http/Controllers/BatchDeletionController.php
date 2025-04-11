@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Support\BulkDeletion\PermissionBulkDeletion;
 use Illuminate\Http\Request;
 
-class BulkDeletionController extends Controller
+class BatchDeletionController extends Controller
 {
     /**
      * Handle the incoming request.

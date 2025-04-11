@@ -60,8 +60,9 @@ function handleSortingChange(item: any) {
     });
   }
 }
-function handleBulkDeletion() {
-  router.post(route('bulk-deletion', { resource: 'permissions' }), rowSelection.value, {
+
+function handleBatchDeletion() {
+  router.post(route('batch-deletion', { resource: 'permissions' }), rowSelection.value, {
     preserveState: false,
     onFinish: () => (rowSelection.value = {}),
   });
@@ -121,7 +122,7 @@ watch(
         :search-only="['permissions']"
         :search-route="route('permissions.index')"
         :table="table"
-        @bulk-delete="handleBulkDeletion"
+        @batch-destroy="handleBatchDeletion"
         @search="(s) => (globalFilter = s)"
         @new="router.get(route('permissions.create'))"
         @read="(id) => router.get(route('permissions.show', { permission: id }))"
