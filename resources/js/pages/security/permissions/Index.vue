@@ -18,6 +18,7 @@ import {
 import { KeySquare } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 import { columns } from './partials/columns';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 interface Props {
   can: Can;
@@ -32,6 +33,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/permissions',
   },
 ];
+
+const openDialog = ref(false);
 
 const cols = columns(props.can);
 const sorting = ref<SortingState>([]);
@@ -126,7 +129,21 @@ watch(
         @search="(s) => (globalFilter = s)"
         @new="router.get(route('permissions.create'))"
         @read="(id) => router.get(route('permissions.show', { permission: id }))"
+        @destroy="openDialog = true"
       />
+
+      <AlertDialog v-model:open="openDialog">
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Ay chamo!</AlertDialogTitle>
+            <AlertDialogDescription>La descargaste</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction>Continuar</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </ContentLayout>
   </AppLayout>
 </template>

@@ -70,7 +70,7 @@ function newData() {
       <template #icon>
         <KeySquare />
       </template>
-      <div class="grid gap-4 md:grid-cols-4">
+      <section class="grid gap-4 md:grid-cols-4">
         <div class="col-1 col-span-3 md:col-span-1">
           <Card class="container">
             <CardHeader>
@@ -125,7 +125,7 @@ function newData() {
             </TabsContent>
           </Tabs>
         </div>
-      </div>
+      </section>
     </ContentLayout>
   </AppLayout>
 </template>

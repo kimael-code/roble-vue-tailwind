@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -50,18 +50,18 @@ function index() {
 
 <template>
   <AppLayout :breadcrumbs>
-    <Head title="Permisos: Nuevo" />
-    <ContentLayout title="Permisos: Nuevo">
+    <Head title="Crear Nuevo Permiso" />
+    <ContentLayout title="Crear Nuevo Permiso">
       <template #icon>
         <KeySquare />
       </template>
-      <section class="mx-auto w-full max-w-4xl">
+      <section class="mx-auto w-full">
         <Card class="container">
           <CardHeader>
-            <CardTitle>Crear Nuevo Permiso</CardTitle>
+             <CardDescription>Los campos con punto rojo son obligatorios.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form>
+            <form @submit.prevent="submit">
               <div class="grid w-full items-center gap-4">
                 <div class="flex flex-col space-y-1.5">
                   <Label class="is-required" for="name">Nombre</Label>
@@ -71,7 +71,7 @@ function index() {
                     type="text"
                     maxlength="255"
                     autocomplete="on"
-                    placeholder="Nombre"
+                    placeholder="por ej.: read any user"
                     required
                     autofocus
                     @change="form.validate('name')"
@@ -86,7 +86,7 @@ function index() {
                     type="text"
                     maxlength="255"
                     autocomplete="on"
-                    placeholder="Descripción"
+                    placeholder="por ej.: leer cualquier usuario"
                     required
                     @change="form.validate('description')"
                   />
