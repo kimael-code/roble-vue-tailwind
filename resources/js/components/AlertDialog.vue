@@ -14,6 +14,7 @@ import {
 defineProps({
   title: String,
   description: String,
+  isDestructive: Boolean,
 });
 defineEmits(['continue']);
 </script>
@@ -29,7 +30,9 @@ defineEmits(['continue']);
       </AlertDialogHeader>
       <AlertDialogFooter>
         <AlertDialogCancel>Cancelar</AlertDialogCancel>
-        <AlertDialogAction @click="$emit('continue')">Continuar</AlertDialogAction>
+        <AlertDialogAction class="bg-destructive text-destructive-foreground hover:bg-destructive/90" @click="$emit('continue')">
+          Continuar
+        </AlertDialogAction>
       </AlertDialogFooter>
     </AlertDialogContent>
   </AlertDialog>
