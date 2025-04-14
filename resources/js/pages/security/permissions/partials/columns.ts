@@ -1,10 +1,10 @@
+import DataTableActions from '@/components/DataTableActions.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Can, Permission } from '@/types';
 import { ColumnDef } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { h } from 'vue';
-import DropdownAction from './DropdownAction.vue';
 
 /**
  * Definiciones de las columnas.
@@ -82,11 +82,11 @@ export const columns = (permissions: Can): ColumnDef<Permission>[] => [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const id = row.original.id;
+      const data = row.original;
       const can = permissions;
 
-      return h(DropdownAction, {
-        id,
+      return h(DataTableActions, {
+        row: data,
         can,
         onExpand: row.toggleExpanded,
       });

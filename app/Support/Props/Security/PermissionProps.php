@@ -56,5 +56,12 @@ class PermissionProps
             ),
         ];
     }
+
+    public static function edit(Permission $permission): array
+    {
+        return [
+            'permission' => $permission,
+        ];
+    }
 }
 

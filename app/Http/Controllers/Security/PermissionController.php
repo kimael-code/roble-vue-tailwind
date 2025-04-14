@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Security;
 
 use App\Actions\Security\CreatePermission;
+use App\Actions\Security\UpdatePermission;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Security\StorePermissionRequest;
 use App\Http\Requests\Security\UpdatePermissionRequest;
@@ -36,9 +37,9 @@ class PermissionController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePermissionRequest $request, CreatePermission $action)
+    public function store(StorePermissionRequest $request)
     {
-        $action->handle($request->validated());
+        CreatePermission::handle($request->validated());
 
         return redirect()->route('permissions.index');
     }
@@ -58,7 +59,9 @@ class PermissionController extends Controller
      */
     public function edit(Permission $permission)
     {
-        //
+        Gate::authorize('update', $permission);
+
+        return Inertia::render('security/permissions/Edit', PermissionProps::edit($permission));
     }
 
     /**
@@ -66,7 +69,9 @@ class PermissionController extends Controller
      */
     public function update(UpdatePermissionRequest $request, Permission $permission)
     {
-        //
+        UpdatePermission::handle($request->validated(), $permission);
+
+        return redirect()->route('permissions.index');
     }
 
     /**

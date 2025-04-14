@@ -1,8 +1,19 @@
 <script setup lang="ts">
 import DataTable from '@/components/DataTable.vue';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { valueUpdater } from '@/components/ui/table/utils';
+import { useConfirmAction } from '@/composables/useConfirmAction';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { valueUpdater } from '@/lib/utils';
 import { BreadcrumbItem, Can, PaginatedCollection, Permission } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import {
@@ -18,7 +29,6 @@ import {
 import { KeySquare } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 import { columns } from './partials/columns';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 interface Props {
   can: Can;
@@ -34,7 +44,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const openDialog = ref(false);
+const { confirmAction, dataRow, openDialog } = useConfirmAction();
 
 const cols = columns(props.can);
 const sorting = ref<SortingState>([]);
@@ -128,19 +138,27 @@ watch(
         @batch-destroy="handleBatchDeletion"
         @search="(s) => (globalFilter = s)"
         @new="router.get(route('permissions.create'))"
-        @read="(id) => router.get(route('permissions.show', { permission: id }))"
-        @destroy="openDialog = true"
+        @read="(row) => router.get(route('permissions.show', { permission: row?.id }))"
+        @update="(row) => router.get(route('permissions.edit', { permission: row?.id }))"
+        @destroy="(row) => confirmAction(row)"
       />
 
       <AlertDialog v-model:open="openDialog">
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Ay chamo!</AlertDialogTitle>
-            <AlertDialogDescription>La descargaste</AlertDialogDescription>
+            <AlertDialogTitle>{{ `¿Eliminar el permiso «${dataRow.name}» permanentemente?` }}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {{ `Este permiso permite «${dataRow.description}», eliminarlo implica no poder ejecutar dicha acción.` }}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction>Continuar</AlertDialogAction>
+            <AlertDialogAction
+              class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              @click="router.delete(route('permissions.destroy', { permission: dataRow.id }))"
+            >
+              Continuar
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

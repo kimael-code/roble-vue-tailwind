@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DataTable from '@/components/DataTable.vue';
-import { valueUpdater } from '@/lib/utils';
+import { valueUpdater } from '@/components/ui/table/utils';
 import { PaginatedCollection, User } from '@/types';
 import { router } from '@inertiajs/vue3';
 import { ColumnFiltersState, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useVueTable } from '@tanstack/vue-table';

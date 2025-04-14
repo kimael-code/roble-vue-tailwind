@@ -7,11 +7,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem } from '@/types';
+import { BreadcrumbItem, Permission } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { KeySquare, LoaderCircle } from 'lucide-vue-next';
 import { ref } from 'vue';
+
+interface Props {
+  permission: Permission;
+}
+
+const props = defineProps<Props>();
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -19,18 +25,18 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/permissions',
   },
   {
-    title: 'Nuevo',
+    title: 'Editar',
     href: '',
   },
 ];
 
 const buttonCancel = ref(false);
 
-const form = useForm('post', route('permissions.store'), {
-  name: '',
-  description: '',
-  guard_name: 'web',
-  set_menu: false,
+const form = useForm('put', route('permissions.update', props.permission.id), {
+  name: props.permission.name,
+  description: props.permission.description,
+  guard_name: props.permission.guard_name,
+  set_menu: props.permission.set_menu,
 });
 
 function submit() {
@@ -50,15 +56,15 @@ function index() {
 
 <template>
   <AppLayout :breadcrumbs>
-    <Head title="Crear Nuevo Permiso" />
-    <ContentLayout title="Crear Nuevo Permiso">
+    <Head title="Editar Permiso" />
+    <ContentLayout title="Editar Permiso">
       <template #icon>
         <KeySquare />
       </template>
       <section class="mx-auto w-full">
         <Card class="container">
           <CardHeader>
-             <CardDescription>Los campos con asterisco rojo son requeridos.</CardDescription>
+            <CardDescription>Los campos con asterisco rojo son requeridos.</CardDescription>
           </CardHeader>
           <CardContent>
             <form @submit.prevent="submit">
@@ -106,7 +112,7 @@ function index() {
                   <InputError :message="form.errors.guard_name" />
                 </div>
                 <div class="flex items-center space-x-2">
-                  <Checkbox id="set_menu" @change="form.validate('set_menu')" />
+                  <Checkbox id="set_menu" v-model="form.set_menu" @change="form.validate('set_menu')" />
                   <Label for="set_menu">Define menú</Label>
                   <InputError :message="form.errors.set_menu" />
                 </div>

@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<Props>(), {
   hasNewButton: true,
   hasBatchActionsButton: true,
 });
-const emit = defineEmits(['batchDestroy', 'export', 'search', 'new', 'read', 'update', 'destroy', 'export']);
+const emit = defineEmits(['batchDestroy', 'export', 'search', 'new', 'read', 'update', 'destroy', 'export', 'enable', 'disable']);
 
 const form = useForm({
   search: props.filters?.search || undefined,
@@ -63,11 +63,11 @@ watchDebounced(
 <template>
   <div class="w-full">
     <div class="flex items-center justify-start px-2 py-4">
-      <div class="mr-3 text-sm text-muted-foreground">{{ data.meta.from }} a {{ data.meta.to }} de {{ data.meta.total }} registros</div>
+      <div class="text-muted-foreground mr-3 text-sm">{{ data.meta.from }} a {{ data.meta.to }} de {{ data.meta.total }} registros</div>
       <div class="relative w-full max-w-xs items-center">
         <Transition>
           <span v-if="form.search" class="absolute inset-y-0 end-0 flex items-center justify-center px-2" @click="form.reset('search')">
-            <Delete class="size-6 text-muted-foreground" />
+            <Delete class="text-muted-foreground size-6" />
           </span>
         </Transition>
         <Input id="search" type="text" class="max-w-xs pr-10" placeholder="Buscar rápido..." v-model:model-value="form.search" />
@@ -108,10 +108,12 @@ watchDebounced(
                   <FlexRender
                     :render="cell.column.columnDef.cell"
                     :props="cell.getContext()"
-                    @read="(id) => $emit('read', id)"
-                    @update="(id) => $emit('update', id)"
-                    @destroy="(id) => $emit('destroy', id)"
-                    @export="(id) => $emit('export', id)"
+                    @read="(row) => $emit('read', row)"
+                    @update="(row) => $emit('update', row)"
+                    @destroy="(row) => $emit('destroy', row)"
+                    @export="(row) => $emit('export', row)"
+                    @enable="(row) => $emit('enable', row)"
+                    @disable="(row) => $emit('disable', row)"
                   />
                 </TableCell>
               </TableRow>
@@ -131,7 +133,7 @@ watchDebounced(
     </div>
 
     <div class="flex items-center justify-end space-x-2 py-4">
-      <div v-if="table.getFilteredSelectedRowModel().rows.length" class="flex-1 text-sm text-muted-foreground">
+      <div v-if="table.getFilteredSelectedRowModel().rows.length" class="text-muted-foreground flex-1 text-sm">
         {{ table.getFilteredSelectedRowModel().rows.length }} de {{ table.getFilteredRowModel().rows.length }} fila(s) seleccionadas.
       </div>
       <div class="space-x-2">

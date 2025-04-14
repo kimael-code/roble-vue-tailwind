@@ -6,7 +6,7 @@ use App\Models\Security\Permission;
 
 class CreatePermission
 {
-    public function handle(array $inputs): Permission
+    public static function handle(array $inputs): Permission
     {
         return Permission::create($inputs);
     }

@@ -183,3 +183,9 @@
     @apply bg-background text-foreground;
   }
 }
+
+.is-required::after {
+  content: '*';
+  position: relative;
+  color: hsl(348, 100%, 61%);
+}

@@ -23,7 +23,7 @@ class StorePermissionRequest extends FormRequest
     {
         return [
             'name'        => ['required', 'string', 'lowercase', 'max:255', 'unique:permissions',],
-            'description' => ['required', 'string', 'max:255',],
+            'description' => ['required', 'string', 'lowercase', 'max:255',],
             'guard_name'  => ['required', 'string', 'lowercase' , 'regex:/^(web)$/',],
             'set_menu'    => ['nullable', 'boolean',],
         ];
