@@ -53,7 +53,7 @@ class HandleInertiaRequests extends Middleware
                     ->all() ?? [],
             ],
             'flash' => [
-                'msg' => fn() => $request->session()->get('msg'),
+                'message' => fn() => $request->session()->get('message'),
             ],
             'ziggy' => [
                 ...(new Ziggy)->toArray(),

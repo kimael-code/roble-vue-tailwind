@@ -13,8 +13,8 @@ class PermissionObserver
      */
     public function created(Permission $permission): void
     {
-        session()->flash('msg', [
-            'msg'   => "{$permission->name} ({$permission->description})",
+        session()->flash('message', [
+            'message' => "{$permission->name} ({$permission->description})",
             'title' => __('SAVED!'),
             'type'  => 'success',
         ]);
@@ -42,8 +42,8 @@ class PermissionObserver
      */
     public function updated(Permission $permission): void
     {
-        session()->flash('msg', [
-            'msg'   => "{$permission->name} ({$permission->description})",
+        session()->flash('message', [
+            'message' => "{$permission->name} ({$permission->description})",
             'title' => __('SAVED!'),
             'type'  => 'success',
         ]);
@@ -71,8 +71,8 @@ class PermissionObserver
      */
     public function deleted(Permission $permission): void
     {
-        session()->flash('msg', [
-            'msg'   => "{$permission->name} ({$permission->description})",
+        session()->flash('message', [
+            'message' => "{$permission->name} ({$permission->description})",
             'title' => __('DELETED!'),
             'type'  => 'danger',
         ]);
@@ -99,8 +99,8 @@ class PermissionObserver
      */
     public function restored(Permission $permission): void
     {
-        session()->flash('msg', [
-            'msg'   => "{$permission->name} ({$permission->description})",
+        session()->flash('message', [
+            'message' => "{$permission->name} ({$permission->description})",
             'title' => __('RESTORED'),
             'type'  => 'success',
         ]);
@@ -128,8 +128,8 @@ class PermissionObserver
      */
     public function forceDeleted(Permission $permission): void
     {
-        session()->flash('msg', [
-            'msg'   => "{$permission->name} ({$permission->description})",
+        session()->flash('message', [
+            'message' => "{$permission->name} ({$permission->description})",
             'title' => __('HARD DELETED!'),
             'type'  => 'danger',
         ]);
