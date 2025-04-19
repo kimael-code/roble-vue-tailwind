@@ -4,6 +4,7 @@ import type { Config } from 'ziggy-js';
 
 export interface Auth {
   user: User;
+  menu: Array<string>;
 }
 
 export interface BreadcrumbItem {
@@ -16,6 +17,7 @@ export interface NavItem {
   href: string;
   icon?: LucideIcon;
   isActive?: boolean;
+  hasPermission?: boolean;
 }
 
 export interface SharedData extends PageProps {

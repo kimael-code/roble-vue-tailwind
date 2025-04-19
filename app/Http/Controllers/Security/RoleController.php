@@ -1,10 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Security;
 
-use App\Http\Requests\StoreRoleRequest;
-use App\Http\Requests\UpdateRoleRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Security\StoreRoleRequest;
+use App\Http\Requests\Security\UpdateRoleRequest;
 use App\Models\Security\Role;
+use App\Support\Props\Security\RoleProps;
+use Gate;
+use Inertia\Inertia;
 
 class RoleController extends Controller
 {
@@ -13,7 +17,9 @@ class RoleController extends Controller
      */
     public function index()
     {
-        //
+        Gate::authorize('viewAny', Role::class);
+
+        return Inertia::render('security/roles/Index', RoleProps::index());
     }
 
     /**
@@ -21,7 +27,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        Gate::authorize('create', Role::class);
+
+        return Inertia::render('security/roles/Create', RoleProps::create());
     }
 
     /**

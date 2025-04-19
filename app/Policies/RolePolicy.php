@@ -13,7 +13,7 @@ class RolePolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->can('read any role');
     }
 
     /**
@@ -21,7 +21,7 @@ class RolePolicy
      */
     public function view(User $user, Role $role): bool
     {
-        return false;
+        return $user->can('read role');
     }
 
     /**
@@ -29,7 +29,7 @@ class RolePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->can('create roles');
     }
 
     /**
@@ -37,15 +37,19 @@ class RolePolicy
      */
     public function update(User $user, Role $role): bool
     {
-        return false;
+        return $user->can('update roles');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Role $role): bool
+    public function delete(User $user, Role $role): Response
     {
-        return false;
+        return $user->can('delete roles')
+            && $role->permissions->isEmpty()
+            && $role->users->isEmpty()
+            ? Response::allow()
+            : Response::deny(__('There are permissions or users having this role.'));
     }
 
     /**
@@ -59,8 +63,12 @@ class RolePolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Role $role): bool
+    public function forceDelete(User $user, Role $role): Response
     {
-        return false;
+        return $user->can('delete roles')
+            && $role->permissions->isEmpty()
+            && $role->users->isEmpty()
+            ? Response::allow()
+            : Response::deny(__('There are permissions or users having this role.'));
     }
 }

@@ -43,7 +43,7 @@ const securityNavItems: NavItem[] = [
   },
   {
     title: 'Roles',
-    href: '/dashboard',
+    href: '/roles',
     icon: Users,
     hasPermission: page.props.auth?.menu.includes('read any role'),
   },
