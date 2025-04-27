@@ -2,13 +2,18 @@
 
 namespace App\Models\Security;
 
+use App\Observers\Security\RoleObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Carbon;
 use Spatie\Activitylog\Contracts\Activity;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Models\Role as SpatieRole;
 
+#[ObservedBy([RoleObserver::class])]
 class Role extends SpatieRole
 {
     /** @use HasFactory<\Database\Factories\Security\RoleFactory> */
@@ -20,6 +25,53 @@ class Role extends SpatieRole
      * @var string
      */
     protected $traceObjectName = 'rol';
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['created_at_human', 'updated_at_human'];
+
+    protected function createdAtHuman(): Attribute
+    {
+        return Attribute::make(
+            get: function (mixed $value, array $attributes)
+            {
+                if ($attributes['created_at'] ?? null)
+                {
+                    return Carbon::createFromTimeString($attributes['created_at'])->isoFormat('L LT')
+                        . ' ('
+                        . Carbon::createFromTimeString($attributes['created_at'])->diffForHumans()
+                        . ')';
+                }
+                else
+                {
+                    return null;
+                }
+            },
+        );
+    }
+
+    protected function updatedAtHuman(): Attribute
+    {
+        return Attribute::make(
+            get: function (mixed $value, array $attributes)
+            {
+                if ($attributes['updated_at'] ?? null)
+                {
+                    return Carbon::createFromTimeString($attributes['updated_at'])->isoFormat('L LT')
+                        . ' ('
+                        . Carbon::createFromTimeString($attributes['updated_at'])->diffForHumans()
+                        . ')';
+                }
+                else
+                {
+                    return null;
+                }
+            },
+        );
+    }
 
     public function getActivityLogOptions(): LogOptions
     {

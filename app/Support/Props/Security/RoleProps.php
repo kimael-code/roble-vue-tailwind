@@ -53,30 +53,38 @@ class RoleProps
         ];
     }
 
-    public static function show(Permission $permission): array
+    public static function show(Role $role): array
     {
         return [
-            'can'        => Arr::except(self::getPermissions(), 'read'),
-            'filters'    => Request::only(['search', 'name']),
-            'permission' => $permission,
-            'roles'      => fn() => new RoleCollection(
-                $permission->roles()->filter(Request::only(['search', 'name']))
+            'can'         => Arr::except(self::getPermissions(), 'read'),
+            'filters'     => Request::only(['search']),
+            'permissions' => fn() => new PermissionCollection(
+                $role->permissions()->filter(Request::only(['search']))
                     ->latest()
                     ->paginate(10)
             ),
-            'users'      => fn() => new UserCollection(
-                User::filter(Request::only(['search', 'name']))
-                    ->permission($permission->name)
+            'role'        => $role,
+            'users'       => fn() => new UserCollection(
+                User::filter(Request::only(['search']))
+                    ->role($role->name)
                     ->latest()
                     ->paginate(10)
             ),
         ];
     }
 
-    public static function edit(Permission $permission): array
+    public static function edit(Role $role): array
     {
+        $page = request()->input('page', 1);
+        $perPage = request()->input('per_page', 10);
+        $permissions = Permission::filter(Request::only(['search']))
+                                 ->paginate($perPage, page: $page);
         return [
-            'permission' => $permission,
+            'permissions' => Inertia::merge(fn() => $permissions->items()),
+            'pagination' => $permissions->toArray(),
+            'filters' => Request::all(['search',]),
+            'role' => $role,
+            'rolePermissions' => $role->permissions()->pluck('description')->all(),
         ];
     }
 }

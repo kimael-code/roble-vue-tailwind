@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Security;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRoleRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateRoleRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('update roles');
     }
 
     /**
@@ -22,7 +23,10 @@ class UpdateRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['required', 'string', 'max:255', Rule::unique('roles')->ignore($this->role),],
+            'description' => ['required', 'string', 'max:255', 'lowercase'],
+            'guard_name' => ['required', 'string', 'max:255',],
+            'permissions' => ['nullable', 'array',],
         ];
     }
 }

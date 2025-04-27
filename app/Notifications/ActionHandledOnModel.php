@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications\Security;
+namespace App\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PermissionNotification extends Notification implements ShouldQueue
+class ActionHandledOnModel extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -20,6 +20,7 @@ class PermissionNotification extends Notification implements ShouldQueue
         public Authenticatable|User $causer,
         public array  $subjectData,
         public string $eventType,
+        public array  $routingData,
     ) {}
 
     /**
@@ -52,7 +53,7 @@ class PermissionNotification extends Notification implements ShouldQueue
     {
         return [
             'causer'    => $this->causer->name,
-            'message'   => __($this->eventType)." el permiso {$this->subjectData['name']}.",
+            'message'   => "{$this->subjectData['type']} [{$this->subjectData['name']}] ".__($this->eventType),
             'photoUrl'  => $this->causer->profile_photo_url,
             'timestamp' => $this->subjectData['timestamp'],
             'url'       => $this->urlResolver(),
@@ -61,11 +62,11 @@ class PermissionNotification extends Notification implements ShouldQueue
 
     private function urlResolver(): string
     {
-        $url = route('permissions.index');
+        $url = route("{$this->routingData['routeName']}.index");
 
         if (!($this->eventType === 'deleted' || $this->eventType === 'f_deleted'))
         {
-            $url = route('permissions.show', ['permission' => $this->subjectData['id']]);
+            $url = route("{$this->routingData['routeName']}.show", ["{$this->routingData['routeParam']}" => $this->subjectData['id']]);
         }
 
         return $url;

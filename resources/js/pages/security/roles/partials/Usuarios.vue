@@ -9,7 +9,7 @@ import { columns } from './columnsUser';
 
 interface Props {
   filters: object;
-  permissionId: string | number;
+  roleId: string | number;
   users: PaginatedCollection<User>;
 }
 const props = defineProps<Props>();
@@ -30,7 +30,7 @@ function handleSortingChange(item: any) {
       data[sortBy] = sortDirection;
     });
 
-    router.visit(route('permissions.show', { permission: props.permissionId }), {
+    router.visit(route('roles.show', { role: props.roleId }), {
       data,
       only: ['users'],
       preserveScroll: true,
@@ -77,7 +77,7 @@ watch(
     :data="users"
     :filters
     :search-only="['users']"
-    :search-route="route('permissions.show', { permission: permissionId })"
+    :search-route="route('permissions.show', { permission: roleId })"
     :table
     @search="(s) => (globalFilter = s)"
   />

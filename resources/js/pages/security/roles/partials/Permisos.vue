@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import DataTable from '@/components/DataTable.vue';
 import { valueUpdater } from '@/components/ui/table/utils';
-import { PaginatedCollection, Role } from '@/types';
+import { PaginatedCollection, Permission } from '@/types';
 import { router } from '@inertiajs/vue3';
 import { ColumnFiltersState, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useVueTable } from '@tanstack/vue-table';
 import { ref, watch } from 'vue';
@@ -9,8 +9,8 @@ import { columns } from './columnsRole';
 
 interface Props {
   filters: object;
-  permissionId: string | number;
-  roles: PaginatedCollection<Role>;
+  roleId: string | number;
+  permissions: PaginatedCollection<Permission>;
 }
 const props = defineProps<Props>();
 
@@ -30,9 +30,9 @@ function handleSortingChange(item: any) {
       data[sortBy] = sortDirection;
     });
 
-    router.visit(route('permissions.show', { permission: props.permissionId }), {
+    router.visit(route('permissions.show', { permission: props.roleId }), {
       data,
-      only: ['roles'],
+      only: ['permissions'],
       preserveScroll: true,
       preserveState: true,
       onSuccess: () => (sorting.value = sortValue),
@@ -42,9 +42,9 @@ function handleSortingChange(item: any) {
 
 const table = useVueTable({
   columns: cols,
-  data: props.roles.data,
+  data: props.permissions.data,
   manualPagination: true,
-  pageCount: props.roles.meta.per_page,
+  pageCount: props.permissions.meta.per_page,
   getCoreRowModel: getCoreRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
   getSortedRowModel: getSortedRowModel(),
@@ -66,7 +66,7 @@ const table = useVueTable({
 });
 
 watch(
-  () => props.roles.data,
+  () => props.permissions.data,
   (newData) => table.setOptions((prev) => ({ ...prev, data: newData })),
 );
 </script>
@@ -74,10 +74,10 @@ watch(
 <template>
   <DataTable
     :columns="cols"
-    :data="roles"
+    :data="permissions"
     :filters
-    :search-only="['roles']"
-    :search-route="route('permissions.show', { permission: permissionId })"
+    :search-only="['permissions']"
+    :search-route="route('roles.show', { role: roleId })"
     :table
     @search="(s) => (globalFilter = s)"
   />

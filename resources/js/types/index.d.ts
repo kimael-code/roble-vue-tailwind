@@ -37,7 +37,7 @@ export interface User {
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
-  deleted_at?: string;
+  deleted_at?: string | null;
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
@@ -48,7 +48,9 @@ export interface Role {
   guard_name: string;
   created_at: string;
   updated_at: string;
-  deleted_at?: string;
+  created_at_human?: string;
+  updated_at_human?: string;
+  deleted_at?: string | null;
   description: string;
 }
 

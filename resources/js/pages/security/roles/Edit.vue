@@ -11,7 +11,7 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Pagination, Permission } from '@/types';
+import { BreadcrumbItem, Pagination, Permission, Role } from '@/types';
 import { Head, router, WhenVisible } from '@inertiajs/vue3';
 import { watchDebounced } from '@vueuse/core';
 import { useForm } from 'laravel-precognition-vue-inertia';
@@ -22,6 +22,8 @@ const props = defineProps<{
   filters: { [index: string]: string | undefined };
   permissions: Array<Permission>;
   pagination: Pagination<Permission>;
+  role: Role;
+  rolePermissions: Array<string>;
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -46,11 +48,11 @@ type formRole = {
   permissions: string[];
 };
 
-const form = useForm('post', route('roles.store'), <formRole>{
-  name: '',
-  description: '',
-  guard_name: 'web',
-  permissions: [],
+const form = useForm('put', route('roles.update', props.role.id), <formRole>{
+  name: props.role.name,
+  description: props.role.description,
+  guard_name: props.role.guard_name,
+  permissions: props.rolePermissions,
 });
 
 function submit() {
@@ -72,7 +74,7 @@ watchDebounced(
   (s) => {
     if (s === '') search.value = undefined;
 
-    router.visit(route('roles.create'), {
+    router.visit(route('roles.edit', props.role.id), {
       data: { search: s },
       preserveScroll: true,
       preserveState: true,
@@ -84,7 +86,7 @@ watchDebounced(
 watch(openSheet, (isOpen) => {
   if (!isOpen) {
     search.value = undefined;
-    router.visit(route('roles.create'), { preserveScroll: true, preserveState: true });
+    router.visit(route('roles.edit', props.role.id), { preserveScroll: true, preserveState: true });
   }
 });
 
@@ -99,8 +101,8 @@ function handlePermissionSelecction(permission: Permission) {
 
 <template>
   <AppLayout :breadcrumbs>
-    <Head title="Crear Nuevo Rol" />
-    <ContentLayout title="Crear Nuevo Rol">
+    <Head title="Editar Rol" />
+    <ContentLayout title="Editar Rol">
       <template #icon>
         <Users />
       </template>
@@ -155,7 +157,7 @@ function handlePermissionSelecction(permission: Permission) {
                   <InputError :message="form.errors.guard_name" />
                 </div>
                 <div class="5 flex flex-col space-y-1">
-                  <Label class="is-required" for="permissions">Permisos</Label>
+                  <Label for="permissions">Permisos</Label>
                   <TagsInput id="permissions" v-model="form.permissions">
                     <TagsInputItem v-for="permission in form.permissions" :key="permission" :value="permission">
                       <TagsInputItemText />

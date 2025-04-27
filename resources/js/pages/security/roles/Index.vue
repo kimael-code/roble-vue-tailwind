@@ -26,7 +26,7 @@ import {
   SortingState,
   useVueTable,
 } from '@tanstack/vue-table';
-import { KeySquare } from 'lucide-vue-next';
+import { Users } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 import { columns } from './partials/columns';
 
@@ -125,7 +125,7 @@ watch(
 
     <ContentLayout title="Roles">
       <template #icon>
-        <KeySquare />
+        <Users />
       </template>
       <DataTable
         :can="can"

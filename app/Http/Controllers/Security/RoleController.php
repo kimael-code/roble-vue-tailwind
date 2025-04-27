@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Security;
 
+use App\Actions\Security\CreateRole;
+use App\Actions\Security\UpdateRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Security\StoreRoleRequest;
 use App\Http\Requests\Security\UpdateRoleRequest;
@@ -37,7 +39,9 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
-        //
+        CreateRole::handle($request->validated());
+
+        return redirect(route('roles.index'));
     }
 
     /**
@@ -45,7 +49,9 @@ class RoleController extends Controller
      */
     public function show(Role $role)
     {
-        //
+        Gate::authorize('view', $role);
+
+        return Inertia::render('security/roles/Show', RoleProps::show($role));
     }
 
     /**
@@ -53,7 +59,9 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        //
+        Gate::authorize('update', $role);
+
+        return Inertia::render('security/roles/Edit', RoleProps::edit($role));
     }
 
     /**
@@ -61,7 +69,9 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
-        //
+        UpdateRole::handle($role, $request->validated());
+
+        return redirect(route('roles.index'));
     }
 
     /**
@@ -69,6 +79,10 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        //
+        Gate::authorize('delete', $role);
+
+        $role->delete();
+
+        return redirect(route('roles.index'));
     }
 }
