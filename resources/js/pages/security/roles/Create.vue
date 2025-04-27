@@ -120,7 +120,7 @@ function handlePermissionSelecction(permission: Permission) {
                     type="text"
                     maxlength="255"
                     autocomplete="on"
-                    placeholder="por ej.: Analista de Datos"
+                    placeholder="ej.: Analista de Datos"
                     required
                     autofocus
                     @change="form.validate('name')"
@@ -135,7 +135,7 @@ function handlePermissionSelecction(permission: Permission) {
                     type="text"
                     maxlength="255"
                     autocomplete="on"
-                    placeholder="por ej.: Administra los datos de la aplicación"
+                    placeholder="ej.: administra los datos de la aplicación"
                     required
                     @change="form.validate('description')"
                   />
@@ -147,7 +147,7 @@ function handlePermissionSelecction(permission: Permission) {
                     id="guard_name"
                     v-model="form.guard_name"
                     type="text"
-                    placeholder="Autenticación"
+                    placeholder="ej.: web"
                     readonly
                     required
                     @change="form.validate('guard_name')"
@@ -163,6 +163,7 @@ function handlePermissionSelecction(permission: Permission) {
                     </TagsInputItem>
                     <TagsInputInput placeholder="Permisos seleccionados..." @click="openSheet = true" />
                   </TagsInput>
+                  <InputError :message="form.errors.permissions" />
                 </div>
               </div>
             </form>
