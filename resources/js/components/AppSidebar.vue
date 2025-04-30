@@ -49,7 +49,7 @@ const securityNavItems: NavItem[] = [
   },
   {
     title: 'Usuarios',
-    href: '/dashboard',
+    href: '/users',
     icon: User,
     hasPermission: page.props.auth?.menu.includes('read any user'),
   },

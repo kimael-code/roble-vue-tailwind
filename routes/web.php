@@ -4,6 +4,7 @@ use App\Http\Controllers\{
     BatchDeletionController,
     Security\PermissionController,
     Security\RoleController,
+    Security\UserController,
 };
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,7 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
     Route::resources([
         'permissions' => PermissionController::class,
         'roles'       => RoleController::class,
+        'users'       => UserController::class,
     ], [
         'middleware' => [HandlePrecognitiveRequests::class],
     ]);

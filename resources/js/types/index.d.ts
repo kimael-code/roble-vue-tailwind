@@ -30,7 +30,7 @@ export interface SharedData extends PageProps {
 }
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   avatar?: string;
@@ -38,6 +38,7 @@ export interface User {
   created_at: string;
   updated_at: string;
   deleted_at?: string | null;
+  is_password_set: boolean;
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
