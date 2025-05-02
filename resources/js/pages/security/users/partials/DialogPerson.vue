@@ -11,7 +11,7 @@ import { Employee } from '@/types';
 import { router, useForm } from '@inertiajs/vue3';
 import { watchDebounced } from '@vueuse/core';
 import { Search } from 'lucide-vue-next';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps<{
   employees: Array<Employee>;
@@ -59,25 +59,15 @@ function handleEmployeeSelection(data: Employee) {
   open.value = false;
   search.value = '';
   emit('employeeSelected', data);
+  formPerson.reset();
 }
 
 function handleExternalPerson() {
   open.value = false;
   search.value = '';
   emit('externalPerson', formPerson.data());
+  formPerson.reset();
 }
-
-onMounted(() =>
-  formPerson.defaults({
-    is_external: false,
-    names: '',
-    surnames: '',
-    phones: '',
-    emails: '',
-    position: '',
-    staff_type: '',
-  }),
-);
 </script>
 
 <template>
