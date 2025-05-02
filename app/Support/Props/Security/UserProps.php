@@ -6,6 +6,7 @@ use App\Http\Resources\Security\UserCollection;
 use App\Models\Security\Permission;
 use App\Models\Security\Role;
 use App\Models\User;
+use App\Repositories\EmployeeRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
@@ -45,9 +46,11 @@ class UserProps
                         ->paginate($perPage, page: $pagePerm);
         $roles       = Role::filter(Request::only(['search']))
                         ->paginate($perPage, page: $pageRole);
+        $repository  = new EmployeeRepository();
 
         return [
             'filters'        => Request::all(['search',]),
+            'employees'      => Request::input('search') ? $repository->find(request()->input('search')) : [],
             'permissions'    => Inertia::merge(fn() => $permissions->items()),
             'roles'          => Inertia::merge(fn() => $roles->items()),
             'paginationPerm' => $permissions->toArray(),

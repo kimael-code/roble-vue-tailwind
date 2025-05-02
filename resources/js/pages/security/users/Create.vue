@@ -11,15 +11,18 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Pagination, Permission, Role } from '@/types';
+import { BreadcrumbItem, Employee, Pagination, Permission, Role } from '@/types';
 import { Head, router, WhenVisible } from '@inertiajs/vue3';
 import { watchDebounced } from '@vueuse/core';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { LoaderCircle, Search, UserIcon } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+import CardPerson from './partials/CardPerson.vue';
+import DialogPerson from './partials/DialogPerson.vue';
 
 const props = defineProps<{
   filters: { [index: string]: string | undefined };
+  employees: Array<Employee>;
   permissions: Array<Permission>;
   roles: Array<Role>;
   paginationPerm: Pagination<Permission>;
@@ -45,9 +48,14 @@ const search = ref(props.filters.search);
 type formUser = {
   name: string;
   email: string;
-  names: string,
-  surnames: string,
-  id_card: string,
+  is_external: boolean;
+  id_card: string;
+  names: string;
+  surnames: string;
+  phones: string;
+  emails: string;
+  position: string;
+  staff_type: string;
   permissions: string[];
   roles: string[];
 };
@@ -55,12 +63,19 @@ type formUser = {
 const form = useForm('post', route('users.store'), <formUser>{
   name: '',
   email: '',
+  is_external: false,
+  id_card: '',
   names: '',
   surnames: '',
-  id_card: '',
+  phones: '',
+  emails: '',
+  position: '',
+  staff_type: '',
   permissions: [],
   roles: [],
 });
+
+const showDialogTrigger = computed(() => form.id_card ? false : true)
 
 function submit() {
   form.submit({
@@ -116,6 +131,17 @@ function handleRoleSelecction(role: Role) {
     form.roles.splice(form.roles.indexOf(role.name), 1);
   }
 }
+
+function handleEmployeeSelected(employe: { [index: string]: any }) {
+  console.log('employee', employe);
+  
+  form.id_card = employe.id_card;
+  form.names = employe.names;
+  form.surnames = employe.surnames;
+  form.position = employe.position;
+  form.staff_type = employe.staff_type;
+  form.is_external = employe.is_external
+}
 </script>
 
 <template>
@@ -162,51 +188,20 @@ function handleRoleSelecction(role: Role) {
                   />
                   <InputError :message="form.errors.email" />
                 </div>
-                <br>
-                <div class="flex flex-col space-y-1.5">
-                  <Label for="names">Nombres</Label>
-                  <Input
-                    id="names"
-                    v-model="form.names"
-                    type="text"
-                    maxlength="255"
-                    autocomplete="on"
-                    placeholder="ej.: Pedro ó Pedro Luis"
-                    required
-                    autofocus
-                    @change="form.validate('names')"
-                  />
-                  <InputError :message="form.errors.names" />
-                </div>
-                <div class="flex flex-col space-y-1.5">
-                  <Label for="surnames">Apellidos</Label>
-                  <Input
-                    id="surnames"
-                    v-model="form.surnames"
-                    type="text"
-                    maxlength="255"
-                    autocomplete="surnames"
-                    placeholder="ej.: Pérez ó Pérez González"
-                    required
-                    @change="form.validate('surnames')"
-                  />
-                  <InputError :message="form.errors.surnames" />
-                </div>
-                <div class="flex flex-col space-y-1.5">
-                  <Label for="id_card">Cédula</Label>
-                  <Input
-                    id="id_card"
-                    v-model="form.id_card"
-                    type="text"
-                    maxlength="255"
-                    autocomplete="id_card"
-                    placeholder="ej.: V-12345678 ó V-1234567 ó E-87654321"
-                    required
-                    @change="form.validate('id_card')"
-                  />
-                  <InputError :message="form.errors.id_card" />
-                </div>
-                <br>
+                <br />
+                <DialogPerson :employees :search="props.filters.search" :show-dialog-trigger="showDialogTrigger" @employee-selected="(employee) => handleEmployeeSelected(employee)" @external-person="(employee) => handleEmployeeSelected(employee)" />
+                <CardPerson
+                  :is-external="form.is_external"
+                  :idCard="form.id_card"
+                  :names="form.names"
+                  :surnames="form.surnames"
+                  :phones="form.phones"
+                  :emails="form.emails"
+                  :position="form.position"
+                  :staffType="form.staff_type"
+                  @quit-person="form.reset()"
+                />
+                <br />
                 <div class="5 flex flex-col space-y-1">
                   <Label for="roles">Roles</Label>
                   <TagsInput id="roles" v-model="form.roles">
@@ -249,9 +244,8 @@ function handleRoleSelecction(role: Role) {
             <SheetHeader>
               <SheetTitle>Seleccionar Roles</SheetTitle>
               <SheetDescription>
-                Haga clic en el rol que necesite ser asignado al usuario.
-                El usuario puede pertenecer a más de un rol a la vez, por lo que puede seleccionar varios.
-                Haga clic en Seleccionar cuando haya terminado.
+                Haga clic en el rol que necesite ser asignado al usuario. El usuario puede pertenecer a más de un rol a la vez, por lo que puede
+                seleccionar varios. Haga clic en Seleccionar cuando haya terminado.
               </SheetDescription>
             </SheetHeader>
             <div class="relative w-full max-w-sm items-center p-4">
@@ -264,11 +258,7 @@ function handleRoleSelecction(role: Role) {
               <div class="p-4">
                 <div v-for="(role, i) in roles" :key="i">
                   <Label :for="role.name" class="flex items-center space-x-3">
-                    <Checkbox
-                      :id="role.name"
-                      :model-value="form.roles.includes(role.name)"
-                      @update:model-value="handleRoleSelecction(role)"
-                    />
+                    <Checkbox :id="role.name" :model-value="form.roles.includes(role.name)" @update:model-value="handleRoleSelecction(role)" />
                     <span>{{ role.name }}</span>
                   </Label>
                   <Separator class="my-2" />

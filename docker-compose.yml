@@ -5,7 +5,7 @@ services:
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-        image: 'sail-8.4/app'
+        image: 'roble-tailwind/app'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
         ports:
@@ -57,9 +57,22 @@ services:
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
+    pgadmin:
+        image: dpage/pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: "${PG_ADM_EMAIL:-dbadmin@local.dev}"
+            PGADMIN_DEFAULT_PASSWORD: "${DB_PASSWORD:-secret}"
+        volumes:
+            - "sail-pgadmin:/var/lib/pgadmin"
+        ports:
+            - "5050:80"
+        networks:
+            - sail
 networks:
     sail:
         driver: bridge
 volumes:
     sail-pgsql:
+        driver: local
+    sail-pgadmin:
         driver: local

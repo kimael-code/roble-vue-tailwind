@@ -59,6 +59,20 @@ export interface Permission extends Role {
   set_menu: boolean;
 }
 
+export interface Employee {
+  company_code?: string;
+  nationality?: string;
+  id_card: string;
+  rif: string;
+  names: string;
+  surnames: string;
+  staff_type_code: string;
+  org_unit_code: string;
+  position: string;
+  staff_type_name: string;
+  org_unit_name: string;
+}
+
 export interface Can {
   create: boolean;
   read?: boolean;

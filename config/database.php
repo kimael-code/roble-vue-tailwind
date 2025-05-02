@@ -112,6 +112,20 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'organization' => [
+            'driver' => 'pgsql',
+            'url' => env('DB_URL_ORG'),
+            'host' => env('DB_HOST_ORG', '127.0.0.1'),
+            'port' => env('DB_PORT_ORG', '5432'),
+            'database' => env('DB_DATABASE_ORG', 'company'),
+            'username' => env('DB_USERNAME_ORG', 'root'),
+            'password' => env('DB_PASSWORD_ORG', ''),
+            'charset' => env('DB_CHARSET_ORG', 'utf8'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'public',
+            'sslmode' => 'prefer',
+        ],
     ],
 
     /*
