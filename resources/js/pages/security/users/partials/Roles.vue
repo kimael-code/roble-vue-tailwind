@@ -5,7 +5,7 @@ import { PaginatedCollection, Role } from '@/types';
 import { router } from '@inertiajs/vue3';
 import { ColumnFiltersState, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useVueTable } from '@tanstack/vue-table';
 import { ref, watch } from 'vue';
-import { columns } from './columnsRolePermission';
+import { columns } from './columnsRole';
 
 interface Props {
   filters: object;

@@ -16,12 +16,12 @@ interface Props {
   can: Can;
   filters: SearchFilter;
   user: User;
-  pagePerm: number;
   permissions: PaginatedCollection<Permission>;
+  permissionsCount: number;
   roles: PaginatedCollection<Role>;
 }
+
 const props = defineProps<Props>();
-console.log(props);
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -119,7 +119,7 @@ function newData() {
               <Roles :filters :user-id="user.id" :roles></Roles>
             </TabsContent>
             <TabsContent value="permissions">
-              <Permisos :filters :user-id="user.id" :page-perm="pagePerm" :permissions></Permisos>
+              <Permisos :filters :user-id="user.id" :permissions :permissions-count></Permisos>
             </TabsContent>
           </Tabs>
         </div>

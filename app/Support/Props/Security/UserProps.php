@@ -64,30 +64,24 @@ class UserProps
     public static function show(User $user): array
     {
         $search = Request::only(['search']);
-        $pagePerm = request()->input('page_perm', 1);
-        $perPage = request()->input('per_page', 10);
         $permissions = new PermissionCollection($user->getAllPermissions()->filter(function ($permission) use ($search)
         {
             if (isset($search['search']))
             {
-                // dd($search['search']);
                 return str_contains($permission->description, $search['search']);
             }
             else
             {
                 return $permission;
             }
-        })->forPage($pagePerm, $perPage)->all());
-        // dd($permissions);
-        // $permissions = $permissions;
+        })->all());
 
         return [
             'can' => Arr::except(self::getPermissions(), 'read'),
             'filters' =>  Request::all(['search']),
             'user' => $user,
-            'pagePerm' => (int)$pagePerm,
-            'permissions' => Inertia::deepMerge(fn () => $permissions),
-            // 'permissions' => $permissions,
+            'permissions' => fn () => $permissions,
+            'permissionsCount' => fn () => $user->getAllPermissions()->count(),
             'roles' => fn() => new RoleCollection(
                 $user->roles()->filter($search)
                     ->latest()
