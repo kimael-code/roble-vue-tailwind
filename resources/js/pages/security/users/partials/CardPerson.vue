@@ -21,7 +21,7 @@ const description = computed(() => (props.isExternal ? 'Usuario Externo' : 'Usua
 </script>
 
 <template>
-  <Card v-if="idCard">
+  <Card v-if="idCard && names && surnames">
     <CardHeader>
       <CardTitle>Empleado / Persona</CardTitle>
       <CardDescription>{{ description }}</CardDescription>

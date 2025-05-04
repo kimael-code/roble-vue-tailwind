@@ -36,6 +36,8 @@ interface Props {
   users  : PaginatedCollection<User>;
 }
 const props = defineProps<Props>();
+console.log(props);
+
 
 const breadcrumbs: BreadcrumbItem[] = [
   {

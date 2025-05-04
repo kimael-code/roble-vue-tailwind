@@ -4,11 +4,6 @@ import { ColumnDef } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { h } from 'vue';
 
-/**
- * Definiciones de las columnas para la tabla de roles en la pestaña roles.
- * @param permissions Acciones que se puden ejecutar.
- * @returns Arreglo de objetos.
- */
 export const columns = (): ColumnDef<Role>[] => [
   {
     accessorKey: 'name',

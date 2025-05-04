@@ -18,7 +18,9 @@ import { useForm } from 'laravel-precognition-vue-inertia';
 import { LoaderCircle, Search, UserIcon } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import CardPerson from './partials/CardPerson.vue';
-import DialogPerson from './partials/DialogPerson.vue';
+// import DialogPerson from './partials/DialogPerson.vue';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
 
 const props = defineProps<{
   filters: { [index: string]: string | undefined };
@@ -43,7 +45,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 const buttonCancel = ref(false);
 const openSheetPermissions = ref(false);
 const openSheetRoles = ref(false);
+const openDialog = ref(false);
 const search = ref(props.filters.search);
+// const searchEmployee = ref(props.filters.search);
 
 type formUser = {
   name: string;
@@ -56,8 +60,9 @@ type formUser = {
   emails: string;
   position: string;
   staff_type: string;
-  permissions: string[];
+  ou_name: string;
   roles: string[];
+  permissions: string[];
 };
 
 const form = useForm('post', route('users.store'), <formUser>{
@@ -71,11 +76,12 @@ const form = useForm('post', route('users.store'), <formUser>{
   emails: '',
   position: '',
   staff_type: '',
-  permissions: [],
+  ou_name: '',
   roles: [],
+  permissions: [],
 });
 
-const showDialogTrigger = computed(() => form.id_card ? false : true)
+const showDialogTrigger = computed(() => (form.id_card ? false : true));
 
 function submit() {
   form.submit({
@@ -116,7 +122,7 @@ watch([openSheetPermissions, openSheetRoles], ([isOpenSheetPermissions, isOpenSh
   }
 });
 
-function handlePermissionSelecction(permission: Permission) {
+function handlePermissionSelection(permission: Permission) {
   if (!form.permissions.includes(permission.description)) {
     form.permissions.push(permission.description);
   } else {
@@ -124,7 +130,7 @@ function handlePermissionSelecction(permission: Permission) {
   }
 }
 
-function handleRoleSelecction(role: Role) {
+function handleRoleSelection(role: Role) {
   if (!form.roles.includes(role.name)) {
     form.roles.push(role.name);
   } else {
@@ -132,15 +138,25 @@ function handleRoleSelecction(role: Role) {
   }
 }
 
-function handleEmployeeSelected(employe: { [index: string]: any }) {
-  console.log('employee', employe);
-  
+function handleEmployeeSelection(employe: { [index: string]: any }) {
   form.id_card = employe.id_card;
   form.names = employe.names;
   form.surnames = employe.surnames;
   form.position = employe.position;
-  form.staff_type = employe.staff_type;
-  form.is_external = employe.is_external
+  form.staff_type = employe.staff_type_name;
+  form.ou_name = employe.org_unit_name;
+  openDialog.value = false;
+  search.value = undefined;
+}
+
+function handleExternalPerson() {
+  form.validate({
+    only: ['id_card', 'names', 'surnames', 'phones', 'emails', 'position', 'staff_type'],
+    onSuccess: () => {
+      openDialog.value = false;
+      search.value = '';
+    },
+  })
 }
 </script>
 
@@ -189,7 +205,72 @@ function handleEmployeeSelected(employe: { [index: string]: any }) {
                   <InputError :message="form.errors.email" />
                 </div>
                 <br />
-                <DialogPerson :employees :search="props.filters.search" :show-dialog-trigger="showDialogTrigger" @employee-selected="(employee) => handleEmployeeSelected(employee)" @external-person="(employee) => handleEmployeeSelected(employee)" />
+                <Dialog v-model:open="openDialog">
+                  <DialogTrigger v-if="showDialogTrigger" as-child>
+                    <Button variant="outline"> Empleado / Persona </Button>
+                  </DialogTrigger>
+                  <DialogContent class="sm:max-w-[425px]">
+                    <DialogHeader>
+                      <DialogTitle>Empleado / Persona</DialogTitle>
+                      <DialogDescription>
+                        Busque y seleccione a un empleado. Si el usuario a registrar no pertenece a la organización active el suiche "Usuario Externo"
+                        para establecer los datos personales manualmente.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div class="flex items-center space-x-2">
+                      <Switch id="is_external" v-model:model-value="form.is_external" />
+                      <Label for="is_external">Usuario Externo</Label>
+                    </div>
+                    <div v-if="!form.is_external" class="relative w-full max-w-sm items-center p-4">
+                      <Input id="search" type="text" placeholder="Buscar..." class="pl-10" v-model="search" />
+                      <span class="absolute inset-y-0 start-0 flex items-center justify-center px-5">
+                        <Search class="text-muted-foreground size-6" />
+                      </span>
+                    </div>
+                    <ScrollArea v-if="!form.is_external" class="m-3 h-20 rounded-md border">
+                      <div class="p-4">
+                        <div v-for="(employee, i) in employees" :key="i">
+                          <Label :for="employee.id_card" class="flex items-center space-x-3">
+                            <Checkbox :id="employee.id_card" @update:model-value="handleEmployeeSelection(employee)" />
+                            <span>{{ `${employee.nationality}-${employee.id_card} ${employee.names} ${employee.surnames}` }}</span>
+                          </Label>
+                          <Separator class="my-2" />
+                        </div>
+                      </div>
+                    </ScrollArea>
+                    <div v-else class="grid gap-4">
+                      <div class="grid grid-cols-4 items-center gap-4">
+                        <Label for="id_card" class="is-required text-right"> Nro. de CI </Label>
+                        <Input id="id_card" v-model="form.id_card" class="col-span-3" maxlength="8" placeholder="ej.: 12345678" />
+                      </div>
+                      <InputError class="mt-0" :message="form.errors.id_card" />
+                      <div class="grid grid-cols-4 items-center gap-4">
+                        <Label for="names" class="is-required text-right"> Nombres </Label>
+                        <Input id="names" v-model="form.names" class="col-span-3" maxlength="255" placeholder="ej.: Pedro ó Pedro Luis" />
+                      </div>
+                      <InputError :message="form.errors.names" />
+                      <div class="grid grid-cols-4 items-center gap-4">
+                        <Label for="surnames" class="is-required text-right"> Apellidos </Label>
+                        <Input
+                          id="surnames"
+                          v-model="form.surnames"
+                          class="col-span-3"
+                          maxlength="255"
+                          placeholder="ej.: Pérez ó Pérez González"
+                        />
+                      </div>
+                      <InputError :message="form.errors.surnames" />
+                      <div class="grid grid-cols-4 items-center gap-4">
+                        <Label for="position" class="text-right"> Cargo </Label>
+                        <Input id="position" v-model="form.position" class="col-span-3" maxlength="255" placeholder="ej.: Auditor Externo" />
+                        <InputError :message="form.errors.position" />
+                      </div>
+                    </div>
+                    <DialogFooter v-if="form.is_external">
+                      <Button type="button" @click="handleExternalPerson"> Guardar </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
                 <CardPerson
                   :is-external="form.is_external"
                   :idCard="form.id_card"
@@ -258,7 +339,7 @@ function handleEmployeeSelected(employe: { [index: string]: any }) {
               <div class="p-4">
                 <div v-for="(role, i) in roles" :key="i">
                   <Label :for="role.name" class="flex items-center space-x-3">
-                    <Checkbox :id="role.name" :model-value="form.roles.includes(role.name)" @update:model-value="handleRoleSelecction(role)" />
+                    <Checkbox :id="role.name" :model-value="form.roles.includes(role.name)" @update:model-value="handleRoleSelection(role)" />
                     <span>{{ role.name }}</span>
                   </Label>
                   <Separator class="my-2" />
@@ -304,7 +385,7 @@ function handleEmployeeSelected(employe: { [index: string]: any }) {
                     <Checkbox
                       :id="permission.description"
                       :model-value="form.permissions.includes(permission.description)"
-                      @update:model-value="handlePermissionSelecction(permission)"
+                      @update:model-value="handlePermissionSelection(permission)"
                     />
                     <span>{{ permission.description }}</span>
                   </Label>

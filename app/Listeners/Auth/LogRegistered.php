@@ -21,9 +21,6 @@ class LogRegistered
      */
     public function handle(Registered $event): void
     {
-        if (! in_array('registration', config('fortify.features')))
-            return;
-
         $causer = auth()->user();
 
         activity()

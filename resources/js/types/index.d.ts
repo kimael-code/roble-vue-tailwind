@@ -24,7 +24,7 @@ export interface SharedData extends PageProps {
   name: string;
   quote: { message: string; author: string };
   auth: Auth;
-  flash: { message: { message: string, title: string, type: string } };
+  flash: { message: { message: string; title: string; type: string } };
   ziggy: Config & { location: string };
   sidebarOpen: boolean;
 }
@@ -39,6 +39,9 @@ export interface User {
   updated_at: string;
   deleted_at?: string | null;
   is_password_set: boolean;
+  created_at_human?: string | null;
+  updated_at_human?: string | null;
+  deleted_at_human?: string | null;
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
@@ -57,6 +60,7 @@ export interface Role {
 
 export interface Permission extends Role {
   set_menu: boolean;
+  pivot?: { [index: string]: string | number };
 }
 
 export interface Employee {
@@ -127,4 +131,8 @@ export interface PaginatedCollection<T> {
   data: Array<T>;
   links: PaginatedCollectionLinks;
   meta: PaginatedCollectionMeta;
+}
+
+export interface SearchFilter {
+  [index: string]: string | undefined;
 }

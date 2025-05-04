@@ -17,7 +17,11 @@ class OrganizationFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'rif' => fake()->taxpayerIdentificationNumber('-'),
+            'name' => fake()->company(),
+            'logo_path' => '',
+            'acronym' => fake()->companySuffix(),
+            'address' => fake()->address(),
         ];
     }
 }

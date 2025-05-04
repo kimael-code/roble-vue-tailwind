@@ -21,9 +21,20 @@ class StoreUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        dd($this->all());
         return [
-            //
+            'name'        => ['required', 'string', 'max:255',],
+            'email'       => ['required', 'email', 'max:255', 'unique:users',],
+            'is_external' => ['required', 'boolean',],
+            'id_card'     => ['required_if_accepted:is_external', 'nullable', 'string', 'max:8', 'unique:people'],
+            'names'       => ['required_if_accepted:is_external', 'nullable', 'string', 'max:255',],
+            'surnames'    => ['required_if_accepted:is_external', 'nullable', 'string', 'max:255',],
+            'phones'      => ['nullable', 'string', 'regex:/\+?\(?[\d\s\-\.]{7,}\d/'],
+            'emails'      => ['nullable', 'string', 'regex:/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/'],
+            'position'    => ['nullable', 'string', 'max:255'],
+            'staff_type'  => ['nullable', 'string', 'max:255'],
+            'ou_name'     => ['nullable', 'string', 'max:255'],
+            'roles'       => ['nullable', 'array',],
+            'permissions' => ['nullable', 'array',],
         ];
     }
 }
