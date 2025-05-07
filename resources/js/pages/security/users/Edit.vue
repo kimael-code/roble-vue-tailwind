@@ -89,6 +89,7 @@ function submit() {
     .transform((data) => ({
       ...data,
       staff_type: form.is_external ? null : form.staff_type,
+      ou_names: form.is_external ? [] : form.ou_names,
     }))
     .submit({
       preserveScroll: true,

@@ -49,7 +49,7 @@ class CreateUser
                 ->performedOn($user)
                 ->event('created')
                 ->withProperties([
-                    'role' => $role->toJson(JSON_UNESCAPED_UNICODE),
+                    'role' => $role,
                     'request' => [
                         'ip_address' => request()->ip(),
                         'user_agent' => request()->header('user-agent'),
@@ -77,7 +77,7 @@ class CreateUser
                 ->performedOn($user)
                 ->event('created')
                 ->withProperties([
-                    'permission' => $permission->toJson(JSON_UNESCAPED_UNICODE),
+                    'permission' => $permission,
                     'request' => [
                         'ip_address' => request()->ip(),
                         'user_agent' => request()->header('user-agent'),
@@ -128,7 +128,7 @@ class CreateUser
                     ->performedOn($user)
                     ->event('created')
                     ->withProperties([
-                        'ou' => $ou->toJson(JSON_UNESCAPED_UNICODE),
+                        'ou' => $ou,
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),

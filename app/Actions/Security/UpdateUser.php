@@ -16,7 +16,6 @@ class UpdateUser
 
     public static function handle(User $user, array $inputs): User
     {
-        // dd($inputs);
         DB::transaction(function () use ($inputs, &$user)
         {
             $user->name = $inputs['name'];
@@ -58,7 +57,7 @@ class UpdateUser
                     ->performedOn($user)
                     ->event('deleted')
                     ->withProperties([
-                        'role' => $role->toJson(JSON_UNESCAPED_UNICODE),
+                        'role' => $role,
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -68,7 +67,7 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__('role unassigned to user'));
+                    ->log(__("{$role->name} role unassigned to the user {$user->name}"));
 
                 // $notifiableUsers = User::permission('update users')->get()->filter(
                 //     fn(User $user) => $user->id != $authUser->id
@@ -109,7 +108,7 @@ class UpdateUser
                     ->performedOn($user)
                     ->event('created')
                     ->withProperties([
-                        'role' => $role->toJson(JSON_UNESCAPED_UNICODE),
+                        'role' => $role,
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -158,7 +157,7 @@ class UpdateUser
                     ->performedOn($user)
                     ->event('deleted')
                     ->withProperties([
-                        'permission' => $permission->toJson(JSON_UNESCAPED_UNICODE),
+                        'permission' => $permission,
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -210,7 +209,7 @@ class UpdateUser
                     ->performedOn($user)
                     ->event('created')
                     ->withProperties([
-                        'permission' => $permission->toJson(JSON_UNESCAPED_UNICODE),
+                        'permission' => $permission,
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -246,6 +245,7 @@ class UpdateUser
 
     private static function setPerson(User $user, array $inputs): void
     {
+        // dd($user, $inputs);
         $authUser = auth()->user();
 
         if ($inputs['is_external'])
@@ -261,7 +261,7 @@ class UpdateUser
                     ->performedOn($user)
                     ->event('deleted')
                     ->withProperties([
-                        'organizationalUnit' => $ou->toJson(JSON_UNESCAPED_UNICODE),
+                        'organizationalUnit' => $ou,
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -302,7 +302,7 @@ class UpdateUser
                         ->performedOn($user)
                         ->event('updated')
                         ->withProperties([
-                            'organizationalUnit' => $ou->toJson(JSON_UNESCAPED_UNICODE),
+                            'organizationalUnit' => $ou,
                             'request' => [
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->header('user-agent'),
@@ -339,7 +339,7 @@ class UpdateUser
                         ->performedOn($user)
                         ->event('created')
                         ->withProperties([
-                            'organizationalUnit' => $ou->toJson(JSON_UNESCAPED_UNICODE),
+                            'organizationalUnit' => $ou,
                             'request' => [
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->header('user-agent'),
@@ -369,7 +369,7 @@ class UpdateUser
                         ->performedOn($user)
                         ->event('updated')
                         ->withProperties([
-                            'organizationalUnit' => $ou->toJson(JSON_UNESCAPED_UNICODE),
+                            'organizationalUnit' => $ou,
                             'request' => [
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->header('user-agent'),
