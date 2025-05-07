@@ -19,26 +19,27 @@ class CreateUser
 
         DB::transaction(function () use ($inputs, &$user)
         {
-            $user->name           = $inputs['name'];
-            $user->email          = $inputs['email'];
-            $user->password       = $inputs['id_card'] ?: Hash::make('12345678');
+            $user->name = $inputs['name'];
+            $user->email = $inputs['email'];
+            $user->password = $inputs['id_card'] ?: Hash::make('12345678');
             $user->remember_token = Str::random();
-            $user->is_external    = $inputs['is_external'];
+            $user->is_external = $inputs['is_external'];
             $user->save();
 
             self::assignRoles($user, $inputs['roles']);
             self::givePermissions($user, $inputs['permissions']);
             self::setPerson($user, $inputs);
+            self::setOrganizationalUnits($user, $inputs);
         });
 
         return $user;
     }
 
-    private static function assignRoles(User $user, array $roles): void
+    private static function assignRoles(User $user, array $roleNames): void
     {
-        $user->assignRole($roles);
+        $user->assignRole($roleNames);
 
-        foreach ($roles as $roleName)
+        foreach ($roleNames as $roleName)
         {
             $role = Role::findByName($roleName);
             $authUser = auth()->user();
@@ -46,9 +47,9 @@ class CreateUser
             activity()
                 ->causedBy($authUser)
                 ->performedOn($user)
-                ->event('auth')
+                ->event('created')
                 ->withProperties([
-                    'role' => $role->toJson(),
+                    'role' => $role->toJson(JSON_UNESCAPED_UNICODE),
                     'request' => [
                         'ip_address' => request()->ip(),
                         'user_agent' => request()->header('user-agent'),
@@ -58,25 +59,25 @@ class CreateUser
                         'request_url' => request()->fullUrl(),
                     ]
                 ])
-                ->log(__('role assigned to user'));
+                ->log(__("{$role->name} role assigned to the user {$user->name}"));
         }
     }
 
-    private static function givePermissions(User $user, array $permissions): void
+    private static function givePermissions(User $user, array $permissionNames): void
     {
-        $user->givePermissionTo($permissions);
+        $user->givePermissionTo($permissionNames);
 
-        foreach ($permissions as $permissionID)
+        foreach ($permissionNames as $permissionID)
         {
             $permission = Permission::find($permissionID);
-            $authUser   = auth()->user();
+            $authUser = auth()->user();
 
             activity()
                 ->causedBy($authUser)
                 ->performedOn($user)
-                ->event('auth')
+                ->event('created')
                 ->withProperties([
-                    'permission' => $permission->toJson(),
+                    'permission' => $permission->toJson(JSON_UNESCAPED_UNICODE),
                     'request' => [
                         'ip_address' => request()->ip(),
                         'user_agent' => request()->header('user-agent'),
@@ -86,51 +87,59 @@ class CreateUser
                         'request_url' => request()->fullUrl(),
                     ]
                 ])
-                ->log(__('permission given to user'));
+                ->log(__("{$permission->description} permission given to the user {$user->name}"));
         }
     }
 
     private static function setPerson(User $user, array $inputs): void
     {
-        if (!$inputs['id_card'] ?? null)
-            return;
+        if ($inputs['id_card'] && $inputs['names'])
+        {
+            $authUser = auth()->user();
 
-        $person = new Person();
-        $person->id_card   = $inputs['id_card'];
-        $person->names     = $inputs['names'];
-        $person->surnames  = $inputs['surnames'];
-        $person->position  = $inputs['position'];
-        $person->staff_type= $inputs['staff_type'];
+            $person = new Person();
+            $person->id_card = $inputs['id_card'];
+            $person->names = $inputs['names'];
+            $person->surnames = $inputs['surnames'];
+            $person->position = $inputs['position'];
+            $person->staff_type = $inputs['staff_type'];
 
-        $person->user()->associate($user);
-        $person->save();
+            $person->user()->associate($user);
+            $person->save();
+        }
+    }
 
-        if (!$inputs['ou_name'] ?? null)
-            return;
+    private static function setOrganizationalUnits(User $user, array $inputs): void
+    {
+        if ($inputs['ou_names'])
+        {
+            foreach ($inputs['ou_names'] as $ouName)
+            {
+                $ou = OrganizationalUnit::where(DB::raw('LOWER(name)'), '=', DB::raw("LOWER('" . $ouName . "')"))->first();
+                if (!$ou)
+                    $ou = OrganizationalUnit::where('name', 'NO DEFINIDA')->first();
 
-        $ou = OrganizationalUnit::where(DB::raw('LOWER(name)'), '=', DB::raw("LOWER('".$inputs['ou_name']."')"))->first();
-        if (!$ou)
-            $ou = OrganizationalUnit::where('name', 'NO DEFINIDA')->first();
+                $user->organizationalUnits()->attach($ou);
 
-        $user->organizationalUnits()->attach($ou);
+                $authUser = auth()->user();
 
-        $authUser = auth()->user();
-
-        activity()
-                ->causedBy($authUser)
-                ->performedOn($user)
-                ->event('created')
-                ->withProperties([
-                    'inputs' => json_encode($inputs),
-                    'request' => [
-                        'ip_address' => request()->ip(),
-                        'user_agent' => request()->header('user-agent'),
-                        'user_agent_lang' => request()->header('accept-language'),
-                        'referer' => request()->header('referer'),
-                        'http_method' => request()->method(),
-                        'request_url' => request()->fullUrl(),
-                    ]
-                ])
-                ->log(__('person attached to organizational unit'));
+                activity()
+                    ->causedBy($authUser)
+                    ->performedOn($user)
+                    ->event('created')
+                    ->withProperties([
+                        'ou' => $ou->toJson(JSON_UNESCAPED_UNICODE),
+                        'request' => [
+                            'ip_address' => request()->ip(),
+                            'user_agent' => request()->header('user-agent'),
+                            'user_agent_lang' => request()->header('accept-language'),
+                            'referer' => request()->header('referer'),
+                            'http_method' => request()->method(),
+                            'request_url' => request()->fullUrl(),
+                        ]
+                    ])
+                    ->log(__("user {$user->name} associated with the administrative unit {$ou->name}"));
+            }
+        }
     }
 }

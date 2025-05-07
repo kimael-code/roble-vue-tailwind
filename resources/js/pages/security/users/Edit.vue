@@ -3,26 +3,24 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Switch } from '@/components/ui/switch';
 import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Employee, OrganizationalUnit, Pagination, Permission, Role, SearchFilter } from '@/types';
+import { BreadcrumbItem, Employee, OrganizationalUnit, Pagination, Permission, Role, SearchFilter, User } from '@/types';
 import { Head, router, WhenVisible } from '@inertiajs/vue3';
 import { watchDebounced } from '@vueuse/core';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { LoaderCircle, Search, UserIcon } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
-import CardPerson from './partials/CardPerson.vue';
 
 const props = defineProps<{
   filters: SearchFilter;
+  user: User;
   employees: Array<Employee>;
   ous: Array<OrganizationalUnit>;
   permissions: Array<Permission>;
@@ -31,6 +29,7 @@ const props = defineProps<{
   paginationPerm: Pagination<Permission>;
   paginationRole: Pagination<Role>;
 }>();
+console.log(props);
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -38,7 +37,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     href: '/users',
   },
   {
-    title: 'Nuevo',
+    title: 'Editar',
     href: '',
   },
 ];
@@ -47,9 +46,11 @@ const buttonCancel = ref(false);
 const openSheetPermissions = ref(false);
 const openSheetRoles = ref(false);
 const openSheetOUs = ref(false);
-const openDialog = ref(false);
 const search = ref(props.filters.search);
-const employeeOU = ref('');
+
+const ouNames = computed(() => props.user.active_organizational_units?.map((ou) => ou.name));
+const roleNames = computed(() => props.user.roles?.map((r) => r.name));
+const permissionNames = computed(() => props.user.permissions?.map((p) => p.description));
 
 type formUser = {
   name: string;
@@ -58,38 +59,41 @@ type formUser = {
   id_card: string;
   names: string;
   surnames: string;
-  phones: string;
-  emails: string;
-  position: string;
-  staff_type: string;
+  phones: string | undefined;
+  emails: string | undefined;
+  position: string | undefined;
+  staff_type: string | undefined;
   ou_names: string[];
   roles: string[];
   permissions: string[];
 };
 
-const form = useForm('post', route('users.store'), <formUser>{
-  name: '',
-  email: '',
-  is_external: false,
-  id_card: '',
-  names: '',
-  surnames: '',
-  phones: '',
-  emails: '',
-  position: '',
-  staff_type: '',
-  ou_names: [],
-  roles: [],
-  permissions: [],
+const form = useForm('put', route('users.update', props.user.id), <formUser>{
+  name: props.user.name,
+  email: props.user.email,
+  is_external: props.user.is_external,
+  id_card: props.user.person?.id_card,
+  names: props.user.person?.names,
+  surnames: props.user.person?.surnames,
+  phones: props.user.person?.phones,
+  emails: props.user.person?.emails,
+  position: props.user.person?.position,
+  staff_type: props.user.person?.staff_type,
+  ou_names: ouNames.value,
+  roles: roleNames.value,
+  permissions: permissionNames.value,
 });
 
-const showDialogTrigger = computed(() => (form.id_card ? false : true));
-
 function submit() {
-  form.submit({
-    preserveScroll: true,
-    onSuccess: () => form.reset(),
-  });
+  form
+    .transform((data) => ({
+      ...data,
+      staff_type: form.is_external ? null : form.staff_type,
+    }))
+    .submit({
+      preserveScroll: true,
+      onSuccess: () => form.reset(),
+    });
 }
 
 function index() {
@@ -104,7 +108,7 @@ watchDebounced(
   (s) => {
     if (s === '') search.value = undefined;
 
-    router.visit(route('users.create'), {
+    router.visit(route('users.edit', props.user.id), {
       data: { search: s },
       preserveScroll: true,
       preserveState: true,
@@ -116,7 +120,7 @@ watchDebounced(
 watch([openSheetPermissions, openSheetRoles, openSheetOUs], ([isOpenSheetPermissions, isOpenSheetRoles, isOpenSheetOUs]) => {
   if (!isOpenSheetRoles || !isOpenSheetPermissions || !isOpenSheetOUs) {
     search.value = undefined;
-    router.visit(route('users.create'), { preserveScroll: true, preserveState: true });
+    router.visit(route('users.edit', props.user.id), { preserveScroll: true, preserveState: true });
   }
 });
 
@@ -143,33 +147,12 @@ function handleOUSelection(ou: OrganizationalUnit) {
     form.ou_names.splice(form.ou_names.indexOf(ou.name), 1);
   }
 }
-
-function handleEmployeeSelection(employe: { [index: string]: any }) {
-  form.id_card = employe.id_card;
-  form.names = employe.names;
-  form.surnames = employe.surnames;
-  form.position = employe.position;
-  form.staff_type = employe.staff_type_name;
-  employeeOU.value = employe.org_unit_name;
-  openDialog.value = false;
-  search.value = undefined;
-}
-
-function handleExternalPerson() {
-  form.validate({
-    only: ['id_card', 'names', 'surnames', 'phones', 'emails', 'position', 'staff_type'],
-    onSuccess: () => {
-      openDialog.value = false;
-      search.value = '';
-    },
-  });
-}
 </script>
 
 <template>
   <AppLayout :breadcrumbs>
-    <Head title="Crear Nuevo Usuario" />
-    <ContentLayout title="Crear Nuevo Usuario">
+    <Head title="Editar Usuario" />
+    <ContentLayout title="Editar Usuario">
       <template #icon>
         <UserIcon />
       </template>
@@ -211,78 +194,72 @@ function handleExternalPerson() {
                   <InputError :message="form.errors.email" />
                 </div>
                 <br />
-                <Dialog v-model:open="openDialog">
-                  <DialogTrigger v-if="showDialogTrigger" as-child>
-                    <Button variant="outline"> Empleado / Persona </Button>
-                  </DialogTrigger>
-                  <DialogContent class="sm:max-w-[425px]">
-                    <DialogHeader>
-                      <DialogTitle>Empleado / Persona</DialogTitle>
-                      <DialogDescription>
-                        Busque y seleccione a un empleado. Si el usuario a registrar no pertenece a la organización active el suiche "Usuario Externo"
-                        para establecer los datos personales manualmente.
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div class="flex items-center space-x-2">
-                      <Switch id="is_external" v-model:model-value="form.is_external" />
-                      <Label for="is_external">Usuario Externo</Label>
-                    </div>
-                    <div v-if="!form.is_external" class="relative w-full max-w-sm items-center p-4">
-                      <Input id="search" type="text" placeholder="Buscar..." class="pl-10" v-model="search" />
-                      <span class="absolute inset-y-0 start-0 flex items-center justify-center px-5">
-                        <Search class="text-muted-foreground size-6" />
-                      </span>
-                    </div>
-                    <ScrollArea v-if="!form.is_external" class="m-3 h-20 rounded-md border">
-                      <div class="p-4">
-                        <div v-for="(employee, i) in employees" :key="i">
-                          <Label :for="employee.id_card" class="flex items-center space-x-3">
-                            <Checkbox :id="employee.id_card" @update:model-value="handleEmployeeSelection(employee)" />
-                            <span>{{ `${employee.nationality}-${employee.id_card} ${employee.names} ${employee.surnames}` }}</span>
-                          </Label>
-                          <Separator class="my-2" />
-                        </div>
-                      </div>
-                    </ScrollArea>
-                    <div v-else class="grid gap-4">
-                      <div class="grid grid-cols-4 items-center gap-4">
-                        <Label for="id_card" class="is-required text-right"> Nro. de CI </Label>
-                        <Input id="id_card" v-model="form.id_card" class="col-span-3" maxlength="8" placeholder="ej.: 12345678" />
-                      </div>
-                      <InputError class="mt-0" :message="form.errors.id_card" />
-                      <div class="grid grid-cols-4 items-center gap-4">
-                        <Label for="names" class="is-required text-right"> Nombres </Label>
-                        <Input id="names" v-model="form.names" class="col-span-3" maxlength="255" placeholder="ej.: Pedro ó Pedro Luis" />
-                      </div>
-                      <InputError :message="form.errors.names" />
-                      <div class="grid grid-cols-4 items-center gap-4">
-                        <Label for="surnames" class="is-required text-right"> Apellidos </Label>
-                        <Input id="surnames" v-model="form.surnames" class="col-span-3" maxlength="255" placeholder="ej.: Pérez ó Pérez González" />
-                      </div>
-                      <InputError :message="form.errors.surnames" />
-                      <div class="grid grid-cols-4 items-center gap-4">
-                        <Label for="position" class="text-right"> Cargo </Label>
-                        <Input id="position" v-model="form.position" class="col-span-3" maxlength="255" placeholder="ej.: Auditor Externo" />
-                        <InputError :message="form.errors.position" />
-                      </div>
-                    </div>
-                    <DialogFooter v-if="form.is_external">
-                      <Button type="button" @click="handleExternalPerson"> Guardar </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-                <CardPerson
-                  :is-external="form.is_external"
-                  :idCard="form.id_card"
-                  :names="form.names"
-                  :surnames="form.surnames"
-                  :phones="form.phones"
-                  :emails="form.emails"
-                  :position="form.position"
-                  :staffType="form.staff_type"
-                  :employee-ou="employeeOU"
-                  @quit-person="form.reset()"
-                />
+                <div class="5 flex flex-col space-y-1">
+                  <Label class="flex items-center space-x-3" for="is_external">
+                    <Checkbox id="is_external" v-model:model-value="form.is_external" />
+                    <span>Usuario Externo</span>
+                  </Label>
+                </div>
+                <div class="flex flex-col space-y-1.5">
+                  <Label :class="{ 'is-required': form.is_external }" for="id_card">Nro. de CI</Label>
+                  <Input
+                    id="id_card"
+                    v-model="form.id_card"
+                    maxlength="8"
+                    autocomplete="id_card"
+                    placeholder="ej.: 12345678 ó 1234567"
+                    @change="form.validate('id_card')"
+                  />
+                  <InputError :message="form.errors.id_card" />
+                </div>
+                <div class="flex flex-col space-y-1.5">
+                  <Label :class="{ 'is-required': form.is_external }" for="names">Nombres</Label>
+                  <Input
+                    id="names"
+                    v-model="form.names"
+                    maxlength="255"
+                    autocomplete="name"
+                    placeholder="ej.: Pedro ó Pedro Luis"
+                    @change="form.validate('names')"
+                  />
+                  <InputError :message="form.errors.names" />
+                </div>
+                <div class="flex flex-col space-y-1.5">
+                  <Label :class="{ 'is-required': form.is_external }" for="surnames">Apellidos</Label>
+                  <Input
+                    id="surnames"
+                    v-model="form.surnames"
+                    maxlength="255"
+                    autocomplete="given-name"
+                    placeholder="ej.: Pérez ó Pérez González"
+                    @change="form.validate('surnames')"
+                  />
+                  <InputError :message="form.errors.surnames" />
+                </div>
+                <div class="flex flex-col space-y-1.5">
+                  <Label for="position">Cargo</Label>
+                  <Input
+                    id="position"
+                    v-model="form.position"
+                    maxlength="255"
+                    autocomplete="position"
+                    placeholder="ej.: Pérez ó Pérez González"
+                    @change="form.validate('position')"
+                  />
+                  <InputError :message="form.errors.position" />
+                </div>
+                <div v-if="!form.is_external" class="flex flex-col space-y-1.5">
+                  <Label for="staff_type">Tipo Personal</Label>
+                  <Input
+                    id="staff_type"
+                    v-model="form.staff_type"
+                    maxlength="255"
+                    autocomplete="staff_type"
+                    placeholder="ej.: Pérez ó Pérez González"
+                    @change="form.validate('staff_type')"
+                  />
+                  <InputError :message="form.errors.staff_type" />
+                </div>
                 <br />
                 <div class="5 flex flex-col space-y-1">
                   <Label for="ou_names">Unidad Administrativa</Label>

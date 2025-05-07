@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Security;
 
 use App\Actions\Security\CreateUser;
+use App\Actions\Security\UpdateUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Security\StoreUserRequest;
 use App\Http\Requests\Security\UpdateUserRequest;
@@ -59,7 +60,9 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        Gate::authorize('update', $user);
+
+        return Inertia::render('security/users/Edit', UserProps::edit($user));
     }
 
     /**
@@ -67,7 +70,9 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        UpdateUser::handle($user, $request->validated());
+
+        return redirect(route('users.index'));
     }
 
     /**

@@ -9,10 +9,11 @@ const props = defineProps<{
   idCard: string;
   names: string;
   surnames: string;
-  phones: string;
-  emails: string;
-  position: string;
-  staffType: string;
+  phones: string | undefined;
+  emails: string | undefined;
+  position: string | undefined;
+  staffType: string | undefined;
+  employeeOu: string | undefined;
 }>();
 
 defineEmits(['quitPerson']);
@@ -50,6 +51,11 @@ const description = computed(() => (props.isExternal ? 'Usuario Externo' : 'Usua
       <div v-if="staffType" class="space-y-1">
         <p class="text-sm leading-none font-medium">
           Personal: <span class="text-muted-foreground text-sm">{{ staffType }}</span>
+        </p>
+      </div>
+      <div v-if="employeeOu" class="space-y-1">
+        <p class="text-sm leading-none font-medium">
+          Unidad Administrativa: <span class="text-muted-foreground text-sm">{{ employeeOu }}</span>
         </p>
       </div>
       <div v-if="phones" class="space-y-1">

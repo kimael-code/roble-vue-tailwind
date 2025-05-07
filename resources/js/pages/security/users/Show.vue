@@ -7,7 +7,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { BreadcrumbItem, Can, PaginatedCollection, Permission, Role, SearchFilter, User } from '@/types';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { LoaderCircle, Plus, Users } from 'lucide-vue-next';
+import { LoaderCircle, Plus, UserIcon } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 import Permisos from './partials/Permisos.vue';
 import Roles from './partials/Roles.vue';
@@ -38,12 +38,18 @@ const deleteForm = useForm({});
 const isProcessing = ref(false);
 
 const title = computed(() =>
-  props.user.deleted_at ? `¿Eliminar el/la usuario/a «${props.user.name}» permanentemente?` : `¿Eliminar el/la usuario/a «${props.user.name}»?`,
+  props.user.deleted_at
+    ? `¿Eliminar el/la usuario/a «${props.user.name}» permanentemente?`
+    : `¿Eliminar el/la usuario/a «${props.user.name}»?`,
 );
 const description = computed(() =>
   props.user.deleted_at
     ? 'Este usuario/a perderá el acceso al sistema. Sus datos serán eliminados permanentemente.'
     : 'Este usuario/a perderá el acceso al sistema. Sus datos no serán eliminados.',
+);
+
+const userOUs = computed(() =>
+  props.user.is_external ? 'Usuario Externo' : props.user.active_organizational_units?.map((ou) => ou.name).join(', '),
 );
 
 function deleteData() {
@@ -73,7 +79,7 @@ function newData() {
     <Head title="Usuarios: Ver" />
     <ContentLayout :title="user.name" :description="user.email">
       <template #icon>
-        <Users />
+        <UserIcon />
       </template>
       <section class="grid gap-4 md:grid-cols-4">
         <div class="col-1 col-span-3 md:col-span-1">
@@ -82,6 +88,9 @@ function newData() {
               <CardTitle>Detalles</CardTitle>
             </CardHeader>
             <CardContent>
+              <p class="text-sm font-medium">Unidad Administrativa</p>
+              <p class="text-muted-foreground text-sm">{{ userOUs }}</p>
+              <br />
               <p class="text-sm font-medium">Creado</p>
               <p class="text-muted-foreground text-sm">{{ user.created_at_human }}</p>
               <br />

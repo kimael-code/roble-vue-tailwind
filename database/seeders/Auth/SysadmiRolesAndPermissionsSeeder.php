@@ -93,24 +93,5 @@ class SysadmiRolesAndPermissionsSeeder extends Seeder
             $permissionsForOrganizationsManagement,
             $permissionsForOrganizationalUnitsManagement,
         ]);
-
-        foreach ($sisadminRole->permissions as $permission)
-        {
-            activity()
-                ->performedOn($permission)
-                ->withProperties([
-                    'role' => $sisadminRole->attributesToArray(),
-                    'request' => [
-                        'ip_address' => request()->ip(),
-                        'user_agent' => request()->header('user-agent'),
-                        'user_agent_lang' => request()->header('accept-language'),
-                        'referer' => request()->header('referer'),
-                        'http_method' => request()->method(),
-                        'request_url' => request()->fullUrl(),
-                    ],
-                ])
-                ->event('auth')
-                ->log(__('permission given to role'));
-        }
     }
 }

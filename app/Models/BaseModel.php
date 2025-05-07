@@ -18,7 +18,7 @@ class BaseModel extends Model
      *
      * @var array
      */
-    protected $appends = ['created_at_human', 'updated_at_human', 'deleted_at_human'];
+    protected $appends = ['created_at_human', 'updated_at_human',];
 
     protected function createdAtHuman(): Attribute
     {

@@ -62,6 +62,13 @@ class User extends Authenticatable
         return $this->hasOne(Person::class);
     }
 
+    public function activeOrganizationalUnits(): BelongsToMany
+    {
+        return $this->belongsToMany(OrganizationalUnit::class)
+            ->withTimestamps()
+            ->wherePivotNull('disabled_at');
+    }
+
     public function organizationalUnits(): BelongsToMany
     {
         return $this->belongsToMany(OrganizationalUnit::class)->withTimestamps();

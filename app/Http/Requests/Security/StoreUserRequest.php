@@ -32,7 +32,7 @@ class StoreUserRequest extends FormRequest
             'emails'      => ['nullable', 'string', 'regex:/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/'],
             'position'    => ['nullable', 'string', 'max:255'],
             'staff_type'  => ['nullable', 'string', 'max:255'],
-            'ou_name'     => ['nullable', 'string', 'max:255'],
+            'ou_names'    => ['nullable', 'array',],
             'roles'       => ['nullable', 'array',],
             'permissions' => ['nullable', 'array',],
         ];

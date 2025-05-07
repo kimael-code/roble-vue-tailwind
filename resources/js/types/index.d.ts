@@ -39,9 +39,29 @@ export interface User {
   updated_at: string;
   deleted_at?: string | null;
   is_password_set: boolean;
+  is_external: boolean;
   created_at_human?: string | null;
   updated_at_human?: string | null;
   deleted_at_human?: string | null;
+  person?: Person;
+  active_organizational_units?: Array<OrganizationalUnit>;
+  organizational_units?: Array<OrganizationalUnit>;
+  roles?: Array<Role>;
+  permissions?: Array<Permission>;
+}
+
+export interface Person {
+  id: string;
+  user_id: number;
+  id_card: string;
+  names: string;
+  surnames: string;
+  phones: string;
+  emails: string;
+  position: string;
+  staff_type: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export type BreadcrumbItemType = BreadcrumbItem;
@@ -135,4 +155,18 @@ export interface PaginatedCollection<T> {
 
 export interface SearchFilter {
   [index: string]: string | undefined;
+}
+
+export interface OrganizationalUnit {
+  id: string;
+  organization_id: string;
+  organizational_unit_id: string;
+  code: string;
+  name: string;
+  acronym: string;
+  floor: string;
+  created_at: string;
+  updated_at: string;
+  disabled_at: string;
+  pivot?: { [index: string]: string | null }
 }
