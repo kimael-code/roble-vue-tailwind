@@ -4,7 +4,7 @@ import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
 import type { BreadcrumbItemType, SharedData } from '@/types';
-import { usePage } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
 import { watchImmediate } from '@vueuse/core';
 import { toast } from 'vue-sonner';
 
@@ -27,27 +27,37 @@ watchImmediate(
       case 'success':
         toast.success(flashMessage.title, {
           description: flashMessage.message,
+          onAutoClose: () => router.reload({ only: ['flash'] }),
+          onDismiss: () => router.reload({ only: ['flash'] }),
         });
         break;
       case 'info':
         toast.info(flashMessage.title, {
           description: flashMessage.message,
+          onAutoClose: () => router.reload({ only: ['flash'] }),
+          onDismiss: () => router.reload({ only: ['flash'] }),
         });
         break;
       case 'warning':
         toast.warning(flashMessage.title, {
           description: flashMessage.message,
+          onAutoClose: () => router.reload({ only: ['flash'] }),
+          onDismiss: () => router.reload({ only: ['flash'] }),
         });
         break;
       case 'danger':
         toast.error(flashMessage.title, {
           description: flashMessage.message,
+          onAutoClose: () => router.reload({ only: ['flash'] }),
+          onDismiss: () => router.reload({ only: ['flash'] }),
         });
         break;
 
       default:
         toast(flashMessage.title, {
           description: flashMessage.message,
+          onAutoClose: () => router.reload({ only: ['flash'] }),
+          onDismiss: () => router.reload({ only: ['flash'] }),
         });
         break;
     }
