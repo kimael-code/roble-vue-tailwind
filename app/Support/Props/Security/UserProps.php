@@ -84,7 +84,7 @@ class UserProps
         return [
             'can' => Arr::except(self::getPermissions(), 'read'),
             'filters' =>  Request::all(['search']),
-            'user' => $user->load(['activeOrganizationalUnits']),
+            'user' => $user->load(['person', 'activeOrganizationalUnits']),
             'permissions' => fn () => $permissions,
             'permissionsCount' => fn () => $user->getAllPermissions()->count(),
             'roles' => fn() => new RoleCollection(

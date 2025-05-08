@@ -56,8 +56,8 @@ export interface Person {
   id_card: string;
   names: string;
   surnames: string;
-  phones: string;
-  emails: string;
+  phones: Array<string> | null;
+  emails: Array<string> | null;
   position: string;
   staff_type: string;
   created_at: string;

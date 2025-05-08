@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Security;
 
+use App\Rules\SoleSystemAdministrator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -41,7 +42,7 @@ class UpdateUserRequest extends FormRequest
             'position' => ['nullable', 'string', 'max:255'],
             'staff_type' => ['nullable', 'string', 'max:255'],
             'ou_names' => ['nullable', 'array',],
-            'roles' => ['nullable', 'array',],
+            'roles' => ['nullable', 'array', new SoleSystemAdministrator($this->user)],
             'permissions' => ['nullable', 'array',],
         ];
     }

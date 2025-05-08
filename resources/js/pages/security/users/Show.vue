@@ -48,9 +48,17 @@ const description = computed(() =>
     : 'Este usuario/a perderá el acceso al sistema. Sus datos no serán eliminados.',
 );
 
-const userOUs = computed(() =>
-  props.user.is_external ? 'Usuario Externo' : props.user.active_organizational_units?.map((ou) => ou.name).join(', '),
-);
+const userOUs = computed(() => {
+  let result = 'Usuario Externo';
+
+  if (!props.user.is_external && props.user.active_organizational_units?.length) {
+    result = props.user.active_organizational_units?.map((ou) => ou.name).join(', ');
+  } else {
+    result = 'SIN ASOCIAR';
+  }
+
+  return result;
+});
 
 function deleteData() {
   deleteForm.delete(route('users.destroy', props.user.id), {
@@ -88,6 +96,15 @@ function newData() {
               <CardTitle>Detalles</CardTitle>
             </CardHeader>
             <CardContent>
+              <template v-if="user.person">
+                <p class="text-muted-foreground text-sm">{{ user.person?.id_card }}</p>
+                <p class="text-muted-foreground text-sm">{{ `${user.person?.names} ${user.person?.surnames}` }}</p>
+                <p class="text-muted-foreground text-sm">{{ user.person?.position }}</p>
+                <p class="text-muted-foreground text-sm">{{ user.person?.staff_type }}</p>
+                <p class="text-muted-foreground text-sm">{{ user.person?.emails?.join(', ') }}</p>
+                <p class="text-muted-foreground text-sm">{{ user.person?.phones?.join(', ') }}</p>
+                <br />
+              </template>
               <p class="text-sm font-medium">Unidad Administrativa</p>
               <p class="text-muted-foreground text-sm">{{ userOUs }}</p>
               <br />

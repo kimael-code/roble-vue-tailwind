@@ -161,7 +161,7 @@ watch(
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              @click="router.delete(route('roles.destroy', { role: dataRow.id }), { preserveState: false })"
+              @click="router.delete(route('users.destroy', dataRow.id), { preserveState: false })"
             >
               Continuar
             </AlertDialogAction>

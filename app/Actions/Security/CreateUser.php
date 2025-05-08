@@ -93,10 +93,8 @@ class CreateUser
 
     private static function setPerson(User $user, array $inputs): void
     {
-        if ($inputs['id_card'] && $inputs['names'])
+        if ($inputs['id_card'] && $inputs['names'] && $inputs['surnames'])
         {
-            $authUser = auth()->user();
-
             $person = new Person();
             $person->id_card = $inputs['id_card'];
             $person->names = $inputs['names'];
@@ -138,7 +136,7 @@ class CreateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("user {$user->name} associated with the administrative unit {$ou->name}"));
+                    ->log(__("user {$user->name} attached to the administrative unit {$ou->name}"));
             }
         }
     }

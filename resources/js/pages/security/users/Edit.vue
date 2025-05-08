@@ -29,7 +29,6 @@ const props = defineProps<{
   paginationPerm: Pagination<Permission>;
   paginationRole: Pagination<Role>;
 }>();
-console.log(props);
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -271,7 +270,7 @@ function handleOUSelection(ou: OrganizationalUnit) {
                     </TagsInputItem>
                     <TagsInputInput placeholder="Unidades Administrativas seleccionados..." @click="openSheetOUs = true" />
                   </TagsInput>
-                  <InputError :message="form.errors.roles" />
+                  <InputError :message="form.errors.ou_names" />
                 </div>
                 <div class="5 flex flex-col space-y-1">
                   <Label for="roles">Roles</Label>

@@ -42,9 +42,23 @@ class UserPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, User $model): bool
+    public function delete(User $user, User $model): bool|Response
     {
-        return false;
+        $sysadminsCount = User::with('roles')->get()->filter(
+            fn ($user) => $user->roles->where('name', 'Administrador de Sistemas')->toArray()
+        )->count();
+
+        if ($sysadminsCount === 1 && $model->hasRole('Administrador de Sistemas'))
+        {
+            return Response::deny(__('This is the only existing System Administrator, therefore it cannot be deleted.'));
+        }
+
+        if ($user->is($model))
+        {
+            return Response::deny(__('You cannot delete yourself.'));
+        }
+
+        return $user->can('delete users');
     }
 
     /**
@@ -52,14 +66,28 @@ class UserPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return false;
+        return $user->can('restore users');
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, User $model): bool
+    public function forceDelete(User $user, User $model): bool|Response
     {
-        return false;
+        $sysadminsCount = User::with('roles')->get()->filter(
+            fn ($user) => $user->roles->where('name', 'Administrador de Sistemas')->toArray()
+        )->count();
+
+        if ($sysadminsCount === 1 && $model->hasRole('Administrador de Sistemas'))
+        {
+            return Response::deny(__('This is the only existing System Administrator, therefore it cannot be deleted.'));
+        }
+
+        if ($user->is($model))
+        {
+            return Response::deny(__('You cannot delete yourself.'));
+        }
+
+        return $user->can('delete users');
     }
 }

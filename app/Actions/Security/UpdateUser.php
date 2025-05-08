@@ -31,8 +31,8 @@ class UpdateUser
 
             if (self::$flashNotify)
             {
-                session()->flash('msg', [
-                    'msg' => "{$user->name}",
+                session()->flash('message', [
+                    'message' => "{$user->name}",
                     'title' => __('SAVED!'),
                     'type' => 'success',
                 ]);
@@ -118,7 +118,7 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__('role assigned to user'));
+                    ->log(__("{$role->name} role assigned to the user {$user->name}"));
 
                 // $notifiableUsers = User::permission('update users')->get()->filter(
                 //     fn(User $user) => $user->id != $authUser->id
@@ -167,7 +167,7 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__('permission revoked to user'));
+                    ->log(__("{$permission->description} permission revoked to the user {$user->name}"));
 
                 // $notifiableUsers = User::permission('update users')->get()->filter(
                 //     fn(User $user) => $user->id != $authUser->id
@@ -219,7 +219,7 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__('permission given to user'));
+                    ->log(__("{$permission->description} permission given to the user {$user->name}"));
 
                 // $notifiableUsers = User::permission('update users')->get()->filter(
                 //     fn(User $user) => $user->id != $authUser->id
@@ -245,7 +245,6 @@ class UpdateUser
 
     private static function setPerson(User $user, array $inputs): void
     {
-        // dd($user, $inputs);
         $authUser = auth()->user();
 
         if ($inputs['is_external'])
@@ -271,7 +270,7 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__('user detached from organizational unit'));
+                    ->log(__("user {$user->name} detached from the organizational unit {$ou->name}"));
 
                 // $notifiableUsers = User::permission('update users')->get()->filter(
                 //     fn(User $user) => $user->id != $authUser->id
@@ -312,7 +311,7 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__('user disabled on organizational unit'));
+                        ->log(__("user {$user->name} disabled in the organizational unit {$ou->name}"));
 
                     // $notifiableUsers = User::permission('update users')->get()->filter(
                     //     fn(User $user) => $user->id != $authUser->id
@@ -349,7 +348,7 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__('user attached to organizational unit'));
+                        ->log(__("user {$user->name} attached to the administrative unit {$ou->name}"));
 
                     // $notifiableUsers = User::permission('update users')->get()->filter(
                     //     fn(User $user) => $user->id != $authUser->id
@@ -379,7 +378,7 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__('user enabled on organizational unit'));
+                        ->log(__("user {$user->name} enabled in the organizational unit {$ou->name}"));
 
                     // $notifiableUsers = User::permission('update users')->get()->filter(
                     //     fn(User $user) => $user->id != $authUser->id
@@ -394,14 +393,19 @@ class UpdateUser
             }
         }
 
-        if (($inputs['id_card'] && $inputs['names']))
+        if (array_key_exists('id_card', $inputs) && empty($inputs['id_card']))
+        {
+            $user->person()->delete();
+            self::$flashNotify = true;
+        }
+        elseif (isset($inputs["id_card"]) && isset($inputs["names"]) && isset($inputs["surnames"]))
         {
             $person = $user->person ?? new Person();
             $person->id_card = $inputs['id_card'];
             $person->names = $inputs['names'];
             $person->surnames = $inputs['surnames'];
-            $person->position = $inputs['position'];
-            $person->staff_type = $inputs['staff_type'];
+            $person->position = $inputs['position'] ?? null;
+            $person->staff_type = $inputs['staff_type'] ?? null;
 
             $user->person ?: $person->user()->associate($user);
 
