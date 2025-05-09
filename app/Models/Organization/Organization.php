@@ -49,9 +49,9 @@ class Organization extends BaseModel
             {
                 $query->where(function (Builder $query) use ($term)
                 {
-                    $query->where('name', 'ilike', "%$term%")
-                        ->orWhere('rif', 'ilike', "%$term%")
-                        ->orWhere('acronym', 'ilike', "%$term%");
+                    $query->whereRaw('unaccent(name) ilike unaccent(?)', ["%$term%"])
+                        ->orWhereRaw('unaccent(rif) ilike unaccent(?)', ["%$term%"])
+                        ->orWhereRaw('unaccent(acronym) ilike unaccent(?)', ["%$term%"]);
                 });
             })
             ->when(empty($filters) ?? null, function (Builder $query)

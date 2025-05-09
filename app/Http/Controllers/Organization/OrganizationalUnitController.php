@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Organization;
 
-use App\Http\Requests\StoreOrganizationalUnitRequest;
-use App\Http\Requests\UpdateOrganizationalUnitRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Organization\StoreOrganizationalUnitRequest;
+use App\Http\Requests\Organization\UpdateOrganizationalUnitRequest;
 use App\Models\Organization\OrganizationalUnit;
 
 class OrganizationalUnitController extends Controller

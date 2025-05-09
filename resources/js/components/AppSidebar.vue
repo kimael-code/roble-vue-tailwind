@@ -22,10 +22,10 @@ const mainNavItems: NavItem[] = [
 ];
 const companyNavItems: NavItem[] = [
   {
-    title: 'Ente',
-    href: '/dashboard',
+    title: 'Entes',
+    href: '/organizations',
     icon: Building,
-    hasPermission: page.props.auth?.menu.includes('read any company'),
+    hasPermission: page.props.auth?.menu.includes('read any organization'),
   },
   {
     title: 'Unidades Administrativas',

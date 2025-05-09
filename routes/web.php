@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\{
     BatchDeletionController,
+    Organization\OrganizationController,
     Security\PermissionController,
     Security\RoleController,
     Security\UserController,
@@ -21,6 +22,7 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
         'permissions' => PermissionController::class,
         'roles'       => RoleController::class,
         'users'       => UserController::class,
+        'organizations' => OrganizationController::class,
     ], [
         'middleware' => [HandlePrecognitiveRequests::class],
     ]);

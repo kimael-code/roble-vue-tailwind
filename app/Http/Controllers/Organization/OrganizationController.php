@@ -1,10 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Organization;
 
-use App\Http\Requests\StoreOrganizationRequest;
-use App\Http\Requests\UpdateOrganizationRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Organization\StoreOrganizationRequest;
+use App\Http\Requests\Organization\UpdateOrganizationRequest;
 use App\Models\Organization\Organization;
+use App\Support\Props\Organization\OrganizationProps;
+use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
 
 class OrganizationController extends Controller
 {
@@ -13,7 +17,9 @@ class OrganizationController extends Controller
      */
     public function index()
     {
-        //
+        Gate::authorize('viewAny', Organization::class);
+
+        return Inertia::render('organization/organizations/Index', OrganizationProps::index());
     }
 
     /**
@@ -21,7 +27,9 @@ class OrganizationController extends Controller
      */
     public function create()
     {
-        //
+        Gate::authorize('create', Organization::class);
+
+        return Inertia::render('organization/organizations/Create', OrganizationProps::create());
     }
 
     /**

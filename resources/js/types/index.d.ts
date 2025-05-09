@@ -157,6 +157,20 @@ export interface SearchFilter {
   [index: string]: string | undefined;
 }
 
+export interface Organization {
+  id: string;
+  rif: string;
+  name: string;
+  logo_path: string | null;
+  acronym: string | null;
+  address: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  disabled_at: string | null;
+  organizational_units?: Array<OrganizationalUnit>;
+  active_organizational_units?: Array<OrganizationalUnit>;
+}
+
 export interface OrganizationalUnit {
   id: string;
   organization_id: string;
@@ -168,5 +182,5 @@ export interface OrganizationalUnit {
   created_at: string;
   updated_at: string;
   disabled_at: string;
-  pivot?: { [index: string]: string | null }
+  pivot?: { [index: string]: string | null };
 }

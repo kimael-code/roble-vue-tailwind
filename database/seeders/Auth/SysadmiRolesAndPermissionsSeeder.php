@@ -21,12 +21,12 @@ class SysadmiRolesAndPermissionsSeeder extends Seeder
 
         // Permisos para gestionar el ente y sus unidades administrativas
         $permissionsForOrganizationsManagement = [
-            Permission::create(['name' => 'create companies', 'description' => __('crear nuevos entes')]),
-            Permission::create(['name' => 'read any company', 'description' => __('ver listado de entes'), 'set_menu' => true,]),
-            Permission::create(['name' => 'read company'    , 'description' => __('ver detalles de un ente')]),
-            Permission::create(['name' => 'update companies', 'description' => __('editar cualquier ente')]),
-            Permission::create(['name' => 'delete companies', 'description' => __('eliminar cualquier ente')]),
-            Permission::create(['name' => 'export companies', 'description' => __('exportar datos de entes a archivo')]),
+            Permission::create(['name' => 'create organizations', 'description' => __('crear nuevos entes')]),
+            Permission::create(['name' => 'read any organization', 'description' => __('ver listado de entes'), 'set_menu' => true,]),
+            Permission::create(['name' => 'read organization'    , 'description' => __('ver detalles de un ente')]),
+            Permission::create(['name' => 'update organizations', 'description' => __('editar cualquier ente')]),
+            Permission::create(['name' => 'delete organizations', 'description' => __('eliminar cualquier ente')]),
+            Permission::create(['name' => 'export organizations', 'description' => __('exportar datos de entes a archivo')]),
         ];
         $permissionsForOrganizationalUnitsManagement = [
             Permission::create(['name' => 'create admin units' , 'description' => __('crear nuevas unidades administrativas')]),
