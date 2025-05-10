@@ -13,11 +13,9 @@ import { useForm } from 'laravel-precognition-vue-inertia';
 import { KeySquare, LoaderCircle } from 'lucide-vue-next';
 import { ref } from 'vue';
 
-interface Props {
+const props = defineProps<{
   permission: Permission;
-}
-
-const props = defineProps<Props>();
+}>();
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
