@@ -21,7 +21,18 @@ class OrganizationPolicy
      */
     public function view(User $user, Organization $organization): bool
     {
-        return false;
+        $userBelongsToOrganization = false;
+
+        foreach ($organization->organizationalUnits as $ou)
+        {
+            if ($user->activeOrganizationalUnits->contains($ou))
+            {
+                $userBelongsToOrganization = true;
+            }
+        }
+
+        return $user->can('read any organization')
+            || ($user->can('read organization') && $userBelongsToOrganization);
     }
 
     /**
@@ -29,7 +40,7 @@ class OrganizationPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->can('create organizations');
     }
 
     /**
@@ -37,15 +48,25 @@ class OrganizationPolicy
      */
     public function update(User $user, Organization $organization): bool
     {
-        return false;
+        return $user->can('update organizations');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Organization $organization): bool
+    public function delete(User $user, Organization $organization): Response | bool
     {
-        return false;
+        $ThereIsOtherActiveOrganization = (bool)Organization::where('id', '<>', $organization->id)->active()->count();
+
+        if (!$ThereIsOtherActiveOrganization)
+        {
+            return Response::deny('You cannot delete the only active Organization');
+        }
+
+        return $user->can('delete organizations')
+            && $organization->organizationalUnits->isEmpty()
+            ? Response::allow()
+            : Response::deny(__('The organization has associated organizational units.'));
     }
 
     /**

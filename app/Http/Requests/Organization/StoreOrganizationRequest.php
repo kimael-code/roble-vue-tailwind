@@ -11,7 +11,7 @@ class StoreOrganizationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('create organizations');
     }
 
     /**
@@ -22,7 +22,23 @@ class StoreOrganizationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'rif' => [
+                'required',
+                'string',
+                'max:12',
+                'uppercase',
+                'unique:organizations',
+                'regex:/[JGVEPC]-[0-9]{8}-[0-9]{1}/',
+            ],
+            'name' => ['required', 'string', 'max:255',],
+            'acronym' => ['nullable', 'string', 'max:20',],
+            'address' => ['nullable', 'string', 'max:2000'],
+            'logo_path' => [
+                ...$this->isPrecognitive() ? [] : ['required'],
+                'image',
+                'mimes:png',
+                'max:512',
+            ],
         ];
     }
 }

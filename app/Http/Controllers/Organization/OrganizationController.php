@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Organization;
 
+use App\Actions\Organization\CreateOrganization;
+use App\Actions\Organization\DeleteOrganization;
+use App\Actions\Organization\UpdateOrganization;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Organization\StoreOrganizationRequest;
 use App\Http\Requests\Organization\UpdateOrganizationRequest;
@@ -29,7 +32,7 @@ class OrganizationController extends Controller
     {
         Gate::authorize('create', Organization::class);
 
-        return Inertia::render('organization/organizations/Create', OrganizationProps::create());
+        return Inertia::render('organization/organizations/Create');
     }
 
     /**
@@ -37,7 +40,9 @@ class OrganizationController extends Controller
      */
     public function store(StoreOrganizationRequest $request)
     {
-        //
+        CreateOrganization::handle($request->validated());
+
+        return redirect(route('organizations.index'));
     }
 
     /**
@@ -45,7 +50,9 @@ class OrganizationController extends Controller
      */
     public function show(Organization $organization)
     {
-        //
+        Gate::authorize('view', $organization);
+
+        return Inertia::render('organization/organizations/Show', OrganizationProps::show($organization));
     }
 
     /**
@@ -53,7 +60,9 @@ class OrganizationController extends Controller
      */
     public function edit(Organization $organization)
     {
-        //
+        Gate::authorize('update', $organization);
+
+        return Inertia::render('organization/organizations/Edit', OrganizationProps::edit($organization));
     }
 
     /**
@@ -61,7 +70,9 @@ class OrganizationController extends Controller
      */
     public function update(UpdateOrganizationRequest $request, Organization $organization)
     {
-        //
+        UpdateOrganization::handle($request->validated(), $organization);
+
+        return redirect(route('organizations.index'));
     }
 
     /**
@@ -69,6 +80,10 @@ class OrganizationController extends Controller
      */
     public function destroy(Organization $organization)
     {
-        //
+        Gate::authorize('delete', $organization);
+
+        DeleteOrganization::handle($organization);
+
+        return redirect(route('organizations.index'));
     }
 }

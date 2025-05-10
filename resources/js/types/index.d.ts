@@ -162,11 +162,15 @@ export interface Organization {
   rif: string;
   name: string;
   logo_path: string | null;
+  logo_url: string | undefined;
   acronym: string | null;
   address: string | null;
   created_at: string | null;
   updated_at: string | null;
+  created_at_human: string | null;
+  updated_at_human: string | null;
   disabled_at: string | null;
+  status: string;
   organizational_units?: Array<OrganizationalUnit>;
   active_organizational_units?: Array<OrganizationalUnit>;
 }
@@ -181,6 +185,8 @@ export interface OrganizationalUnit {
   floor: string;
   created_at: string;
   updated_at: string;
+  created_at_human: string | null;
+  updated_at_human: string | null;
   disabled_at: string;
   pivot?: { [index: string]: string | null };
 }

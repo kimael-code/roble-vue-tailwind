@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
-import { Role } from '@/types';
+import { OrganizationalUnit } from '@/types';
 import { ColumnDef } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { h } from 'vue';
 
-export const columns = (): ColumnDef<Role>[] => [
+export const columns = (): ColumnDef<OrganizationalUnit>[] => [
   {
     accessorKey: 'name',
     header: ({ column }) => {
@@ -30,9 +30,9 @@ export const columns = (): ColumnDef<Role>[] => [
     cell: ({ row }) => h('div', row.getValue('name')),
   },
   {
-    accessorKey: 'description',
+    accessorKey: 'created_at_human',
     enableSorting: false,
-    header: 'Descripción',
-    cell: ({ row }) => h('div', row.getValue('description')),
+    header: 'Fecha Creado',
+    cell: ({ row }) => h('div', row.getValue('created_at_human')),
   },
 ];

@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import DataTable from '@/components/DataTable.vue';
 import { valueUpdater } from '@/components/ui/table/utils';
-import { PaginatedCollection, Role } from '@/types';
+import { OrganizationalUnit, PaginatedCollection } from '@/types';
 import { router } from '@inertiajs/vue3';
 import { ColumnFiltersState, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useVueTable } from '@tanstack/vue-table';
 import { ref, watch } from 'vue';
-import { columns } from './columnsRole';
+import { columns } from './columnsOrganizationalUnit';
 
 interface Props {
   filters: object;
-  userId: string | number;
-  roles: PaginatedCollection<Role>;
+  resourceId: string | number;
+  ous: PaginatedCollection<OrganizationalUnit>;
 }
 const props = defineProps<Props>();
 
@@ -30,9 +30,9 @@ function handleSortingChange(item: any) {
       data[sortBy] = sortDirection;
     });
 
-    router.visit(route('users.show', props.userId), {
+    router.visit(route('organizations.show', props.resourceId), {
       data,
-      only: ['roles'],
+      only: ['ous'],
       preserveScroll: true,
       preserveState: true,
       onSuccess: () => (sorting.value = sortValue),
@@ -42,9 +42,9 @@ function handleSortingChange(item: any) {
 
 const table = useVueTable({
   columns: cols,
-  data: props.roles.data,
+  data: props.ous.data,
   manualPagination: true,
-  pageCount: props.roles.meta.per_page,
+  pageCount: props.ous.meta.per_page,
   getCoreRowModel: getCoreRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
   getSortedRowModel: getSortedRowModel(),
@@ -66,7 +66,7 @@ const table = useVueTable({
 });
 
 watch(
-  () => props.roles.data,
+  () => props.ous.data,
   (newData) => table.setOptions((prev) => ({ ...prev, data: newData })),
 );
 </script>
@@ -74,10 +74,10 @@ watch(
 <template>
   <DataTable
     :columns="cols"
-    :data="roles"
+    :data="ous"
     :filters
-    :search-only="['roles']"
-    :search-route="route('users.show', userId)"
+    :search-only="['ous']"
+    :search-route="route('organizations.show', resourceId)"
     :table
     @search="(s) => (globalFilter = s)"
   />

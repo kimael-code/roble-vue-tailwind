@@ -36,8 +36,6 @@ interface Props {
   organizations: PaginatedCollection<Organization>;
 }
 const props = defineProps<Props>();
-console.log(props);
-
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -147,16 +145,10 @@ watch(
 
       <AlertDialog v-model:open="openDialog">
         <AlertDialogContent>
-          <AlertDialogHeader v-if="!dataRow?.deleted_at">
-            <AlertDialogTitle>{{ `¿Eliminar el usuario «${dataRow.name}»?` }}</AlertDialogTitle>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{{ `¿Eliminar al ente «${dataRow.rif} ${dataRow.name}» permanentemente?` }}</AlertDialogTitle>
             <AlertDialogDescription>
-              {{ `Este usuario no podrá ingresar al sistema. Sus datos no se perderán.` }}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogHeader v-else>
-            <AlertDialogTitle>{{ `¿Eliminar el usuario «${dataRow.name}» permanentemente?` }}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {{ `Este usuario no podrá ingresar al sistema. Sus datos se borrarán permanentemente.` }}
+              {{ `Los datos del ente se perderán permanentemente.` }}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

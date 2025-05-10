@@ -43,7 +43,7 @@ export const columns = (permissions: Can): ColumnDef<Organization>[] => [
           class: 'ml-auto',
         },
         () => [
-          'Nombre de Usuario',
+          'Ente',
           isSorted
             ? isSortedDesc
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
@@ -55,7 +55,7 @@ export const columns = (permissions: Can): ColumnDef<Organization>[] => [
     cell: ({ row }) => h('div', row.getValue('name')),
   },
   {
-    accessorKey: 'acronym',
+    accessorKey: 'disabled_at',
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       const isSortedDesc = column.getIsSorted() === 'desc';
@@ -67,7 +67,7 @@ export const columns = (permissions: Can): ColumnDef<Organization>[] => [
           class: 'ml-auto',
         },
         () => [
-          'Siglas',
+          'Estatus',
           isSorted
             ? isSortedDesc
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
@@ -76,7 +76,13 @@ export const columns = (permissions: Can): ColumnDef<Organization>[] => [
         ],
       );
     },
-    cell: ({ row }) => h('div', row.getValue('acronym')),
+    cell: ({ row }) => {
+      const isDisabled = row.getValue('disabled_at') ? true : false;
+      const cssClass = isDisabled ? 'text-red-500' : 'text-green-500';
+      const text = isDisabled ? 'INACTIVO' : 'ACTIVO';
+
+      return h('div', { class: cssClass }, text);
+    },
   },
   {
     id: 'actions',
