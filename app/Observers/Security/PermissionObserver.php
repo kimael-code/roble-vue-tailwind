@@ -60,7 +60,7 @@ class PermissionObserver
                 [
                     'id' => $permission->id,
                     'name' => "{$permission->name} ({$permission->description})",
-                    'timestamp' => $permission->created_at,
+                    'timestamp' => $permission->updated_at,
                 ],
                 'updated',
                 ['routeName' => 'permissions', 'routeParam' => 'permission']
