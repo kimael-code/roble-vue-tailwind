@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Organization\StoreOrganizationalUnitRequest;
 use App\Http\Requests\Organization\UpdateOrganizationalUnitRequest;
 use App\Models\Organization\OrganizationalUnit;
+use App\Support\Props\Organization\OrganizationalUnitProps;
+use Illuminate\Support\Facades\Gate;
+use Inertia\Inertia;
 
 class OrganizationalUnitController extends Controller
 {
@@ -14,7 +17,9 @@ class OrganizationalUnitController extends Controller
      */
     public function index()
     {
-        //
+        Gate::authorize('viewAny', OrganizationalUnit::class);
+
+        return Inertia::render('organization/organizational-units/Index', OrganizationalUnitProps::index());
     }
 
     /**
@@ -22,7 +27,9 @@ class OrganizationalUnitController extends Controller
      */
     public function create()
     {
-        //
+        Gate::authorize('create', OrganizationalUnit::class);
+
+        return Inertia::render('organization/organizational-units/Create', OrganizationalUnitProps::create());
     }
 
     /**

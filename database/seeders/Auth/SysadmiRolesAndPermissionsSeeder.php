@@ -29,15 +29,15 @@ class SysadmiRolesAndPermissionsSeeder extends Seeder
             Permission::create(['name' => 'export organizations', 'description' => __('exportar datos de entes a archivo')]),
         ];
         $permissionsForOrganizationalUnitsManagement = [
-            Permission::create(['name' => 'create admin units' , 'description' => __('crear nuevas unidades administrativas')]),
-            Permission::create(['name' => 'read any admin unit', 'description' => __('ver listado de unidades administrativas'), 'set_menu' => true]),
-            Permission::create(['name' => 'read admin unit'    , 'description' => __('ver detalles de una unidad administrativa')]),
-            Permission::create(['name' => 'update admin units' , 'description' => __('editar cualquier unidad administrativa')]),
-            Permission::create(['name' => 'delete admin units' , 'description' => __('eliminar cualquier unidad administrativa')]),
-            Permission::create(['name' => 'export admin units' , 'description' => __('exportar datos de unidades administrativas a archivo')]),
+            Permission::create(['name' => 'create organizational units' , 'description' => __('crear nuevas unidades administrativas')]),
+            Permission::create(['name' => 'read any organizational unit', 'description' => __('ver listado de unidades administrativas'), 'set_menu' => true]),
+            Permission::create(['name' => 'read organizational unit'    , 'description' => __('ver detalles de una unidad administrativa')]),
+            Permission::create(['name' => 'update organizational units' , 'description' => __('editar cualquier unidad administrativa')]),
+            Permission::create(['name' => 'delete organizational units' , 'description' => __('eliminar cualquier unidad administrativa')]),
+            Permission::create(['name' => 'export organizational units' , 'description' => __('exportar datos de unidades administrativas a archivo')]),
         ];
 
-        // permisos de administrador de sistemas
+        // permisos para gestionar roles, permisos y usuarios
         $permissionsForRolesManagement = [
             Permission::create(['name' => 'create roles' , 'description' => __('crear nuevos roles')]),
             Permission::create(['name' => 'read any role', 'description' => __('ver listado de roles'), 'set_menu' => true]),
@@ -64,6 +64,8 @@ class SysadmiRolesAndPermissionsSeeder extends Seeder
             Permission::create(['name' => 'export users'      , 'description' => __('exportar datos de usuarios a archivo')]),
             Permission::create(['name' => 'restore users'     , 'description' => __('restaurar cualquier usuario')]),
         ];
+
+        // permisos para gestionar los logs y trazas
         $permissionsForSystemLogsManagement = [
             Permission::create(['name' => 'read any system log', 'description' => __('ver listado de registros de depuración'), 'set_menu' => true]),
             Permission::create(['name' => 'read system log'    , 'description' => __('ver detalles de un registro de depuración')]),

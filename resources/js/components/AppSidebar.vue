@@ -29,9 +29,9 @@ const companyNavItems: NavItem[] = [
   },
   {
     title: 'Unidades Administrativas',
-    href: '/dashboard',
+    href: '/organizational-units',
     icon: Workflow,
-    hasPermission: page.props.auth?.menu.includes('read any admin unit'),
+    hasPermission: page.props.auth?.menu.includes('read any organizational unit'),
   },
 ];
 const securityNavItems: NavItem[] = [
