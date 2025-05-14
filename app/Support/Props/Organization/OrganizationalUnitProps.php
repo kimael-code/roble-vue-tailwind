@@ -5,6 +5,7 @@ namespace App\Support\Props\Organization;
 use App\Http\Resources\Organization\OrganizationalUnitCollection;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationalUnit;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 
@@ -39,6 +40,19 @@ class OrganizationalUnitProps
     {
         return [
             'activeOrganizations' => Organization::active()->with(['activeOrganizationalUnits'])->get(),
+        ];
+    }
+
+    public static function show(OrganizationalUnit $ou): array
+    {
+        return [
+            'can' => Arr::except(self::getPermissions(), 'read'),
+            'filters' => Request::all(['search']),
+            'organizationalUnit' => OrganizationalUnitCollection::make($ou->load([
+                'organization',
+                'organizationalUnit',
+                'organizationalUnits',
+            ])),
         ];
     }
 }

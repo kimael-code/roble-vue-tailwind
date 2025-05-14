@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Organization;
 
+use App\Actions\Organization\CreateOrganizationalUnit;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Organization\StoreOrganizationalUnitRequest;
 use App\Http\Requests\Organization\UpdateOrganizationalUnitRequest;
@@ -37,7 +38,9 @@ class OrganizationalUnitController extends Controller
      */
     public function store(StoreOrganizationalUnitRequest $request)
     {
-        //
+        CreateOrganizationalUnit::handle($request->validated());
+
+        return redirect(route('organizational-units.index'));
     }
 
     /**
@@ -45,7 +48,9 @@ class OrganizationalUnitController extends Controller
      */
     public function show(OrganizationalUnit $organizationalUnit)
     {
-        //
+        Gate::authorize('view', $organizationalUnit);
+
+        return Inertia::render('organization/organizational-units/Show', OrganizationalUnitProps::show($organizationalUnit));
     }
 
     /**

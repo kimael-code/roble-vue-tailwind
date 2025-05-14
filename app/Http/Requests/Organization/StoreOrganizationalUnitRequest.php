@@ -11,7 +11,7 @@ class StoreOrganizationalUnitRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return $this->user()->can('create organizational units');
     }
 
     /**
@@ -22,7 +22,12 @@ class StoreOrganizationalUnitRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'organization_id' => ['required', 'numeric', 'integer', 'exists:organizations,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'code' => ['nullable', 'string', 'max:10', 'unique:organizational_units'],
+            'acronym' => ['nullable', 'string', 'max:20'],
+            'floor' => ['nullable', 'string', 'max:5'],
+            'organizational_unit_id' => ['nullable', 'numeric', 'integer', 'exists:organizational_units,id'],
         ];
     }
 }

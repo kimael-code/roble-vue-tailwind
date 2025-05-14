@@ -190,4 +190,5 @@ export interface OrganizationalUnit {
   disabled_at: string;
   pivot?: { [index: string]: string | null };
   organization?: Organization;
+  status: string;
 }

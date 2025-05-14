@@ -41,7 +41,7 @@ type OrganizationalUnitForm = {
   floor: string;
 };
 
-const form = useForm('post', route('organizations.store'), <OrganizationalUnitForm>{
+const form = useForm('post', route('organizational-units.store'), <OrganizationalUnitForm>{
   organization_id: '',
   organizational_unit_id: '',
   code: '',
@@ -91,7 +91,7 @@ function index() {
               <div class="grid w-full items-center gap-4">
                 <div class="flex flex-col space-y-1.5">
                   <Label class="is-required" for="organization_id">Ente</Label>
-                  <Select id="organization_id" v-model="form.organization_id" required autofocus @change="form.validate('organization_id')">
+                  <Select id="organization_id" v-model="form.organization_id" required autofocus @update:model-value="form.validate('organization_id')">
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccione Ente" />
                     </SelectTrigger>
