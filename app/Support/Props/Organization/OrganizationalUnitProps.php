@@ -48,11 +48,23 @@ class OrganizationalUnitProps
         return [
             'can' => Arr::except(self::getPermissions(), 'read'),
             'filters' => Request::all(['search']),
-            'organizationalUnit' => OrganizationalUnitCollection::make($ou->load([
+            'organizationalUnit' => $ou->load([
                 'organization',
                 'organizationalUnit',
-                'organizationalUnits',
-            ])),
+            ]),
+            'organizationalUnits' => fn() => new OrganizationalUnitCollection(
+                $ou->organizationalUnits()->filter(Request::only(['search', 'name']))
+                    ->latest()
+                    ->paginate(10)
+            ),
+        ];
+    }
+
+    public static function edit(OrganizationalUnit $organizationalUnit): array
+    {
+        return [
+            'organizationalUnits' => $organizationalUnit->organization->activeOrganizationalUnits,
+            'organizationalUnit' => $organizationalUnit->load(['organization',]),
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Organization;
 
 use App\Actions\Organization\CreateOrganizationalUnit;
+use App\Actions\Organization\UpdateOrganizationalUnit;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Organization\StoreOrganizationalUnitRequest;
 use App\Http\Requests\Organization\UpdateOrganizationalUnitRequest;
@@ -58,7 +59,9 @@ class OrganizationalUnitController extends Controller
      */
     public function edit(OrganizationalUnit $organizationalUnit)
     {
-        //
+        Gate::authorize('update', $organizationalUnit);
+
+        return Inertia::render('organization/organizational-units/Edit', OrganizationalUnitProps::edit($organizationalUnit));
     }
 
     /**
@@ -66,7 +69,9 @@ class OrganizationalUnitController extends Controller
      */
     public function update(UpdateOrganizationalUnitRequest $request, OrganizationalUnit $organizationalUnit)
     {
-        //
+        UpdateOrganizationalUnit::handle($request->validated(), $organizationalUnit);
+
+        return redirect(route('organizational-units.index'));
     }
 
     /**
@@ -74,6 +79,10 @@ class OrganizationalUnitController extends Controller
      */
     public function destroy(OrganizationalUnit $organizationalUnit)
     {
-        //
+        Gate::authorize('delete', $organizationalUnit);
+
+        $organizationalUnit->delete();
+
+        return redirect(route('organizational-units.index'));
     }
 }

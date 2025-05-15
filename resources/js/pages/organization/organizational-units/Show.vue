@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import AlertDialog from '@/components/AlertDialog.vue';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, OrganizationalUnit } from '@/types';
+import { BreadcrumbItem, Can, OrganizationalUnit, PaginatedCollection } from '@/types';
 import { Head, router, useForm } from '@inertiajs/vue3';
 import { LoaderCircle, Plus, Workflow } from 'lucide-vue-next';
 import { ref } from 'vue';
 import OrganizationalUnits from './partials/OrganizationalUnits.vue';
+import CardOrganization from './partials/CardOrganization.vue';
 
 interface Props {
   can: Can;
   filters: object;
   organizationalUnit: OrganizationalUnit;
+  organizationalUnits: PaginatedCollection<OrganizationalUnit>;
 }
 
 const props = defineProps<Props>();
@@ -69,7 +70,7 @@ function newData() {
             </CardHeader>
             <CardContent>
               <p class="text-sm font-medium">Piso</p>
-              <p class="text-muted-foreground text-sm">{{ organizationalUnit.floor }}</p>
+              <p class="text-muted-foreground text-sm">{{ organizationalUnit.floor ?? '-' }}</p>
               <br />
               <p v-if="organizationalUnit.code" class="text-sm font-medium">Código</p>
               <p v-if="organizationalUnit.code" class="text-muted-foreground text-sm">{{ organizationalUnit.code }}</p>
@@ -111,12 +112,16 @@ function newData() {
               Nuevo
             </Button>
           </div>
-          <Tabs default-value="ous" class="w-auto">
+          <Tabs default-value="organization" class="w-auto">
             <TabsList class="grid w-full grid-cols-2">
+              <TabsTrigger value="organization">Ente</TabsTrigger>
               <TabsTrigger value="ous">Unidades Administrativas</TabsTrigger>
             </TabsList>
+            <TabsContent value="organization">
+              <CardOrganization :organization="organizationalUnit.organization" :ou="organizationalUnit.organizational_unit" />
+            </TabsContent>
             <TabsContent value="ous">
-              <OrganizationalUnits :filters :resource-id="organization.id" :ous></OrganizationalUnits>
+              <OrganizationalUnits :filters :resource-id="organizationalUnit.id" :ous="organizationalUnits" />
             </TabsContent>
           </Tabs>
         </div>

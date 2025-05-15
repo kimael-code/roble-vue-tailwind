@@ -30,9 +30,9 @@ function handleSortingChange(item: any) {
       data[sortBy] = sortDirection;
     });
 
-    router.visit(route('organizations.show', props.resourceId), {
+    router.visit(route('organizational-units.show', props.resourceId), {
       data,
-      only: ['ous'],
+      only: ['organizationalUnits'],
       preserveScroll: true,
       preserveState: true,
       onSuccess: () => (sorting.value = sortValue),
@@ -76,8 +76,8 @@ watch(
     :columns="cols"
     :data="ous"
     :filters
-    :search-only="['ous']"
-    :search-route="route('organizations.show', resourceId)"
+    :search-only="['organizationalUnits']"
+    :search-route="route('organizational-units.show', resourceId)"
     :table
     @search="(s) => (globalFilter = s)"
   />

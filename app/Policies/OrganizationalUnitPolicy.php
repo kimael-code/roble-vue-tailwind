@@ -21,7 +21,7 @@ class OrganizationalUnitPolicy
      */
     public function view(User $user, OrganizationalUnit $organizationalUnit): bool
     {
-        return false;
+        return $user->can('read organizational unit');
     }
 
     /**
@@ -37,15 +37,20 @@ class OrganizationalUnitPolicy
      */
     public function update(User $user, OrganizationalUnit $organizationalUnit): bool
     {
-        return false;
+        return $user->can('update organizational units');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, OrganizationalUnit $organizationalUnit): bool
+    public function delete(User $user, OrganizationalUnit $organizationalUnit): Response|bool
     {
-        return false;
+        if ($organizationalUnit->users->isNotEmpty())
+        {
+            return Response::deny(__('There are users who belong to this administrative unit'));
+        }
+
+        return $user->can('delete organizational units');
     }
 
     /**

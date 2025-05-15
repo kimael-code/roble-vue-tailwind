@@ -3,12 +3,17 @@
 namespace App\Models\Organization;
 
 use App\Models\BaseModel;
+use App\Models\User;
+use App\Observers\Organization\OrganizationalUnitObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+#[ObservedBy([OrganizationalUnitObserver::class])]
 class OrganizationalUnit extends BaseModel
 {
     /** @use HasFactory<\Database\Factories\Organization\OrganizationalUnitFactory> */
@@ -70,6 +75,17 @@ class OrganizationalUnit extends BaseModel
     public function organizationalUnit(): BelongsTo
     {
         return $this->belongsTo(self::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    public function activeUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)
+            ->whereNull('organizational_units.disabled_at');
     }
 
     public function organizationalUnits(): HasMany

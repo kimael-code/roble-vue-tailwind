@@ -16,7 +16,6 @@ import { ref, watch } from 'vue';
 const props = defineProps<{
   activeOrganizations: Array<Organization>;
 }>();
-console.log(props);
 
 const breadcrumbs: BreadcrumbItem[] = [
   {

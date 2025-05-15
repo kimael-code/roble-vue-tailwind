@@ -189,6 +189,8 @@ export interface OrganizationalUnit {
   updated_at_human: string | null;
   disabled_at: string;
   pivot?: { [index: string]: string | null };
-  organization?: Organization;
+  organization: Organization;
   status: string;
+  organizational_unit: OrganizationalUnit;
+  organizational_units: Array<OrganizationalUnit>;
 }

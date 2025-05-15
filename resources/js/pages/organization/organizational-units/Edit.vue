@@ -1,28 +1,27 @@
 <script lang="ts" setup>
 import InputError from '@/components/InputError.vue';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Organization } from '@/types';
+import { BreadcrumbItem, OrganizationalUnit } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import { useForm } from 'laravel-precognition-vue-inertia';
-import { Building, LoaderCircle } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { LoaderCircle, Workflow } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 const props = defineProps<{
-  organization: Organization;
+  organizationalUnits: Array<OrganizationalUnit>;
+  organizationalUnit: OrganizationalUnit;
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Entes',
-    href: '/organizations',
+    title: 'Unidades Administrativas',
+    href: '/organizational-units',
   },
   {
     title: 'Editar',
@@ -31,39 +30,24 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const buttonCancel = ref(false);
-const urlLogo = ref(props.organization.logo_url);
-const statusDisabled = computed(() => props.organization.disabled_at ? true : false)
 
-type OrganizationForm = {
-  rif: string;
+type OrganizationalUnitForm = {
+  organization_id: string;
+  organizational_unit_id: string;
+  code: string;
   name: string;
-  logo_path: File | string | null;
   acronym: string;
-  address: string;
-  disabled: boolean;
+  floor: string;
 };
 
-const form = useForm('post', route('organizations.update', props.organization.id), <OrganizationForm>{
-  _method: 'put',
-  rif: props.organization.rif,
-  name: props.organization.name,
-  logo_path: props.organization.logo_path,
-  acronym: props.organization.acronym,
-  address: props.organization.address,
-  disabled: statusDisabled.value,
+const form = useForm('put', route('organizational-units.update', props.organizationalUnit.id), <OrganizationalUnitForm>{
+  organization_id: props.organizationalUnit.organization_id,
+  organizational_unit_id: props.organizationalUnit.organizational_unit_id,
+  code: props.organizationalUnit.code,
+  name: props.organizationalUnit.name,
+  acronym: props.organizationalUnit.acronym,
+  floor: props.organizationalUnit.floor,
 });
-
-function handleLogoChange(e: Event) {
-  const inputElement = e.target as HTMLInputElement;
-
-  if (inputElement && inputElement.files && inputElement.files.length) {
-    urlLogo.value = URL.createObjectURL(inputElement.files[0]);
-    form.logo_path = inputElement.files[0];
-  } else {
-    urlLogo.value = props.organization.logo_url;
-    form.logo_path = props.organization.logo_path;
-  }
-}
 
 function submit() {
   form.submit({
@@ -73,7 +57,7 @@ function submit() {
 }
 
 function index() {
-  router.visit(route('organizations.index'), {
+  router.visit(route('organizational-units.index'), {
     onStart: () => (buttonCancel.value = true),
     onFinish: () => (buttonCancel.value = false),
   });
@@ -82,10 +66,10 @@ function index() {
 
 <template>
   <AppLayout :breadcrumbs>
-    <Head title="Editar Ente" />
-    <ContentLayout title="Editar Ente">
+    <Head title="Editar Unidad Administrativa" />
+    <ContentLayout title="Editar Unidad Administrativa">
       <template #icon>
-        <Building />
+        <Workflow />
       </template>
       <section class="mx-auto w-full">
         <Card class="container">
@@ -96,19 +80,18 @@ function index() {
             <form @submit.prevent="submit">
               <div class="grid w-full items-center gap-4">
                 <div class="flex flex-col space-y-1.5">
-                  <Label class="is-required" for="rif">RIF</Label>
+                  <Label class="is-required" for="organization_id">Ente</Label>
                   <Input
-                    id="rif"
-                    v-model="form.rif"
+                    id="organization_id"
+                    :value="organizationalUnit.organization.name"
                     type="text"
-                    maxlength="12"
+                    maxlength="255"
                     autocomplete="on"
-                    placeholder="ej.: J-12345678-9"
+                    placeholder="ej.: Dirección de Tecnología"
                     required
-                    autofocus
-                    @change="form.validate('rif')"
+                    disabled
                   />
-                  <InputError :message="form.errors.rif" />
+                  <InputError :message="form.errors.organization_id" />
                 </div>
                 <div class="flex flex-col space-y-1.5">
                   <Label class="is-required" for="name">Nombre</Label>
@@ -117,9 +100,10 @@ function index() {
                     v-model="form.name"
                     type="text"
                     maxlength="255"
-                    autocomplete="organization"
-                    placeholder="ej.: Global Fonseca y Tórrez"
+                    autocomplete="on"
+                    placeholder="ej.: Dirección de Tecnología"
                     required
+                    autofocus
                     @change="form.validate('name')"
                   />
                   <InputError :message="form.errors.name" />
@@ -130,29 +114,37 @@ function index() {
                   <InputError :message="form.errors.acronym" />
                 </div>
                 <div class="flex flex-col space-y-1.5">
-                  <Label for="address">Dirección</Label>
-                  <Textarea
-                    id="address"
-                    v-model="form.address"
-                    autocomplete="street-address"
-                    placeholder="ej.: Carretera Ybarra, Edif 6, Abril de Asis Edo. Vargas"
-                    @change="form.validate('address')"
-                  ></Textarea>
+                  <Label for="code">Código</Label>
+                  <Input id="code" v-model="form.code" type="text" maxlength="20" placeholder="ej.: 000000009999" @change="form.validate('code')" />
+                  <InputError :message="form.errors.code" />
                 </div>
                 <div class="flex flex-col space-y-1.5">
-                  <Label class="is-required" for="logo_path">Logo</Label>
-                  <Input type="file" id="logo_path" accept="image/png" @change="handleLogoChange" />
-                  <InputError :message="form.errors.logo_path" />
+                  <Label for="floor">Piso</Label>
+                  <Input id="floor" v-model="form.floor" type="text" maxlength="5" placeholder="ej.: PB" @change="form.validate('floor')" />
+                  <InputError :message="form.errors.floor" />
                 </div>
-                <div v-if="urlLogo" class="w-full overflow-hidden rounded-xs shadow-sm sm:w-[350px]">
-                  <AspectRatio :ratio="31 / 8">
-                    <img class="h-full w-full object-cover" :src="urlLogo" alt="Logo seleccionado" />
-                  </AspectRatio>
-                </div>
-                <div class="flex items-center space-x-2">
-                  <Checkbox id="disabled" v-model:model-value="form.disabled" @update:model-value="form.validate('disabled')" />
-                  <Label for="disabled">Desactivar</Label>
-                  <InputError :message="form.errors.disabled" />
+                <div class="flex flex-col space-y-1.5">
+                  <Label for="organizational_unit_id">Unidad Administrativa de Adscripción</Label>
+                  <Select
+                    id="organizational_unit_id"
+                    v-model="form.organizational_unit_id"
+                    required
+                    autofocus
+                    @update:model-value="form.validate('organizational_unit_id')"
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione Unidad Administrativa de Adscripción" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectLabel>Unidades Administrativas</SelectLabel>
+                        <SelectItem v-for="(ou, i) in organizationalUnits" :value="ou.id" :key="i">
+                          {{ ou.name }}
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <InputError :message="form.errors.organizational_unit_id" />
                 </div>
               </div>
             </form>
