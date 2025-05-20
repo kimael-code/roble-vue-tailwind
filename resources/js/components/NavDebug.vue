@@ -14,11 +14,11 @@ const show = computed(() => props.items.some((it) => it.hasPermission === true))
 
 <template>
   <SidebarGroup v-if="show" class="px-2 py-0">
-    <SidebarGroupLabel>Auditoría</SidebarGroupLabel>
+    <SidebarGroupLabel>Depuración</SidebarGroupLabel>
     <SidebarMenu>
       <template v-for="item in items" :key="item.title">
         <SidebarMenuItem v-if="item.hasPermission">
-          <SidebarMenuButton as-child :is-active="item.href === page.url">
+          <SidebarMenuButton as-child :is-active="page.url.startsWith(item.href)">
             <Link :href="item.href">
               <component :is="item.icon" />
               <span>{{ item.title }}</span>

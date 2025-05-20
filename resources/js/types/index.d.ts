@@ -194,3 +194,10 @@ export interface OrganizationalUnit {
   organizational_unit: OrganizationalUnit;
   organizational_units: Array<OrganizationalUnit>;
 }
+
+interface DashboardDataSysadmin {
+  activeUsers: Array<{ user: User; ip_address: string; last_active: string }>;
+  logSizes: Array<{ [index: string]: { logName: string, sizeHuman: string; sizeRaw: number } }>;
+  roles: { count: number; series: Array<number>; labels: Array<string> };
+  users: { count: number; series: Array<number>; labels: Array<string> };
+}
