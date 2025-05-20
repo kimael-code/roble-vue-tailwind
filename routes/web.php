@@ -8,21 +8,30 @@ use App\Http\Controllers\{
     Security\RoleController,
     Security\UserController,
 };
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Debugging\LogFileController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn () => Inertia::render('Welcome'))->name('home');
+Route::get('/', fn() => Inertia::render('Welcome'))->name('home');
 
 Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
 {
-    Route::get('dashboard', fn () => Inertia::render('Dashboard'))->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::post('/batch-deletion/{resource}', BatchDeletionController::class)->name('batch-deletion');
+
+    Route::controller(LogFileController::class)->group(function ()
+    {
+        Route::get('log-files', 'index')->middleware('can:read any system log')->name('log-files.index');
+        Route::get('log-files/{file}', 'export')->middleware('can:export system logs')->name('log-files.export');
+        Route::delete('log-files/{file}', 'delete')->middleware('can:delete system logs')->name('log-files.destroy');
+    });
 
     Route::resources([
         'permissions' => PermissionController::class,
-        'roles'       => RoleController::class,
-        'users'       => UserController::class,
+        'roles' => RoleController::class,
+        'users' => UserController::class,
         'organizations' => OrganizationController::class,
         'organizational-units' => OrganizationalUnitController::class,
     ], [

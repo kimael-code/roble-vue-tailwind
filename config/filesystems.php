@@ -60,6 +60,13 @@ return [
             'report' => false,
         ],
 
+        'logs' => [
+            'driver' => 'local',
+            'root' => storage_path('logs'),
+            'visibility' => 'private',
+            'throw' => false,
+        ],
+
     ],
 
     /*

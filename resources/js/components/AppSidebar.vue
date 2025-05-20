@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { BookOpen, Bug, Building, Folder, Footprints, KeySquare, LayoutGrid, User, Users, Workflow } from 'lucide-vue-next';
-import { Link, usePage } from '@inertiajs/vue3';
-import { SharedData, type NavItem } from '@/types';
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import AppLogo from './AppLogo.vue';
-import NavAudit from './NavAudit.vue';
-import NavCompany from './NavCompany.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
-import NavSecurity from './NavSecurity.vue';
 import NavUser from '@/components/NavUser.vue';
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { SharedData, type NavItem } from '@/types';
+import { Link, usePage } from '@inertiajs/vue3';
+import { BookOpen, Bug, Building, Folder, Footprints, KeySquare, LayoutGrid, User, Users, Workflow } from 'lucide-vue-next';
+import AppLogo from './AppLogo.vue';
+import NavCompany from './NavCompany.vue';
+import NavDebug from './NavDebug.vue';
+import NavSecurity from './NavSecurity.vue';
 
 const page = usePage<SharedData>();
 
@@ -54,18 +54,18 @@ const securityNavItems: NavItem[] = [
     hasPermission: page.props.auth?.menu.includes('read any user'),
   },
 ];
-const auditNavItems: NavItem[] = [
+const debugNavItems: NavItem[] = [
   {
     title: 'Trazas',
     href: '/dashboard',
     icon: Footprints,
-    hasPermission: page.props.auth?.menu.includes('read any trace'),
+    hasPermission: page.props.auth?.menu.includes('read any activity trace'),
   },
   {
-    title: 'Depuración',
-    href: '/dashboard',
+    title: 'Logs',
+    href: '/log-files',
     icon: Bug,
-    hasPermission: page.props.auth?.menu.includes('read any syslog'),
+    hasPermission: page.props.auth?.menu.includes('read any system log'),
   },
 ];
 
@@ -101,7 +101,7 @@ const footerNavItems: NavItem[] = [
       <NavMain :items="mainNavItems" />
       <NavCompany :items="companyNavItems" />
       <NavSecurity :items="securityNavItems" />
-      <NavAudit :items="auditNavItems" />
+      <NavDebug :items="debugNavItems" />
     </SidebarContent>
 
     <SidebarFooter>
