@@ -195,9 +195,56 @@ export interface OrganizationalUnit {
   organizational_units: Array<OrganizationalUnit>;
 }
 
-interface DashboardDataSysadmin {
+export interface DashboardDataSysadmin {
   activeUsers: Array<{ user: User; ip_address: string; last_active: string }>;
-  logSizes: Array<{ [index: string]: { logName: string, sizeHuman: string; sizeRaw: number } }>;
+  logSizes: Array<{ [index: string]: { logName: string; sizeHuman: string; sizeRaw: number } }>;
   roles: { count: number; series: Array<number>; labels: Array<string> };
   users: { count: number; series: Array<number>; labels: Array<string> };
+}
+
+export interface ActivityLog {
+  id: string;
+  log_name: string;
+  description: string;
+  subject_type: string | null;
+  subject_id: number | null;
+  causer_type: string | null;
+  causer_id: number;
+  properties: {
+    request: {
+      ip_address: string;
+      user_agent: string;
+      user_agent_lang: string;
+      referer: string;
+      http_method: string;
+      request_url: string;
+      guard_name?: string;
+      remembered?: boolean;
+    };
+    attributes?: {
+      [index: string]: string | number | null;
+    };
+    old?: {
+      [index: string]: string | number | null;
+    };
+  };
+  created_at: string;
+  updated_at: string;
+  event: string;
+  batch_uuid: string | null;
+  created_at_human: string;
+  updated_at_human: string;
+  causer: User;
+  subject: User;
+}
+
+export interface UserAgent {
+  details: {
+    platform: string;
+    type: string;
+    renderer: string;
+    browser: string;
+    version: string;
+  };
+  locale: string;
 }

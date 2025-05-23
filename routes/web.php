@@ -2,14 +2,15 @@
 
 use App\Http\Controllers\{
     BatchDeletionController,
+    DashboardController,
+    Debugging\ActivityLogController,
+    Debugging\LogFileController,
     Organization\OrganizationalUnitController,
     Organization\OrganizationController,
     Security\PermissionController,
     Security\RoleController,
     Security\UserController,
 };
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Debugging\LogFileController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,6 +28,8 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
         Route::get('log-files/{file}', 'export')->middleware('can:export system logs')->name('log-files.export');
         Route::delete('log-files/{file}', 'delete')->middleware('can:delete system logs')->name('log-files.destroy');
     });
+
+    Route::resource('activity-logs', ActivityLogController::class)->only(['index', 'show',]);
 
     Route::resources([
         'permissions' => PermissionController::class,
