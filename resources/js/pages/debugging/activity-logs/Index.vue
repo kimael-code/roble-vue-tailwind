@@ -14,7 +14,7 @@ import { valueUpdater } from '@/components/ui/table/utils';
 import { useConfirmAction } from '@/composables/useConfirmAction';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, OrganizationalUnit, PaginatedCollection } from '@/types';
+import { ActivityLog, BreadcrumbItem, Can, PaginatedCollection, SearchFilter, User } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import {
   ColumnFiltersState,
@@ -28,27 +28,29 @@ import {
 } from '@tanstack/vue-table';
 import { Workflow } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
-import { columns } from './partials/columns';
-import { permissions } from './partials/columns';
+import { columns, permissions } from './partials/columns';
 
 const props = defineProps<{
   can: Can;
-  filters: object;
-  organizationalUnits: PaginatedCollection<OrganizationalUnit>;
+  filters: SearchFilter;
+  users?: Array<User>;
+  events?: Array<string>;
+  logs: PaginatedCollection<ActivityLog>;
 }>();
+console.log(props);
 
 permissions.value = props.can;
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
-    title: 'Unidades Administrativas',
-    href: '/organizational-units',
+    title: 'Trazas',
+    href: '/activity-logs',
   },
 ];
 
 const { confirmAction, dataRow, openDialog } = useConfirmAction();
 
-const cols = columns(props.can);
+// const cols = columns(props.can);
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const globalFilter = ref('');
@@ -66,7 +68,7 @@ function handleSortingChange(item: any) {
       data[sortBy] = sortDirection;
     });
 
-    router.visit(route('organizational-units.index'), {
+    router.visit(route('activity-logs.index'), {
       data,
       only: ['organizationalUnits'],
       preserveScroll: true,
@@ -84,10 +86,10 @@ function handleBatchDeletion() {
 }
 
 const table = useVueTable({
-  data: props.organizationalUnits.data,
-  columns: cols,
+  data: props.logs.data,
+  columns: columns,
   manualPagination: true,
-  pageCount: props.organizationalUnits.meta.per_page,
+  pageCount: props.logs.meta.per_page,
   getCoreRowModel: getCoreRowModel(),
   getFilteredRowModel: getFilteredRowModel(),
   getSortedRowModel: getSortedRowModel(),
@@ -116,7 +118,7 @@ const table = useVueTable({
 });
 
 watch(
-  () => props.organizationalUnits.data,
+  () => props.logs.data,
   (newData) => table.setOptions((prev) => ({ ...prev, data: newData })),
 );
 </script>
@@ -131,17 +133,17 @@ watch(
       </template>
       <DataTable
         :can="can"
-        :columns="cols"
-        :data="organizationalUnits"
+        :columns
+        :data="logs"
         :filters="filters"
         :search-only="['organizationalUnits']"
-        :search-route="route('organizational-units.index')"
+        :search-route="route('activity-logs.index')"
         :table="table"
         @batch-destroy="handleBatchDeletion"
         @search="(s) => (globalFilter = s)"
-        @new="router.get(route('organizational-units.create'))"
-        @read="(row) => router.get(route('organizational-units.show', row?.id))"
-        @update="(row) => router.get(route('organizational-units.edit', row?.id))"
+        @new="router.get(route('activity-logs.create'))"
+        @read="(row) => router.get(route('activity-logs.show', row?.id))"
+        @update="(row) => router.get(route('activity-logs.edit', row?.id))"
         @destroy="(row) => confirmAction(row)"
       />
 
@@ -157,7 +159,7 @@ watch(
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              @click="router.delete(route('organizational-units.destroy', dataRow.id), { preserveState: false })"
+              @click="router.delete(route('activity-logs.destroy', dataRow.id), { preserveState: false })"
             >
               Continuar
             </AlertDialogAction>

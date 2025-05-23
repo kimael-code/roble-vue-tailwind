@@ -5,7 +5,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Bug, Building, Folder, Footprints, KeySquare, LayoutGrid, User, Users, Workflow } from 'lucide-vue-next';
+import { BookOpen, Bug, Building, Folder, KeySquare, LayoutGrid, LogsIcon, User, Users, Workflow } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 import NavCompany from './NavCompany.vue';
 import NavDebug from './NavDebug.vue';
@@ -57,8 +57,8 @@ const securityNavItems: NavItem[] = [
 const debugNavItems: NavItem[] = [
   {
     title: 'Trazas',
-    href: '/dashboard',
-    icon: Footprints,
+    href: '/activity-logs',
+    icon: LogsIcon,
     hasPermission: page.props.auth?.menu.includes('read any activity trace'),
   },
   {

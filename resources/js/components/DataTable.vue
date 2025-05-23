@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Can, PaginatedCollection } from '@/types';
 import { router, useForm } from '@inertiajs/vue3';
-import { ColumnDef, FlexRender, Table as TanstackTable } from '@tanstack/vue-table';
+import { ColumnDef, ColumnDefBase, FlexRender, Table as TanstackTable } from '@tanstack/vue-table';
 import { watchDebounced } from '@vueuse/core';
 import { Delete, Plus } from 'lucide-vue-next';
 import { Button } from './ui/button';
@@ -19,7 +19,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 
 interface Props {
   can?: Can;
-  columns: ColumnDef<any>[];
+  columns: ColumnDef<any>[] | ColumnDefBase<any>[];
   data: PaginatedCollection<any>;
   filters: { [key: string]: any };
   searchOnly: Array<string>;
