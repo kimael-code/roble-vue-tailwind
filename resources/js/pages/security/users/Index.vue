@@ -28,12 +28,12 @@ import {
 } from '@tanstack/vue-table';
 import { UserIcon } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
-import { columns } from './partials/columns';
+import { columns, permissions } from './partials/columns';
 
 interface Props {
-  can    : Can;
+  can: Can;
   filters: object;
-  users  : PaginatedCollection<User>;
+  users: PaginatedCollection<User>;
 }
 const props = defineProps<Props>();
 
@@ -46,12 +46,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const { confirmAction, dataRow, openDialog } = useConfirmAction();
 
-const cols          = columns(props.can);
-const sorting       = ref<SortingState>([]);
+permissions.value = props.can;
+const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
-const globalFilter  = ref('');
-const rowSelection  = ref<RowSelectionState>({});
-const expanded      = ref<ExpandedState>({});
+const globalFilter = ref('');
+const rowSelection = ref<RowSelectionState>({});
+const expanded = ref<ExpandedState>({});
 
 function handleSortingChange(item: any) {
   if (typeof item === 'function') {
@@ -83,7 +83,7 @@ function handleBatchDeletion() {
 
 const table = useVueTable({
   data: props.users.data,
-  columns: cols,
+  columns: columns,
   manualPagination: true,
   pageCount: props.users.meta.per_page,
   getCoreRowModel: getCoreRowModel(),
@@ -129,7 +129,7 @@ watch(
       </template>
       <DataTable
         :can="can"
-        :columns="cols"
+        :columns="columns"
         :data="users"
         :filters="filters"
         :search-only="['users']"

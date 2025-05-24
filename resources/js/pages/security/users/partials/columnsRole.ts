@@ -1,12 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { Role } from '@/types';
-import { ColumnDef } from '@tanstack/vue-table';
+import { createColumnHelper } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { h } from 'vue';
 
-export const columns = (): ColumnDef<Role>[] => [
-  {
-    accessorKey: 'name',
+const columnHelper = createColumnHelper<Role>();
+
+export const columns = [
+  columnHelper.accessor('name', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       const isSortedDesc = column.getIsSorted() === 'desc';
@@ -27,12 +28,11 @@ export const columns = (): ColumnDef<Role>[] => [
         ],
       );
     },
-    cell: ({ row }) => h('div', row.getValue('name')),
-  },
-  {
-    accessorKey: 'description',
+    cell: (info) => h('div', info.getValue()),
+  }),
+  columnHelper.accessor('description', {
     enableSorting: false,
     header: 'Descripción',
     cell: ({ row }) => h('div', row.getValue('description')),
-  },
+  }),
 ];

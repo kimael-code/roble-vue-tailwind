@@ -14,7 +14,6 @@ interface Props {
 }
 const props = defineProps<Props>();
 
-const cols = columns();
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const globalFilter = ref('');
@@ -41,7 +40,7 @@ function handleSortingChange(item: any) {
 }
 
 const table = useVueTable({
-  columns: cols,
+  columns: columns,
   data: props.roles.data,
   manualPagination: true,
   pageCount: props.roles.meta.per_page,
@@ -73,7 +72,7 @@ watch(
 
 <template>
   <DataTable
-    :columns="cols"
+    :columns="columns"
     :data="roles"
     :filters
     :search-only="['roles']"

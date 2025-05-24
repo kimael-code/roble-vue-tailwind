@@ -28,7 +28,7 @@ import {
 } from '@tanstack/vue-table';
 import { Building } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
-import { columns } from './partials/columns';
+import { columns, permissions } from './partials/columns';
 
 interface Props {
   can: Can;
@@ -46,7 +46,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const { confirmAction, dataRow, openDialog } = useConfirmAction();
 
-const cols = columns(props.can);
+permissions.value = props.can;
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const globalFilter = ref('');
@@ -83,7 +83,7 @@ function handleBatchDeletion() {
 
 const table = useVueTable({
   data: props.organizations.data,
-  columns: cols,
+  columns: columns,
   manualPagination: true,
   pageCount: props.organizations.meta.per_page,
   getCoreRowModel: getCoreRowModel(),
@@ -129,7 +129,7 @@ watch(
       </template>
       <DataTable
         :can="can"
-        :columns="cols"
+        :columns="columns"
         :data="organizations"
         :filters="filters"
         :search-only="['organizations']"

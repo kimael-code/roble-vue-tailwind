@@ -1,12 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { OrganizationalUnit } from '@/types';
-import { ColumnDef } from '@tanstack/vue-table';
+import { createColumnHelper } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { h } from 'vue';
 
-export const columns = (): ColumnDef<OrganizationalUnit>[] => [
-  {
-    accessorKey: 'name',
+const columnHelper = createColumnHelper<OrganizationalUnit>();
+
+export const columns = [
+  columnHelper.accessor('name', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       const isSortedDesc = column.getIsSorted() === 'desc';
@@ -27,12 +28,11 @@ export const columns = (): ColumnDef<OrganizationalUnit>[] => [
         ],
       );
     },
-    cell: ({ row }) => h('div', row.getValue('name')),
-  },
-  {
-    accessorKey: 'created_at_human',
+    cell: (info) => h('div', info.getValue()),
+  }),
+  columnHelper.accessor('created_at_human', {
     enableSorting: false,
     header: 'Fecha Creado',
     cell: ({ row }) => h('div', row.getValue('created_at_human')),
-  },
+  }),
 ];

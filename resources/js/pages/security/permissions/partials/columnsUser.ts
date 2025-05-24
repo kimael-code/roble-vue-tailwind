@@ -1,16 +1,13 @@
 import { Button } from '@/components/ui/button';
 import { User } from '@/types';
-import { ColumnDef } from '@tanstack/vue-table';
+import { createColumnHelper } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { h } from 'vue';
 
-/**
- * Definiciones de las columnas para la tabla de usuarios en la pestaña usuarios.
- * @returns Arreglo de objetos.
- */
-export const columns = (): ColumnDef<User>[] => [
-  {
-    accessorKey: 'name',
+const columnHelper = createColumnHelper<User>();
+
+export const columns = [
+  columnHelper.accessor('name', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       const isSortedDesc = column.getIsSorted() === 'desc';
@@ -31,12 +28,11 @@ export const columns = (): ColumnDef<User>[] => [
         ],
       );
     },
-    cell: ({ row }) => h('div', row.getValue('name')),
-  },
-  {
-    accessorKey: 'email',
+    cell: (info) => h('div', info.getValue()),
+  }),
+  columnHelper.accessor('email', {
     enableSorting: false,
     header: 'Correo Electrónico',
     cell: ({ row }) => h('div', row.getValue('email')),
-  },
+  }),
 ];

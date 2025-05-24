@@ -37,7 +37,6 @@ const props = defineProps<{
   events?: Array<string>;
   logs: PaginatedCollection<ActivityLog>;
 }>();
-console.log(props);
 
 permissions.value = props.can;
 
@@ -50,7 +49,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const { confirmAction, dataRow, openDialog } = useConfirmAction();
 
-// const cols = columns(props.can);
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const globalFilter = ref('');
@@ -133,7 +131,7 @@ watch(
       </template>
       <DataTable
         :can="can"
-        :columns
+        :columns="columns"
         :data="logs"
         :filters="filters"
         :search-only="['organizationalUnits']"

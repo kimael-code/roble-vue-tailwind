@@ -2,36 +2,41 @@ import DataTableActions from '@/components/DataTableActions.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Can, Role } from '@/types';
-import { ColumnDef } from '@tanstack/vue-table';
+import { createColumnHelper } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
-import { h } from 'vue';
+import { h, ref } from 'vue';
 
-/**
- * Definiciones de las columnas.
- * @param permissions Acciones que se puden ejecutar.
- * @returns Arreglo de objetos.
- */
-export const columns = (permissions: Can): ColumnDef<Role>[] => [
-  {
+export const permissions = ref<Can>({
+  create: false,
+  read: false,
+  update: false,
+  delete: false,
+  enable: false,
+  disable: false,
+  export: false,
+});
+
+const columnHelper = createColumnHelper<Role>();
+
+export const columns = [
+  columnHelper.display({
     id: 'select',
     header: ({ table }) =>
       h(Checkbox, {
-        checked: table.getIsAllPageRowsSelected(),
-        'onUpdate:checked': (value: boolean) => table.toggleAllPageRowsSelected(!!value),
-        ariaLabel: 'Select all',
+        modelValue: table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate'),
+        'onUpdate:modelValue': (value) => table.toggleAllPageRowsSelected(!!value),
+        ariaLabel: 'Seleccionar todo',
       }),
     cell: ({ row }) =>
       h(Checkbox, {
-        checked: row.getIsSelected(),
-        disabled: !row.getCanSelect(),
-        'onUpdate:checked': (value: boolean) => row.toggleSelected(!!value),
-        ariaLabel: 'Select row',
+        modelValue: row.getIsSelected(),
+        'onUpdate:modelValue': (value) => row.toggleSelected(!!value),
+        ariaLabel: 'Seleccionar fila',
       }),
     enableSorting: false,
     enableHiding: false,
-  },
-  {
-    accessorKey: 'name',
+  }),
+  columnHelper.accessor('name', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       const isSortedDesc = column.getIsSorted() === 'desc';
@@ -52,10 +57,9 @@ export const columns = (permissions: Can): ColumnDef<Role>[] => [
         ],
       );
     },
-    cell: ({ row }) => h('div', row.getValue('name')),
-  },
-  {
-    accessorKey: 'description',
+    cell: (info) => h('div', info.getValue()),
+  }),
+  columnHelper.accessor('description', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       const isSortedDesc = column.getIsSorted() === 'desc';
@@ -76,14 +80,14 @@ export const columns = (permissions: Can): ColumnDef<Role>[] => [
         ],
       );
     },
-    cell: ({ row }) => h('div', row.getValue('description')),
-  },
-  {
+    cell: (info) => h('div', info.getValue()),
+  }),
+  columnHelper.display({
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
       const data = row.original;
-      const can = permissions;
+      const can = permissions.value;
 
       return h(DataTableActions, {
         row: data,
@@ -91,5 +95,5 @@ export const columns = (permissions: Can): ColumnDef<Role>[] => [
         onExpand: row.toggleExpanded,
       });
     },
-  },
+  }),
 ];

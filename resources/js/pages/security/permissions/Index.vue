@@ -28,7 +28,7 @@ import {
 } from '@tanstack/vue-table';
 import { KeySquare } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
-import { columns } from './partials/columns';
+import { columns, permissions as DTpermissions } from './partials/columns';
 
 interface Props {
   can: Can;
@@ -46,7 +46,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const { confirmAction, dataRow, openDialog } = useConfirmAction();
 
-const cols = columns(props.can);
+DTpermissions.value = props.can;
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const globalFilter = ref('');
@@ -83,7 +83,7 @@ function handleBatchDeletion() {
 
 const table = useVueTable({
   data: props.permissions.data,
-  columns: cols,
+  columns: columns,
   manualPagination: true,
   pageCount: props.permissions.meta.per_page,
   getCoreRowModel: getCoreRowModel(),
@@ -129,7 +129,7 @@ watch(
       </template>
       <DataTable
         :can="can"
-        :columns="cols"
+        :columns="columns"
         :data="permissions"
         :filters="filters"
         :search-only="['permissions']"
