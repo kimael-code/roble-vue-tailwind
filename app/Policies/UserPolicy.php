@@ -44,11 +44,12 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool|Response
     {
+        $sysAdminRole = __('Systems Administrator');
         $sysadminsCount = User::with('roles')->get()->filter(
-            fn ($user) => $user->roles->where('name', 'Administrador de Sistemas')->toArray()
+            fn ($user) => $user->roles->where('name', $sysAdminRole)->toArray()
         )->count();
 
-        if ($sysadminsCount === 1 && $model->hasRole('Administrador de Sistemas'))
+        if ($sysadminsCount === 1 && $model->hasRole($sysAdminRole))
         {
             return Response::deny(__('This is the only existing System Administrator, therefore it cannot be deleted.'));
         }
@@ -74,11 +75,12 @@ class UserPolicy
      */
     public function forceDelete(User $user, User $model): bool|Response
     {
+        $sysAdminRole = __('Systems Administrator');
         $sysadminsCount = User::with('roles')->get()->filter(
-            fn ($user) => $user->roles->where('name', 'Administrador de Sistemas')->toArray()
+            fn ($user) => $user->roles->where('name', $sysAdminRole)->toArray()
         )->count();
 
-        if ($sysadminsCount === 1 && $model->hasRole('Administrador de Sistemas'))
+        if ($sysadminsCount === 1 && $model->hasRole($sysAdminRole))
         {
             return Response::deny(__('This is the only existing System Administrator, therefore it cannot be deleted.'));
         }

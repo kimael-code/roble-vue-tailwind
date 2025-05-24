@@ -1,3 +1,57 @@
 {
-    "person attached to organizational unit": "persona asociada a unidad administrativa"
+  "Superuser": "Superusuario",
+  "has access to any system route and can perform any action that does not violate system stability": "tiene acceso a cualquier ruta del sistema y puede ejecutar cualquier acción que no viole la estabilidad del sistema",
+  "Systems Administrator": "Administrador de Sistemas",
+  "manages data related to system security and monitoring": "gestiona los datos relacionados con la seguridad y monitoreo del sistema",
+
+  "create new organizations": "crear nuevos entes",
+  "read any organization": "ver listado de entes",
+  "read organization": "ver detalles de un ente",
+  "update organizations": "editar cualquier ente",
+  "delete organizations": "eliminar cualquier ente",
+  "export organizations": "exportar datos de entes a archivo",
+
+  "create new organizational units": "crear nuevas unidades administrativas",
+  "read any organizational unit": "ver listado de unidades administrativas",
+  "read organizational unit": "ver detalles de una unidad administrativa",
+  "update organizational units": "editar cualquier unidad administrativa",
+  "delete organizational units": "eliminar cualquier unidad administrativa",
+  "export organizational units": "exportar datos de unidades administrativas a archivo",
+
+  "create new roles": "crear nuevos roles",
+  "read any role": "ver listado de roles",
+  "read role": "ver detalles de un rol",
+  "update roles": "editar cualquier rol",
+  "delete roles": "eliminar cualquier rol",
+  "export roles": "exportar datos de roles a archivo",
+
+  "create new permissions": "crear nuevos permisos",
+  "read any permission": "ver listado de permisos",
+  "read permission": "ver detalles de un permiso",
+  "update permissions": "editar cualquier permiso",
+  "delete permissions": "eliminar cualquier permiso",
+  "export permissions": "exportar datos de permisos a archivo",
+
+  "create new users": "crear nuevos usuarios",
+  "read any user": "ver listado de usuarios",
+  "read user": "ver detalles de un usuario",
+  "update users": "editar cualquier usuario",
+  "delete users": "eliminar cualquier usuario",
+  "force delete users": "eliminar permanentemente cualquier usuario",
+  "export users": "exportar datos de usuarios a archivo",
+  "restore users": "restaurar cualquier usuario",
+
+  "read any system log": "ver listado de registros de depuración",
+  "read system log": "ver detalles de un registro de depuración",
+  "delete system logs": "eliminar los registros de depuración",
+  "export system logs": "exportar registros de depuración a archivo",
+
+  "read any activity trace": "ver listado de trazas de usuarios",
+  "read activity trace": "ver detalles de un traza de usuario",
+  "export activity traces": "exportar trazas de usuarios a archivo",
+
+  "read sysadmin dashboard": "ver tablero de administrador de sistema",
+
+  "person attached to organizational unit": "persona asociada a unidad administrativa",
+  "This is the only user with Systems Administrator permissions.": "Este usuario es el único con permisos de Administrador de Sistemas."
 }

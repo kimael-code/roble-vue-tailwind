@@ -20,23 +20,31 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
+                'name'            => 'root',
+                'email'           => 'root@company.com',
+                'password'        => Hash::make('root'),
+                'remember_token'  => Str::random(10),
+                'is_password_set' => false,
+                'role'            => __('Superuser'),
+            ],
+            [
                 'name'            => 'admin',
-                'email'           => 'admin@company.org',
+                'email'           => 'admin@company.com',
                 'password'        => Hash::make('admin'),
                 'remember_token'  => Str::random(10),
                 'is_password_set' => false,
-                'role'            => 'Administrador de Sistemas',
+                'role'            => __('Systems Administrator'),
             ],
         ];
 
         $devUsers = [
             [
-                'name'            => 'test',
-                'email'           => 'test@examplecom',
+                'name'            => 'admin.dev',
+                'email'           => 'admin.dev@example.com',
                 'password'        => Hash::make('12345678'),
                 'remember_token'  => Str::random(10),
                 'is_password_set' => true,
-                'role'            => 'Administrador de Sistemas',
+                'role'            => __('Systems Administrator'),
             ],
         ];
 
