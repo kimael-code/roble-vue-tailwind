@@ -111,3 +111,29 @@ const footerNavItems: NavItem[] = [
   </Sidebar>
   <slot />
 </template>
+
+<style lang="css" scoped>
+/* Sólo para navegadores basados en Chromium (Chrome, Opera, Brave, Edge...) */
+
+/* Estilo general para la barra de desplazamiento */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 8px;
+}
+
+/* Fondo de la barra de desplazamiento */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+/* El "pulgar" o la parte arrastrable de la barra de desplazamiento */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+/* El "pulgar" al pasar el ratón por encima */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+</style>

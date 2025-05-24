@@ -31,7 +31,7 @@ const badgeVariant = (size: number) => {
 
 <template>
   <div class="grid auto-rows-min gap-4 md:grid-cols-2">
-    <Card>
+    <Card class="bg-accent">
       <CardHeader>
         <CardTitle> Usuarios </CardTitle>
         <CardDescription>Cantidad de usuarios registrados / eliminados.</CardDescription>
@@ -41,7 +41,7 @@ const badgeVariant = (size: number) => {
       </CardHeader>
     </Card>
 
-    <Card>
+    <Card class="bg-accent">
       <CardHeader>
         <CardTitle> Roles </CardTitle>
         <CardDescription>Cantidad de roles registrados.</CardDescription>
@@ -52,7 +52,7 @@ const badgeVariant = (size: number) => {
     </Card>
   </div>
   <div class="grid auto-rows-min gap-4 md:grid-cols-2">
-    <Card>
+    <Card class="bg-accent">
       <CardHeader>
         <CardTitle> Usuarios Activos </CardTitle>
         <CardDescription>Usuarios que actualmente han iniciado sesión.</CardDescription>
@@ -95,7 +95,7 @@ const badgeVariant = (size: number) => {
       </CardHeader>
     </Card>
 
-    <Card>
+    <Card class="bg-accent">
       <CardHeader>
         <CardTitle> Depuración </CardTitle>
         <CardDescription>Tamaño actual de los archivos de depuración (logs) de la aplicación.</CardDescription>

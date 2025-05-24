@@ -7,7 +7,7 @@ const isOpen = usePage<SharedData>().props?.sidebarOpen;
 
 export function useChartOptionsUsers(labels: Array<string>, colors = ['#2e93fa', '#e91e63']) {
   const isDark = useDark();
-  const textColor = computed(() => (isDark.value ? '#abb1bf' : '#373d3f'));
+  const textColor = computed(() => (isDark.value ? '#f5f5f5' : '#373d3f'));
 
   const chartOptionsUsers = ref({
     colors: colors,
@@ -103,7 +103,7 @@ export function useChartOptionsUsers(labels: Array<string>, colors = ['#2e93fa',
             return [seriesName, ' = ', opts.w.globals.series[opts.seriesIndex]];
           },
           labels: {
-            colors: isDarkTheme ? '#abb1bf' : '#373d3f',
+            colors: isDarkTheme ? '#f5f5f5' : '#373d3f',
           },
         },
         stroke: {
@@ -118,12 +118,12 @@ export function useChartOptionsUsers(labels: Array<string>, colors = ['#2e93fa',
                 value: {
                   show: true,
                   fontSize: '16px',
-                  color: isDarkTheme ? '#abb1bf' : '#373d3f',
+                  color: isDarkTheme ? '#f5f5f5' : '#373d3f',
                 },
                 total: {
                   show: true,
                   fontSize: '15px',
-                  color: isDarkTheme ? '#abb1bf' : '#373d3f',
+                  color: isDarkTheme ? '#f5f5f5' : '#373d3f',
                 },
               },
             },
@@ -174,7 +174,7 @@ export function useChartOptionsUsers(labels: Array<string>, colors = ['#2e93fa',
 
 export function useChartOptionsRoles(labels: Array<string>,) {
   const isDark = useDark();
-  const textColor = computed(() => (isDark.value ? '#abb1bf' : '#373d3f'));
+  const textColor = computed(() => (isDark.value ? '#f5f5f5' : '#373d3f'));
 
   const chartOptionsRoles = ref({
     dataLabels: {
@@ -266,7 +266,7 @@ export function useChartOptionsRoles(labels: Array<string>,) {
           return [seriesName, ' = ', opts.w.globals.series[opts.seriesIndex]];
         },
         labels: {
-          colors: isDarkTheme ? '#abb1bf' : '#373d3f',
+          colors: isDarkTheme ? '#f5f5f5' : '#373d3f',
         },
       },
       stroke: {
@@ -281,12 +281,12 @@ export function useChartOptionsRoles(labels: Array<string>,) {
               value: {
                 show: true,
                 fontSize: '16px',
-                color: isDarkTheme ? '#abb1bf' : '#373d3f',
+                color: isDarkTheme ? '#f5f5f5' : '#373d3f',
               },
               total: {
                 show: true,
                 fontSize: '15px',
-                color: isDarkTheme ? '#abb1bf' : '#373d3f',
+                color: isDarkTheme ? '#f5f5f5' : '#373d3f',
               },
             },
           },
