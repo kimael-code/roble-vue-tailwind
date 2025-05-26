@@ -54,7 +54,7 @@ class UserSeeder extends Seeder
             {
                 array_push($users, $devUser);
             }
-            array_shift($users);
+            unset($users[0], $users[1]);
         }
 
         foreach ($users as $user)
