@@ -11,7 +11,7 @@ class StoreOrganizationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->can('create organizations');
+        return $this->user()->can('create new organizations');
     }
 
     /**

@@ -29,7 +29,7 @@ class OrganizationalUnitPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create organizational units');
+        return $user->can('create new organizational units');
     }
 
     /**

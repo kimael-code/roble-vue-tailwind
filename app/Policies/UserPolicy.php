@@ -28,7 +28,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create users');
+        return $user->can('create new users');
     }
 
     /**

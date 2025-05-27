@@ -40,7 +40,7 @@ class OrganizationPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create organizations');
+        return $user->can('create new organizations');
     }
 
     /**

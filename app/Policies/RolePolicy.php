@@ -29,7 +29,7 @@ class RolePolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create roles');
+        return $user->can('create new roles');
     }
 
     /**

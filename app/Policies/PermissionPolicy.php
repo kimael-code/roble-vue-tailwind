@@ -29,7 +29,7 @@ class PermissionPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create permissions');
+        return $user->can('create new permissions');
     }
 
     /**
