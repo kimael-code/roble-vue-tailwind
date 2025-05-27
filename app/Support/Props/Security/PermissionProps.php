@@ -16,7 +16,7 @@ class PermissionProps
     private static function getPermissions(): array
     {
         return [
-            'create' => Auth::user()->can('create permissions'),
+            'create' => Auth::user()->can('create new permissions'),
             'read' => Auth::user()->can('read permission'),
             'update' => Auth::user()->can('update permissions'),
             'delete' => Auth::user()->can('delete permissions'),

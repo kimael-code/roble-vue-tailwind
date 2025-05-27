@@ -18,7 +18,7 @@ class RoleProps
     private static function getPermissions(): array
     {
         return [
-            'create' => Auth::user()->can('create roles'),
+            'create' => Auth::user()->can('create new roles'),
             'read'   => Auth::user()->can('read role'),
             'update' => Auth::user()->can('update roles'),
             'delete' => Auth::user()->can('delete roles'),

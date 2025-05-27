@@ -14,7 +14,7 @@ class OrganizationProps
     private static function getPermissions(): array
     {
         return [
-            'create' => Auth::user()->can('create organizations'),
+            'create' => Auth::user()->can('create new organizations'),
             'read' => Auth::user()->can('read organization'),
             'update' => Auth::user()->can('update organizations'),
             'delete' => Auth::user()->can('delete organizations'),

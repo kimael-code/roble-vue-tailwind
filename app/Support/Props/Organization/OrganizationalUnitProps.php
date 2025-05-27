@@ -14,7 +14,7 @@ class OrganizationalUnitProps
     private static function getPermissions(): array
     {
         return [
-            'create' => Auth::user()->can('create organizational units'),
+            'create' => Auth::user()->can('create new organizational units'),
             'read' => Auth::user()->can('read organizational unit'),
             'update' => Auth::user()->can('update organizational units'),
             'delete' => Auth::user()->can('delete organizational units'),
