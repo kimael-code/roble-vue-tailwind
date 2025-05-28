@@ -24,4 +24,13 @@ class OrganizationFactory extends Factory
             'address' => fake()->address(),
         ];
     }
+
+    /**
+     * Indica que el ente u organización está inactivo.
+     * @return OrganizationFactory
+     */
+    public function disabled(): Factory
+    {
+        return $this->state(fn(array $attributes) => ['disabled_at' => now()->toISOString()]);
+    }
 }
