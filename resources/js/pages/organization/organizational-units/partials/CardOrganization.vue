@@ -4,7 +4,7 @@ import { Organization, OrganizationalUnit } from '@/types';
 
 defineProps<{
   organization: Organization;
-  ou: OrganizationalUnit;
+  ou?: OrganizationalUnit;
 }>();
 </script>
 
@@ -22,7 +22,7 @@ defineProps<{
       </div>
       <div class="space-y-1">
         <p class="text-sm leading-none font-medium">
-          Unidad de Adscripción: <span class="text-muted-foreground text-sm">{{ ou.name }}</span>
+          Unidad de Adscripción: <span class="text-muted-foreground text-sm">{{ ou?.name ?? 'N/A' }}</span>
         </p>
       </div>
     </CardContent>
