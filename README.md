@@ -1,39 +1,38 @@
-# ROBLE Tailwind
+# ROBLE Vue-Tailwind
 
-Plantilla para desarrollar aplicaciones web monolíticas.
+Starter kit for developing monolithic web applications based on Laravel, Inertia.js, Vue.js, and Tailwind CSS.
 
-## Construido con
+## Made with
 
-    - Laravel 12
-    - Vue 3
-    - Inertia 2
-    - Tailwind CSS (shadcn-vue)
-    - PosrgreSQL 17+
+- Laravel
+- Vue
+- Inertia
+- Tailwind CSS (shadcn-vue)
+- PosrgreSQL
 
-## Primeros pasos en Entorno Local (`localhost`) usando Docker
+## Getting started in Local Environment (`localhost`) using Docker & Laravel Sail
 
-### Requisitos
+### Requirements
 
-    - Docker v28.1 o superior
-    - Docker Compose v2.35 o superior
-    - Conexión a internet
+- Docker Engine v28.1 or higher
+- Docker Compose v2.35 or higher
+- Internet connection
+- Shell alias configured to use Laravel Sail
 
-1. Clonar el repositorio
+1. Clone this repo
+
     ```sh
-    git clone https://gitlab.com/profemaik/roble.git
+    git clone https://github.com/kimael-code/roble-vue-tailwind.git
     ```
 
-2. Cambiar la rama a `laravel-12x-vue`
+2. Go to the root project folder and create the `.env` file
+
     ```sh
-    git checkout laravel-12x-vue
+    cd roble-vue-tailwind && cp .env.example .env
     ```
 
-3. Crear el archivo `.env`
-    ```sh
-    cp .env.example .env
-    ```
+3. Install Composer dependencies
 
-4. Instalar las dependencias de Composer
     ```sh
     docker run --rm --interactive --tty \
     --volume $PWD:/app \
@@ -41,112 +40,95 @@ Plantilla para desarrollar aplicaciones web monolíticas.
     composer install --ignore-platform-reqs
     ```
 
-5. Desplegar los contenedores (recomendable configurar un alias)
-    ```sh
-    # sin alias
-    ./vendor/bin/sail up -d
+4. Start the containers (*it's necessary to configure a shell alias*)
 
-    # con alias configurado
+    ```sh
     sail up -d
     ```
 
-6. Crear la clave de encriptación
-    ```sh
-    # sin alias
-    ./vendor/bin/sail artisan key:generate
+5. Create the app encryption key
 
-    # con alias configurado
+    ```sh
     sail artisan key:generate
     ```
 
-7. Definir el esquema de la base de datos y alimentarla con datos iniciales
-    ```sh
-    # sin alias
-    ./vendor/bin/sail artisan migrate:fresh --seed
+6. Run database migrations and seeders
 
-    # con alias configurado
+    ```sh
     sail artisan migrate:fresh --seed
     ```
 
-8. Instalar las dependencias de Node
-    ```sh
-    # sin alias
-    ./vendor/bin/sail npm i
+7. Install Node dependencies
 
-    # con alias configurado
+    ```sh
     sail npm i
     ```
 
-9. Construir las pantallas o vistas
-    ```sh
-    # sin alias
-    ./vendor/bin/sail npm run build
+8. Build Node dependencies
 
-    # con alias configurado
+    ```sh
     sail npm run build
     ```
 
-10. Abrir el navegador web e ir a <http://localhost>
+9. Oper your favorite web browser and go to <http://localhost>
 
-## Primeros pasos en Entorno Local (`localhost`)
+## Getting started in Local Environment (`localhost`) using Laravel Herd
 
-### Requisitos
+### Requirements
 
-    - PHP v8.3 o superior
-    - Composer v2.8 o superior
-    - Node 22 o superior
-    - Conexión a internet
+- Laravel Herd
+- PostgreSQL with pgAdmin or any other universal database tool
 
-1. Clonar el repositorio
+1. Clone this repo inside Herd folder
+
     ```sh
-    git clone https://gitlab.com/profemaik/roble.git
+    git clone https://github.com/kimael-code/roble-vue-tailwind.git
     ```
 
-2. Cambiar la rama a `laravel-12x-vue`
+2. Go to the root project folder and create the `.env` file
+
     ```sh
-    git checkout laravel-12x-vue
+    cd roble-vue-tailwind && cp .env.example .env
     ```
 
-3. Crear el archivo `.env`
-    ```sh
-    cp .env.example .env
-    ```
+3. Set values ​​for database connection environment variables
+    - `DB_HOST=localhost`.
+    - `DB_USERNAME=postgres`.
+    - `DB_PASSWORD=your_postgres_user_password`.  
+    *You need to set the values of these variables according to your PostgreSQL installation and configurations (port, user, password, etc.)*
 
-4. Establecer los valores para las variables de conexión a la base de datos
-    - `DB_HOST` (computadora donde está la base de datos).
-    - `DB_PORT` (puerto de la computadora donde está la base de datos).
-    - `DB_DATABASE` (nombre de la base de datos).
-    - `DB_USERNAME` (usuario de la base de datos).
-    - `DB_PASSWORD` (contraseña del usuario de la base de datos).
+4. Install Composer dependencies
 
-5. Instalar las dependencias de Composer
     ```sh
     composer install --ignore-platform-reqs
     ```
 
-6. Crear la clave de encriptación
+5. Create the app encryption key
+
     ```sh
     php artisan key:generate
     ```
 
-7. Definir el esquema de la base de datos y alimentarla con datos iniciales
+6. Run database migrations and seeders
+
     ```sh
     php artisan migrate:fresh --seed
     ```
 
-8. Instalar las dependencias de Node
+7. Install Node dependencies
+
     ```sh
     npm i
     ```
 
-9. Construir las pantallas o vistas
+8. Build Node dependencies
+
     ```sh
     npm run build
     ```
 
-10. Desplegar el servidor local
-    ```sh
-    composer run dev
-    ```
+9. Run the app
 
-10. Abrir el navegador web e ir a <http://localhost:8000>
+    ```sh
+    herd open
+    ```
