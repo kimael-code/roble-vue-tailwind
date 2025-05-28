@@ -81,10 +81,10 @@ function newData() {
               <p class="text-sm text-muted-foreground">{{ permission.set_menu }}</p>
               <br />
               <p class="text-sm font-medium">Creado</p>
-              <p class="text-sm text-muted-foreground">{{ permission.created_at }}</p>
+              <p class="text-sm text-muted-foreground">{{ permission.created_at_human }}</p>
               <br />
               <p class="text-sm font-medium">Modificado</p>
-              <p class="text-sm text-muted-foreground">{{ permission.updated_at }}</p>
+              <p class="text-sm text-muted-foreground">{{ permission.updated_at_human }}</p>
             </CardContent>
             <CardFooter class="flex justify-between px-6 pb-6">
               <Button @click="editData" :disabled="isProcessing">
