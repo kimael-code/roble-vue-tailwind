@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from 'vue'
+import { onMounted, ref, type HTMLAttributes } from 'vue'
 import { cn } from '@/lib/utils'
 import { useVModel } from '@vueuse/core'
 
@@ -13,14 +13,25 @@ const emits = defineEmits<{
   (e: 'update:modelValue', payload: string | number): void
 }>()
 
+const input = ref<HTMLInputElement | null>(null);
+
 const modelValue = useVModel(props, 'modelValue', emits, {
   passive: true,
   defaultValue: props.defaultValue,
 })
+
+onMounted(() => {
+  if (input.value && input.value.hasAttribute('autofocus')) {
+    input.value.focus();
+  }
+});
+
+defineExpose({ focus: () => input.value?.focus() });
 </script>
 
 <template>
   <input
+    ref="input"
     v-model="modelValue"
     data-slot="input"
     :class="cn(
