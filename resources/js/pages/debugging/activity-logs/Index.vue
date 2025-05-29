@@ -26,7 +26,7 @@ import {
   SortingState,
   useVueTable,
 } from '@tanstack/vue-table';
-import { Workflow } from 'lucide-vue-next';
+import { LogsIcon } from 'lucide-vue-next';
 import { ref, watch } from 'vue';
 import { columns, permissions } from './partials/columns';
 
@@ -123,11 +123,11 @@ watch(
 
 <template>
   <AppLayout :breadcrumbs="breadcrumbs">
-    <Head title="Unidades Administrativas" />
+    <Head title="Trazas" />
 
-    <ContentLayout title="Unidades Administrativas">
+    <ContentLayout title="Trazas">
       <template #icon>
-        <Workflow />
+        <LogsIcon />
       </template>
       <DataTable
         :can="can"
