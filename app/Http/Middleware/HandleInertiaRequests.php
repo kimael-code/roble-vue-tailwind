@@ -55,6 +55,7 @@ class HandleInertiaRequests extends Middleware
             'flash' => [
                 'message' => fn() => $request->session()->get('message'),
             ],
+            'unreadNotifications' => fn() => $request->user()?->unreadNotifications()->latest()->lazy(5)->all(),
             'ziggy' => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),

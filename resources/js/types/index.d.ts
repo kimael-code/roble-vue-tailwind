@@ -25,6 +25,7 @@ export interface SharedData extends PageProps {
   quote: { message: string; author: string };
   auth: Auth;
   flash: { message: { message: string; title: string; type: string } };
+  unreadNotifications: Array<Notification>;
   ziggy: Config & { location: string };
   sidebarOpen: boolean;
 }
@@ -247,4 +248,21 @@ export interface UserAgent {
     version: string;
   };
   locale: string;
+}
+
+export interface Notification {
+  id: string;
+  type: string;
+  notifiable_type: string;
+  notifiable_id: string;
+  data: {
+    causer: string;
+    message: string;
+    photoUrl: string | null;
+    timestamp: string;
+    url: string;
+  };
+  read_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
