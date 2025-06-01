@@ -5,7 +5,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { SharedData, type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Bug, Building, Folder, KeySquare, LayoutGrid, LogsIcon, User, Users, Workflow } from 'lucide-vue-next';
+import { Bug, Building, FolderGit2, KeySquare, LayoutGrid, LogsIcon, User, Users, Workflow } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 import NavCompany from './NavCompany.vue';
 import NavDebug from './NavDebug.vue';
@@ -72,13 +72,8 @@ const debugNavItems: NavItem[] = [
 const footerNavItems: NavItem[] = [
   {
     title: 'Github Repo',
-    href: 'https://github.com/laravel/vue-starter-kit',
-    icon: Folder,
-  },
-  {
-    title: 'Documentation',
-    href: 'https://laravel.com/docs/starter-kits',
-    icon: BookOpen,
+    href: 'https://github.com/kimael-code/roble-vue-tailwind',
+    icon: FolderGit2,
   },
 ];
 </script>

@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class UpdateUser
 {
-    protected static $flashNotify = false;
+    protected static $notify = false;
 
     public static function handle(User $user, array $inputs): User
     {
@@ -21,6 +21,12 @@ class UpdateUser
             $user->name = $inputs['name'];
             $user->email = $inputs['email'];
             $user->is_external = $inputs['is_external'];
+
+            if ($user->isDirty())
+            {
+                self::$notify = true;
+            }
+
             $user->save();
 
             self::removeRoles($user, $inputs['roles']);
@@ -29,13 +35,32 @@ class UpdateUser
             self::givePermissions($user, $inputs['permissions']);
             self::setPerson($user, $inputs);
 
-            if (self::$flashNotify)
+            if (self::$notify)
             {
                 session()->flash('message', [
                     'message' => "{$user->name}",
                     'title' => __('SAVED!'),
                     'type' => 'success',
                 ]);
+
+                $users = User::permission('update users')->get()->filter(
+                    fn(User $user) => $user->id != auth()->user()->id
+                )->all();
+
+                foreach ($users as $user)
+                {
+                    $user->notify(new ActionHandledOnModel(
+                        auth()->user(),
+                        [
+                            'id' => $user->id,
+                            'type' => __('user'),
+                            'name' => "({$user->name})",
+                            'timestamp' => $user->updated_at,
+                        ],
+                        'updated',
+                        ['routeName' => 'users', 'routeParam' => 'user']
+                    ));
+                }
             }
         });
 
@@ -69,24 +94,7 @@ class UpdateUser
                     ])
                     ->log(__("{$role->name} role unassigned to the user {$user->name}"));
 
-                // $notifiableUsers = User::permission('update users')->get()->filter(
-                //     fn(User $user) => $user->id != $authUser->id
-                // )->all();
-
-                // foreach ($notifiableUsers as $notiUser)
-                // {
-                //     $notiUser->notify(new ActionHandledOnModel(
-                //         $authUser,
-                //         [
-                //             'id' => $role->id,
-                //             'name' => $role->name,
-                //             'timestamp' => now()->toISOString(),
-                //         ],
-                //         'unasigned',
-                //         ['routeName' => 'users', 'routeParam' => 'user']
-                //     ));
-                // }
-                self::$flashNotify = true;
+                self::$notify = true;
             }
         }
     }
@@ -120,24 +128,7 @@ class UpdateUser
                     ])
                     ->log(__("{$role->name} role assigned to the user {$user->name}"));
 
-                // $notifiableUsers = User::permission('update users')->get()->filter(
-                //     fn(User $user) => $user->id != $authUser->id
-                // )->all();
-
-                // foreach ($notifiableUsers as $notiUser)
-                // {
-                //     $notiUser->notify(new ActionHandledOnModel(
-                //         $authUser,
-                //         [
-                //             'id' => $role->id,
-                //             'name' => $role->name,
-                //             'timestamp' => now()->toISOString(),
-                //         ],
-                //         'assigned',
-                //         ['routeName' => 'users', 'routeParam' => 'user']
-                //     ));
-                // }
-                self::$flashNotify = true;
+                self::$notify = true;
             }
         }
     }
@@ -169,24 +160,7 @@ class UpdateUser
                     ])
                     ->log(__("{$permission->description} permission revoked to the user {$user->name}"));
 
-                // $notifiableUsers = User::permission('update users')->get()->filter(
-                //     fn(User $user) => $user->id != $authUser->id
-                // )->all();
-
-                // foreach ($notifiableUsers as $notiUser)
-                // {
-                //     $notiUser->notify(new ActionHandledOnModel(
-                //         $authUser,
-                //         [
-                //             'id' => $permission->id,
-                //             'name' => $permission->description,
-                //             'timestamp' => now()->toISOString(),
-                //         ],
-                //         'unassigned',
-                //         ['routeName' => 'users', 'routeParam' => 'user']
-                //     ));
-                // }
-                self::$flashNotify = true;
+                self::$notify = true;
             }
         }
     }
@@ -221,24 +195,7 @@ class UpdateUser
                     ])
                     ->log(__("{$permission->description} permission given to the user {$user->name}"));
 
-                // $notifiableUsers = User::permission('update users')->get()->filter(
-                //     fn(User $user) => $user->id != $authUser->id
-                // )->all();
-
-                // foreach ($notifiableUsers as $notiUser)
-                // {
-                //     $notiUser->notify(new ActionHandledOnModel(
-                //         $authUser,
-                //         [
-                //             'id' => $permission->id,
-                //             'name' => $permission->description,
-                //             'timestamp' => now()->toISOString(),
-                //         ],
-                //         'assigned',
-                //         ['routeName' => 'users', 'routeParam' => 'user']
-                //     ));
-                // }
-                self::$flashNotify = true;
+                self::$notify = true;
             }
         }
     }
@@ -272,15 +229,7 @@ class UpdateUser
                     ])
                     ->log(__("user {$user->name} detached from the organizational unit {$ou->name}"));
 
-                // $notifiableUsers = User::permission('update users')->get()->filter(
-                //     fn(User $user) => $user->id != $authUser->id
-                // )->all();
-
-                // foreach ($notifiableUsers as $notiUser)
-                // {
-                //     $notiUser->notify(new OrganizationalUnitDetachedFromUser($ou, now()->toISOString(), $user, $authUser));
-                // }
-                self::$flashNotify = true;
+                self::$notify = true;
             }
         }
         else
@@ -313,15 +262,7 @@ class UpdateUser
                         ])
                         ->log(__("user {$user->name} disabled in the organizational unit {$ou->name}"));
 
-                    // $notifiableUsers = User::permission('update users')->get()->filter(
-                    //     fn(User $user) => $user->id != $authUser->id
-                    // )->all();
-
-                    // foreach ($notifiableUsers as $notiUser)
-                    // {
-                    //     $notiUser->notify(new OrganizationalUnitDisabledOnUser($ou, now()->toISOString(), $user, $authUser));
-                    // }
-                    self::$flashNotify = true;
+                    self::$notify = true;
                 }
             }
             // y ahora se deben registrar las nuevas asociaciones del usuario
@@ -350,15 +291,7 @@ class UpdateUser
                         ])
                         ->log(__("user {$user->name} attached to the administrative unit {$ou->name}"));
 
-                    // $notifiableUsers = User::permission('update users')->get()->filter(
-                    //     fn(User $user) => $user->id != $authUser->id
-                    // )->all();
-
-                    // foreach ($notifiableUsers as $notiUser)
-                    // {
-                    //     $notiUser->notify(new OrganizationalUnitAttachedToUser($ou, now()->toISOString(), $user, $authUser));
-                    // }
-                    self::$flashNotify = true;
+                    self::$notify = true;
                 }
                 else
                 {
@@ -380,15 +313,7 @@ class UpdateUser
                         ])
                         ->log(__("user {$user->name} enabled in the organizational unit {$ou->name}"));
 
-                    // $notifiableUsers = User::permission('update users')->get()->filter(
-                    //     fn(User $user) => $user->id != $authUser->id
-                    // )->all();
-
-                    // foreach ($notifiableUsers as $notiUser)
-                    // {
-                    //     $notiUser->notify(new OrganizationalUnitAttachedToUser($ou, now()->toISOString(), $user, $authUser));
-                    // }
-                    self::$flashNotify = true;
+                    self::$notify = true;
                 }
             }
         }
@@ -396,7 +321,7 @@ class UpdateUser
         if (array_key_exists('id_card', $inputs) && empty($inputs['id_card']))
         {
             $user->person()->delete();
-            self::$flashNotify = true;
+            self::$notify = true;
         }
         elseif (isset($inputs["id_card"]) && isset($inputs["names"]) && isset($inputs["surnames"]))
         {
@@ -411,16 +336,7 @@ class UpdateUser
 
             if ($person->isDirty())
             {
-                self::$flashNotify = true;
-
-                // $notifiableUsers = User::permission('update users')->get()->filter(
-                //     fn(User $user) => $user->id != $authUser->id
-                // )->all();
-
-                // foreach ($notifiableUsers as $notiUser)
-                // {
-                //     $notiUser->notify(new UserUpdated($user, $authUser));
-                // }
+                self::$notify = true;
             }
 
             $person->save();

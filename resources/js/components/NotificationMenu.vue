@@ -7,6 +7,7 @@ import { BellRingIcon, HourglassIcon } from 'lucide-vue-next';
 import { DateTime } from 'luxon';
 import { computed, ref } from 'vue';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { ScrollArea } from './ui/scroll-area';
@@ -27,13 +28,20 @@ channel().notification(() =>
     only: ['unreadNotifications'],
   }),
 );
+
+router.reload();
 </script>
 
 <template>
   <div class="mr-8 ml-auto">
     <Popover>
       <PopoverTrigger as-child>
-        <Button v-show="unreadCount" size="icon"> <BellRingIcon /> </Button>
+        <div class="relative">
+          <Button v-show="unreadCount" variant="ghost" size="icon"> <BellRingIcon /> </Button>
+          <Badge v-if="unreadCount > 0" class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full p-0">{{
+            unreadCount
+          }}</Badge>
+        </div>
       </PopoverTrigger>
       <PopoverContent class="w-96">
         <div class="grid gap-4">
@@ -42,7 +50,7 @@ channel().notification(() =>
             <ScrollArea>
               <div
                 v-for="(notification, i) in unreadNotifications"
-                class="mb-2 flex cursor-pointer justify-normal space-x-4 rounded-md transition-colors duration-200 hover:bg-gray-100"
+                class="mb-2 flex cursor-pointer justify-normal space-x-4 rounded-md transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                 :key="i"
                 @click="markAsRead(notification.id)"
               >
