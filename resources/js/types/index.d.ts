@@ -250,18 +250,20 @@ export interface UserAgent {
   locale: string;
 }
 
+export interface NotificationData {
+  causer: string;
+  message: string;
+  photoUrl: string | null;
+  timestamp: string;
+  url: string;
+}
+
 export interface Notification {
   id: string;
   type: string;
   notifiable_type: string;
   notifiable_id: string;
-  data: {
-    causer: string;
-    message: string;
-    photoUrl: string | null;
-    timestamp: string;
-    url: string;
-  };
+  data: NotificationData;
   read_at: string | null;
   created_at: string | null;
   updated_at: string | null;

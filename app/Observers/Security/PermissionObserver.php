@@ -19,7 +19,7 @@ class PermissionObserver
             'type'  => 'success',
         ]);
 
-        $users = User::permission('create permissions')->get()->filter(
+        $users = User::permission('create new permissions')->get()->filter(
             fn (User $user) => $user->id != auth()->user()->id
         )->all();
 
