@@ -19,7 +19,7 @@ class RoleObserver
             'type'  => 'success',
         ]);
 
-        $users = User::permission('create roles')->get()->filter(
+        $users = User::permission('create new roles')->get()->filter(
             fn (User $user) => $user->id != auth()->user()->id
         )->all();
 
@@ -29,7 +29,8 @@ class RoleObserver
                 auth()->user(),
                 [
                     'id' => $role->id,
-                    'name' => "{$role->name} ({$role->description})",
+                    'type' => __('role'),
+                    'name' => "{$role->name}",
                     'timestamp' => $role->created_at,
                 ],
                 'created',
@@ -59,7 +60,8 @@ class RoleObserver
                 auth()->user(),
                 [
                     'id' => $role->id,
-                    'name' => "{$role->name} ({$role->description})",
+                    'type' => __('role'),
+                    'name' => "{$role->name}",
                     'timestamp' => $role->updated_at,
                 ],
                 'updated',
@@ -88,7 +90,8 @@ class RoleObserver
             $user->notify(new ActionHandledOnModel(
                 auth()->user(),
                 [
-                    'name' => "{$role->name} ({$role->description})",
+                    'type' => __('role'),
+                    'name' => "{$role->name}",
                     'timestamp' => now()->toISOString(),
                 ],
                 'deleted',

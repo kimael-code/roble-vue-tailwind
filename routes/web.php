@@ -10,6 +10,7 @@ use App\Http\Controllers\{
     Security\PermissionController,
     Security\RoleController,
     Security\UserController,
+    Settings\NotificationController,
 };
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,11 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
 {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::post('/batch-deletion/{resource}', BatchDeletionController::class)->name('batch-deletion');
+
+    Route::controller(NotificationController::class)->group(function ()
+    {
+        Route::put('notifications/{notification}/mark-as-read', 'markAsRead')->name('notifications.mark-as-read');
+    });
 
     Route::controller(LogFileController::class)->group(function ()
     {

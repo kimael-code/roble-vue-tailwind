@@ -28,6 +28,7 @@ class UserObserver
                 auth()->user(),
                 [
                     'id' => $user->id,
+                    'type' => __('user'),
                     'name' => "({$user->name})",
                     'timestamp' => $user->created_at,
                 ],
@@ -58,6 +59,7 @@ class UserObserver
                 auth()->user(),
                 [
                     'id' => $user->id,
+                    'type' => __('user'),
                     'name' => "({$user->name})",
                     'timestamp' => $user->updated_at,
                 ],
@@ -87,6 +89,7 @@ class UserObserver
             $user->notify(new ActionHandledOnModel(
                 auth()->user(),
                 [
+                    'type' => __('user'),
                     'name' => "({$user->name})",
                     'timestamp' => now()->toISOString(),
                 ],
@@ -117,6 +120,7 @@ class UserObserver
                 auth()->user(),
                 [
                     'id' => $user->id,
+                    'type' => __('user'),
                     'name' => "({$user->name})",
                     'timestamp' => $user->updated_at,
                 ],
@@ -146,6 +150,7 @@ class UserObserver
             $user->notify(new ActionHandledOnModel(
                 auth()->user(),
                 [
+                    'type' => __('user'),
                     'name' => "({$user->name})",
                     'timestamp' => now()->toISOString(),
                 ],

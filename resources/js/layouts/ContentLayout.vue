@@ -6,7 +6,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="px-4 py-6">
+  <div class="duration-750 starting:opacity-0 px-4 py-6 opacity-100 transition-opacity">
     <div class="mb-8 space-y-0.5">
       <div class="flex items-start space-x-2">
         <slot v-if="$slots.icon" name="icon"></slot>

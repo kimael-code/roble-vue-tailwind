@@ -6,6 +6,7 @@ use App\Models\Security\Permission;
 use App\Models\Security\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class SysadmiRolesAndPermissionsSeeder extends Seeder
 {
@@ -30,6 +31,7 @@ class SysadmiRolesAndPermissionsSeeder extends Seeder
             'name' => __('Systems Administrator'),
             'description' => __('manages data related to system security and monitoring'),
         ]);
+        DB::unprepared("SELECT setval('roles_id_seq', (SELECT max(id) FROM roles));");
 
         // Permisos para gestionar los entes (organizaciones o compañías)
         Permission::create(['name' => 'create new organizations', 'description' => __('create new organizations')])->assignRole([$sysadminRole,]);

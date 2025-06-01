@@ -90,8 +90,8 @@ function index() {
               <div class="grid w-full items-center gap-4">
                 <div class="flex flex-col space-y-1.5">
                   <Label class="is-required" for="organization_id">Ente</Label>
-                  <Select id="organization_id" v-model="form.organization_id" required autofocus @update:model-value="form.validate('organization_id')">
-                    <SelectTrigger>
+                  <Select v-model="form.organization_id" required @update:model-value="form.validate('organization_id')">
+                    <SelectTrigger id="organization_id" autofocus>
                       <SelectValue placeholder="Seleccione Ente" />
                     </SelectTrigger>
                     <SelectContent>
@@ -136,14 +136,8 @@ function index() {
                 </div>
                 <div class="flex flex-col space-y-1.5">
                   <Label for="organizational_unit_id">Unidad Administrativa de Adscripción</Label>
-                  <Select
-                    id="organizational_unit_id"
-                    v-model="form.organizational_unit_id"
-                    required
-                    autofocus
-                    @change="form.validate('organizational_unit_id')"
-                  >
-                    <SelectTrigger>
+                  <Select v-model="form.organizational_unit_id" required @change="form.validate('organizational_unit_id')">
+                    <SelectTrigger id="organizational_unit_id">
                       <SelectValue placeholder="Seleccione Unidad Administrativa de Adscripción" />
                     </SelectTrigger>
                     <SelectContent>

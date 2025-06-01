@@ -29,6 +29,7 @@ class OrganizationalUnitObserver
                 auth()->user(),
                 [
                     'id' => $organizationalUnit->id,
+                    'type' => __('organizational unit'),
                     'name' => $organizationalUnit->name,
                     'timestamp' => $organizationalUnit->created_at,
                 ],
@@ -59,6 +60,7 @@ class OrganizationalUnitObserver
                 auth()->user(),
                 [
                     'id' => $organizationalUnit->id,
+                    'type' => __('organizational unit'),
                     'name' => $organizationalUnit->name,
                     'timestamp' => $organizationalUnit->updated_at,
                 ],
@@ -88,6 +90,7 @@ class OrganizationalUnitObserver
             $user->notify(new ActionHandledOnModel(
                 auth()->user(),
                 [
+                    'type' => __('organizational unit'),
                     'name' => $organizationalUnit->name,
                     'timestamp' => now()->toISOString(),
                 ],
