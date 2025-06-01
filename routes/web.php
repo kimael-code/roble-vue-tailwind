@@ -5,12 +5,12 @@ use App\Http\Controllers\{
     DashboardController,
     Debugging\ActivityLogController,
     Debugging\LogFileController,
+    NotificationController,
     Organization\OrganizationalUnitController,
     Organization\OrganizationController,
     Security\PermissionController,
     Security\RoleController,
     Security\UserController,
-    Settings\NotificationController,
 };
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +25,9 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
 
     Route::controller(NotificationController::class)->group(function ()
     {
+        Route::get('notifications', 'index')->name('notifications.index');
         Route::put('notifications/{notification}/mark-as-read', 'markAsRead')->name('notifications.mark-as-read');
+        Route::post('notifications', 'markAllAsRead')->name('notifications.mark-all-as-read');
     });
 
     Route::controller(LogFileController::class)->group(function ()

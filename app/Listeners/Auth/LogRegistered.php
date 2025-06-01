@@ -2,6 +2,8 @@
 
 namespace App\Listeners\Auth;
 
+use App\Models\User;
+use App\Notifications\ActionHandledOnModel;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -21,20 +23,29 @@ class LogRegistered
      */
     public function handle(Registered $event): void
     {
-        $causer = auth()->user();
+        session()->flash('message', [
+            'message' => "({$event->user->name})",
+            'title' => __('SAVED!'),
+            'type'  => 'success',
+        ]);
 
-        activity()
-            ->event('auth')
-            ->causedBy($causer)
-            ->performedOn($event->user)
-            ->withProperty('request', [
-                'ip_address'      => request()->ip(),
-                'user_agent'      => request()->header('user-agent'),
-                'user_agent_lang' => request()->header('accept-language'),
-                'referer'         => request()->header('referer'),
-                'http_method'     => request()->method(),
-                'request_url'     => request()->fullUrl(),
-            ])
-            ->log(__('user registered'));
+        $users = User::permission('create new users')->get()->filter(
+            fn (User $user) => $user->id != auth()->user()->id
+        )->all();
+
+        foreach ($users as $user)
+        {
+            $user->notify(new ActionHandledOnModel(
+                auth()->user(),
+                [
+                    'id' => $user->id,
+                    'type' => __('user'),
+                    'name' => "({$user->name})",
+                    'timestamp' => $user->created_at,
+                ],
+                'created',
+                ['routeName' => 'users', 'routeParam' => 'user']
+            ));
+        }
     }
 }

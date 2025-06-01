@@ -12,30 +12,7 @@ class UserObserver
      */
     public function created(User $user): void
     {
-        session()->flash('message', [
-            'message' => "({$user->name})",
-            'title' => __('SAVED!'),
-            'type'  => 'success',
-        ]);
-
-        $users = User::permission('create new users')->get()->filter(
-            fn (User $user) => $user->id != auth()->user()->id
-        )->all();
-
-        foreach ($users as $user)
-        {
-            $user->notify(new ActionHandledOnModel(
-                auth()->user(),
-                [
-                    'id' => $user->id,
-                    'type' => __('user'),
-                    'name' => "({$user->name})",
-                    'timestamp' => $user->created_at,
-                ],
-                'created',
-                ['routeName' => 'users', 'routeParam' => 'user']
-            ));
-        }
+        //
     }
 
     /**
@@ -43,30 +20,7 @@ class UserObserver
      */
     public function updated(User $user): void
     {
-        session()->flash('message', [
-            'message' => "({$user->name})",
-            'title' => __('SAVED!'),
-            'type'  => 'success',
-        ]);
-
-        $users = User::permission('update users')->get()->filter(
-            fn (User $user) => $user->id != auth()->user()->id
-        )->all();
-
-        foreach ($users as $user)
-        {
-            $user->notify(new ActionHandledOnModel(
-                auth()->user(),
-                [
-                    'id' => $user->id,
-                    'type' => __('user'),
-                    'name' => "({$user->name})",
-                    'timestamp' => $user->updated_at,
-                ],
-                'updated',
-                ['routeName' => 'users', 'routeParam' => 'user']
-            ));
-        }
+        //
     }
 
     /**
