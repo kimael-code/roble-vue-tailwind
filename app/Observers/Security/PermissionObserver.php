@@ -29,6 +29,7 @@ class PermissionObserver
                 auth()->user(),
                 [
                     'id' => $permission->id,
+                    'type' => __('permission'),
                     'name' => "{$permission->name} ({$permission->description})",
                     'timestamp' => $permission->created_at,
                 ],
@@ -59,6 +60,7 @@ class PermissionObserver
                 auth()->user(),
                 [
                     'id' => $permission->id,
+                    'type' => __('permission'),
                     'name' => "{$permission->name} ({$permission->description})",
                     'timestamp' => $permission->updated_at,
                 ],
@@ -88,6 +90,7 @@ class PermissionObserver
             $user->notify(new ActionHandledOnModel(
                 auth()->user(),
                 [
+                    'type' => __('permission'),
                     'name' => "{$permission->name} ({$permission->description})",
                     'timestamp' => now()->toISOString(),
                 ],

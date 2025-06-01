@@ -29,6 +29,7 @@ class OrganizationObserver
                 auth()->user(),
                 [
                     'id' => $organization->id,
+                    'type' => __('organization'),
                     'name' => "{$organization->rif} ({$organization->name})",
                     'timestamp' => $organization->created_at,
                 ],
@@ -59,6 +60,7 @@ class OrganizationObserver
                 auth()->user(),
                 [
                     'id' => $organization->id,
+                    'type' => __('organization'),
                     'name' => "{$organization->rif} ({$organization->name})",
                     'timestamp' => $organization->updated_at,
                 ],
@@ -88,6 +90,7 @@ class OrganizationObserver
             $user->notify(new ActionHandledOnModel(
                 auth()->user(),
                 [
+                    'type' => __('organization'),
                     'name' => "{$organization->rif} ({$organization->name})",
                     'timestamp' => now()->toISOString(),
                 ],
