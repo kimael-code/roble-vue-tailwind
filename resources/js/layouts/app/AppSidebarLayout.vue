@@ -3,9 +3,11 @@ import AppContent from '@/components/AppContent.vue';
 import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
-import type { BreadcrumbItemType, SharedData } from '@/types';
+import type { BreadcrumbItemType, NotificationData, SharedData } from '@/types';
 import { router, usePage } from '@inertiajs/vue3';
+import { useEchoModel } from '@laravel/echo-vue';
 import { watchImmediate } from '@vueuse/core';
+import { DateTime } from 'luxon';
 import { toast } from 'vue-sonner';
 
 interface Props {
@@ -16,8 +18,15 @@ withDefaults(defineProps<Props>(), {
   breadcrumbs: () => [],
 });
 
-const flashMessage = usePage<SharedData>().props.flash.message;
+const page = usePage<SharedData>();
+const { channel } = useEchoModel('App.Models.User', page.props.auth.user.id);
+const flashMessage = page.props.flash.message;
 
+channel().notification((n: NotificationData) => {
+  toast(n.causer, {
+    description: `${n.message}, ${DateTime.fromISO(n?.timestamp).toRelative()}`,
+  });
+});
 watchImmediate(
   () => flashMessage,
   () => {

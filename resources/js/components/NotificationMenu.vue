@@ -3,7 +3,7 @@ import { getInitials } from '@/composables/useInitials';
 import { SharedData } from '@/types';
 import { router, usePage } from '@inertiajs/vue3';
 import { useEchoModel } from '@laravel/echo-vue';
-import { BellDotIcon, HourglassIcon } from 'lucide-vue-next';
+import { BellRingIcon, HourglassIcon } from 'lucide-vue-next';
 import { DateTime } from 'luxon';
 import { computed, ref } from 'vue';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -33,7 +33,7 @@ channel().notification(() =>
   <div class="mr-8 ml-auto">
     <Popover>
       <PopoverTrigger as-child>
-        <Button v-show="unreadCount" size="icon"> <BellDotIcon /> </Button>
+        <Button v-show="unreadCount" size="icon"> <BellRingIcon /> </Button>
       </PopoverTrigger>
       <PopoverContent class="w-96">
         <div class="grid gap-4">
