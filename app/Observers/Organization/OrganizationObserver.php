@@ -19,7 +19,7 @@ class OrganizationObserver
             'type'  => 'success',
         ]);
 
-        $users = User::permission('create organizations')->get()->filter(
+        $users = User::permission('create new organizations')->get()->filter(
             fn (User $user) => $user->id != auth()->user()->id
         )->all();
 

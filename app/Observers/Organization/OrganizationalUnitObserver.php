@@ -19,7 +19,7 @@ class OrganizationalUnitObserver
             'type'  => 'success',
         ]);
 
-        $users = User::permission('create organizational units')->get()->filter(
+        $users = User::permission('create new organizational units')->get()->filter(
             fn (User $user) => $user->id != auth()->user()->id
         )->all();
 

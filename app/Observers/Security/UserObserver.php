@@ -18,7 +18,7 @@ class UserObserver
             'type'  => 'success',
         ]);
 
-        $users = User::permission('create users')->get()->filter(
+        $users = User::permission('create new users')->get()->filter(
             fn (User $user) => $user->id != auth()->user()->id
         )->all();
 
