@@ -1,27 +1,44 @@
 <script setup lang="ts">
-import AlertDialog from '@/components/AlertDialog.vue';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useRunAction } from '@/composables/useRunAction';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { BreadcrumbItem, Can, PaginatedCollection, Permission, Role, SearchFilter, User } from '@/types';
-import { Head, router, useForm } from '@inertiajs/vue3';
-import { LoaderCircle, Plus, UserIcon } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { Head } from '@inertiajs/vue3';
+import { EllipsisIcon, LoaderCircle, Plus, UserIcon } from 'lucide-vue-next';
+import { computed, ref, watch } from 'vue';
 import Permisos from './partials/Permisos.vue';
 import Roles from './partials/Roles.vue';
 
-interface Props {
+const props = defineProps<{
   can: Can;
   filters: SearchFilter;
   user: User;
   permissions: PaginatedCollection<Permission>;
   permissionsCount: number;
   roles: PaginatedCollection<Role>;
-}
-
-const props = defineProps<Props>();
+}>();
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -34,19 +51,11 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const deleteForm = useForm({});
-const isProcessing = ref(false);
-
-const title = computed(() =>
-  props.user.deleted_at
-    ? `¿Eliminar el/la usuario/a «${props.user.name}» permanentemente?`
-    : `¿Eliminar el/la usuario/a «${props.user.name}»?`,
-);
-const description = computed(() =>
-  props.user.deleted_at
-    ? 'Este usuario/a perderá el acceso al sistema. Sus datos serán eliminados permanentemente.'
-    : 'Este usuario/a perderá el acceso al sistema. Sus datos no serán eliminados.',
-);
+const { action, request, runAction } = useRunAction('users');
+const dialogOpen = ref(false);
+const dialogAction = ref('Continuar');
+const dialogTitle = ref('¿Está seguro?');
+const dialogDescription = ref('Si realmente está seguro haga clic en el botón "Continuar"');
 
 const userOUs = computed(() => {
   let result = 'Usuario Externo';
@@ -60,26 +69,31 @@ const userOUs = computed(() => {
   return result;
 });
 
-function deleteData() {
-  deleteForm.delete(route('users.destroy', props.user.id), {
-    onFinish: () => (isProcessing.value = false),
-    onStart: () => (isProcessing.value = true),
-  });
-}
+watch(action, () => {
+  switch (action.value) {
+    case 'delete':
+      dialogAction.value = 'Eliminar';
+      dialogTitle.value = `¿Eliminar usuario(a) «${props.user.name}»?`;
+      dialogDescription.value = `«${props.user.name}» perderá el acceso al sistema. Sus datos se conservarán.`;
+      dialogOpen.value = true;
+      break;
+    case 'restore':
+      dialogAction.value = 'Restaurar';
+      dialogTitle.value = `¿Restaurar usuario(a) «${props.user.name}»?`;
+      dialogDescription.value = `«${props.user.name}» recuperará el acceso al sistema. Sus datos se restaurarán.`;
+      dialogOpen.value = true;
+      break;
+    case 'f_delete':
+      dialogAction.value = 'Eliminar permanentemente';
+      dialogTitle.value = `¿Eliminar usuario(a) «${props.user.name}» permanentemente?`;
+      dialogDescription.value = `Esta acción no podrá revertirse. «${props.user.name}» perderá el acceso al sistema. Sus datos se eliminarán.`;
+      dialogOpen.value = true;
+      break;
 
-function editData() {
-  router.visit(route('users.edit', props.user.id), {
-    onFinish: () => (isProcessing.value = false),
-    onStart: () => (isProcessing.value = true),
-  });
-}
-
-function newData() {
-  router.visit(route('users.create'), {
-    onFinish: () => (isProcessing.value = false),
-    onStart: () => (isProcessing.value = true),
-  });
-}
+    default:
+      break;
+  }
+});
 </script>
 
 <template>
@@ -113,25 +127,44 @@ function newData() {
               <br />
               <p class="text-sm font-medium">Modificado</p>
               <p class="text-muted-foreground text-sm">{{ user.updated_at_human }}</p>
+              <br />
+              <p class="text-sm font-medium">Estatus</p>
+              <p v-if="user.deleted_at" class="text-sm text-red-500">ELIMINADO</p>
+              <p v-if="user.deleted_at" class="text-muted-foreground text-sm">{{ user.deleted_at_human }}</p>
+              <p v-else class="text-sm text-green-500">REGISTRADO</p>
             </CardContent>
-            <CardFooter class="flex justify-between px-6 pb-6">
-              <Button @click="editData" :disabled="isProcessing">
-                <LoaderCircle v-if="isProcessing" class="h-4 w-4 animate-spin" />
-                Editar
-              </Button>
-              <AlertDialog :title="title" :description="description" @continue="deleteData">
-                <Button variant="destructive" :disabled="isProcessing">
-                  <LoaderCircle v-if="isProcessing" class="h-4 w-4 animate-spin" />
-                  Eliminar
-                </Button>
-              </AlertDialog>
-            </CardFooter>
           </Card>
         </div>
         <div class="col-1 col-span-3">
-          <div class="flex items-center justify-end">
-            <Button v-if="can.create" class="mb-3" @click="newData" :disabled="isProcessing">
-              <LoaderCircle v-if="isProcessing" class="h-4 w-4 animate-spin" />
+          <div class="flex items-center justify-end pb-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger as-child>
+                <Button variant="outline" :disabled="request.processing">
+                  <LoaderCircle v-if="request.processing" class="animate-spin" />
+                  <EllipsisIcon v-else />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                  <DropdownMenuItem @click="request.get(route('users.edit', props.user.id))">
+                    <span>Editar</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem :disabled="!user.deleted_at" @click="action = 'restore'">
+                    <span>Restaurar</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem :disabled="user.deleted_at ? true : false" @click="action = 'delete'">
+                    <span>Eliminar</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem :disabled="!user.deleted_at" @click="action = 'f_delete'">
+                    <span>Eliminar permanentemente</span>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button v-if="can.create" class="ml-3" @click="request.get(route('users.create'))" :disabled="request.processing">
+              <LoaderCircle v-if="request.processing" class="h-4 w-4 animate-spin" />
               <Plus v-else class="mr-2 h-4 w-4" />
               Nuevo
             </Button>
@@ -150,6 +183,21 @@ function newData() {
           </Tabs>
         </div>
       </section>
+
+      <AlertDialog v-model:open="dialogOpen">
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{{ dialogTitle }}</AlertDialogTitle>
+            <AlertDialogDescription>{{ dialogDescription }}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction @click="runAction(user.id)">
+              {{ dialogAction }}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </ContentLayout>
   </AppLayout>
 </template>

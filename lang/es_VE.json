@@ -53,5 +53,7 @@
   "read sysadmin dashboard": "ver tablero de administrador de sistema",
 
   "person attached to organizational unit": "persona asociada a unidad administrativa",
-  "This is the only user with Systems Administrator permissions.": "Este usuario es el único con permisos de Administrador de Sistemas."
+  "This is the only user with Systems Administrator permissions.": "Este usuario es el único con permisos de Administrador de Sistemas.",
+  "DELETED": "ELIMINADO",
+  "REGISTERED": "REGISTRADO"
 }

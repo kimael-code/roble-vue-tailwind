@@ -38,12 +38,13 @@ export interface User {
   email_verified_at: string | null;
   created_at: string;
   updated_at: string;
-  deleted_at?: string | null;
+  deleted_at: string | null;
   is_password_set: boolean;
   is_external: boolean;
   created_at_human?: string | null;
   updated_at_human?: string | null;
   deleted_at_human?: string | null;
+  record_status?: string;
   person?: Person;
   active_organizational_units?: Array<OrganizationalUnit>;
   organizational_units?: Array<OrganizationalUnit>;
@@ -103,6 +104,8 @@ export interface Can {
   read?: boolean;
   update: boolean;
   delete: boolean;
+  f_delete?: boolean;
+  restore?: boolean;
   enable?: boolean;
   disable?: boolean;
   export?: boolean;

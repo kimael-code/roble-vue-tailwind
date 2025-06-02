@@ -33,7 +33,21 @@ const props = withDefaults(defineProps<Props>(), {
   hasNewButton: true,
   hasBatchActionsButton: true,
 });
-const emit = defineEmits(['batchDestroy', 'export', 'search', 'new', 'read', 'update', 'destroy', 'export', 'enable', 'disable']);
+
+const emit = defineEmits([
+  'batchDestroy',
+  'export',
+  'search',
+  'new',
+  'read',
+  'update',
+  'destroy',
+  'forceDestroy',
+  'restore',
+  'export',
+  'enable',
+  'disable',
+]);
 
 const form = useForm({
   search: props.filters?.search || undefined,
@@ -111,6 +125,8 @@ watchDebounced(
                     @read="(row) => $emit('read', row)"
                     @update="(row) => $emit('update', row)"
                     @destroy="(row) => $emit('destroy', row)"
+                    @force-destroy="(row) => $emit('forceDestroy', row)"
+                    @restore="(row) => $emit('restore', row)"
                     @export="(row) => $emit('export', row)"
                     @enable="(row) => $emit('enable', row)"
                     @disable="(row) => $emit('disable', row)"
