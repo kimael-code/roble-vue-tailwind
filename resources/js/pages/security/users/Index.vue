@@ -11,7 +11,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { valueUpdater } from '@/components/ui/table/utils';
-import { useConfirmAction } from '@/composables/useConfirmAction';
+import { useRunAction } from '@/composables/useRunAction';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { BreadcrumbItem, Can, PaginatedCollection, User } from '@/types';
@@ -44,7 +44,11 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { confirmAction, dataRow, openDialog } = useConfirmAction();
+const { action, subject, runAction } = useRunAction('users');
+const dialogOpen = ref(false);
+const dialogAction = ref('Continuar');
+const dialogTitle = ref('¿Está seguro?');
+const dialogDescription = ref('Si realmente está seguro haga clic en el botón "Continuar"');
 
 permissions.value = props.can;
 const sorting = ref<SortingState>([]);
@@ -65,7 +69,7 @@ function handleSortingChange(item: any) {
     });
 
     router.visit(route('users.index'), {
-      data,
+      data: { sortBy: data },
       only: ['users'],
       preserveScroll: true,
       preserveState: true,
@@ -117,6 +121,31 @@ watch(
   () => props.users.data,
   (newData) => table.setOptions((prev) => ({ ...prev, data: newData })),
 );
+watch(action, () => {
+  switch (action.value) {
+    case 'delete':
+      dialogAction.value = 'Eliminar';
+      dialogTitle.value = `¿Eliminar usuario(a) «${subject.value?.name}»?`;
+      dialogDescription.value = `«${subject.value?.name}» perderá el acceso al sistema. Sus datos se conservarán.`;
+      dialogOpen.value = true;
+      break;
+    case 'restore':
+      dialogAction.value = 'Restaurar';
+      dialogTitle.value = `¿Restaurar usuario(a) «${subject.value?.name}»?`;
+      dialogDescription.value = `«${subject.value?.name}» recuperará el acceso al sistema. Sus datos se restaurarán.`;
+      dialogOpen.value = true;
+      break;
+    case 'f_delete':
+      dialogAction.value = 'Eliminar permanentemente';
+      dialogTitle.value = `¿Eliminar usuario(a) «${subject.value?.name}» permanentemente?`;
+      dialogDescription.value = `Esta acción no podrá revertirse. «${subject.value?.name}» perderá el acceso al sistema. Sus datos se eliminarán.`;
+      dialogOpen.value = true;
+      break;
+
+    default:
+      break;
+  }
+});
 </script>
 
 <template>
@@ -140,30 +169,21 @@ watch(
         @new="router.get(route('users.create'))"
         @read="(row) => router.get(route('users.show', row?.id))"
         @update="(row) => router.get(route('users.edit', row?.id))"
-        @destroy="(row) => confirmAction(row)"
+        @destroy="(row) => ((action = 'delete'), (subject = row))"
+        @force-destroy="(row) => ((action = 'f_delete'), (subject = row))"
+        @restore="(row) => ((action = 'restore'), (subject = row))"
       />
 
-      <AlertDialog v-model:open="openDialog">
+      <AlertDialog v-model:open="dialogOpen">
         <AlertDialogContent>
-          <AlertDialogHeader v-if="!dataRow?.deleted_at">
-            <AlertDialogTitle>{{ `¿Eliminar el usuario «${dataRow.name}»?` }}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {{ `Este usuario no podrá ingresar al sistema. Sus datos no se perderán.` }}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogHeader v-else>
-            <AlertDialogTitle>{{ `¿Eliminar el usuario «${dataRow.name}» permanentemente?` }}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {{ `Este usuario no podrá ingresar al sistema. Sus datos se borrarán permanentemente.` }}
-            </AlertDialogDescription>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{{ dialogTitle }}</AlertDialogTitle>
+            <AlertDialogDescription>{{ dialogDescription }}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              @click="router.delete(route('users.destroy', dataRow.id), { preserveState: false })"
-            >
-              Continuar
+            <AlertDialogCancel @click="action = ''">Cancelar</AlertDialogCancel>
+            <AlertDialogAction @click="runAction(subject.id)">
+              {{ dialogAction }}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

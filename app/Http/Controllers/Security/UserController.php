@@ -86,4 +86,13 @@ class UserController extends Controller
 
         return redirect(route('users.index'));
     }
+
+    public function restore(User $user)
+    {
+        Gate::authorize('restore', $user);
+
+        $user->restore();
+
+        return redirect()->back();
+    }
 }

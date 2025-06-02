@@ -9,10 +9,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Can } from '@/types';
-import { Eye, FileDown, MoreHorizontal, Pencil, ToggleLeft, ToggleRight, Trash2 } from 'lucide-vue-next';
+import { Eye, FileDown, MoreHorizontal, Pencil, RotateCcwIcon, ToggleLeft, ToggleRight, Trash2, XIcon } from 'lucide-vue-next';
 
 defineProps<{
-  row: object;
+  row: {
+    [index: string]: any;
+  };
   can: Can;
 }>();
 
@@ -20,9 +22,11 @@ defineEmits<{
   read: [row: object];
   update: [row: object];
   destroy: [row: object];
+  forceDestroy: [row: object];
   export: [row: object];
   enable: [row: object];
   disable: [row: object];
+  restore: [row: object];
 }>();
 </script>
 
@@ -45,9 +49,17 @@ defineEmits<{
         <Pencil />
         <span>Editar</span>
       </DropdownMenuItem>
-      <DropdownMenuItem v-if="can.delete" @click="$emit('destroy', row)">
+      <DropdownMenuItem v-if="can.restore" :disabled="!row?.deleted_at" @click="$emit('restore', row)">
+        <RotateCcwIcon />
+        <span>Restaurar</span>
+      </DropdownMenuItem>
+      <DropdownMenuItem v-if="can.delete" :disabled="row?.deleted_at ? true : false" @click="$emit('destroy', row)">
         <Trash2 />
         <span>Eliminar</span>
+      </DropdownMenuItem>
+      <DropdownMenuItem v-if="can.f_delete" :disabled="!row?.deleted_at" @click="$emit('forceDestroy', row)">
+        <XIcon />
+        <span>Eliminar permanentemente</span>
       </DropdownMenuItem>
       <DropdownMenuSeparator v-if="can.enable || can.disable" />
       <DropdownMenuItem v-if="can.enable" @click="$emit('destroy', row)">

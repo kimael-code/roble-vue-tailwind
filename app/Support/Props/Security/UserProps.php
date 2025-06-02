@@ -24,7 +24,9 @@ class UserProps
             'read' => Auth::user()->can('read user'),
             'update' => Auth::user()->can('update users'),
             'delete' => Auth::user()->can('delete users'),
+            'f_delete' => Auth::user()->can('force delete users'),
             'export' => Auth::user()->can('export users'),
+            'restore' => Auth::user()->can('restore users'),
         ];
     }
 
@@ -32,9 +34,9 @@ class UserProps
     {
         return [
             'can' => self::getPermissions(),
-            'filters' => Request::all(['search', 'name', 'email']),
+            'filters' => Request::all(['search', 'sortBy',]),
             'users' => fn() => new UserCollection(
-                User::filter(Request::only(['search', 'name', 'email']))
+                User::withTrashed()->filter(Request::only(['search', 'sortBy',]))
                     ->paginate(10)
                     ->withQueryString()
             ),

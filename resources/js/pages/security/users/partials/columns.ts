@@ -82,6 +82,33 @@ export const columns = [
     },
     cell: (info) => h('div', info.getValue()),
   }),
+  columnHelper.accessor('record_status', {
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
+      const isSortedDesc = column.getIsSorted() === 'desc';
+
+      return h(
+        Button,
+        {
+          variant: isSorted ? 'default' : 'ghost',
+          class: 'ml-auto',
+        },
+        () => [
+          'Estatus',
+          isSorted
+            ? isSortedDesc
+              ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
+              : h(ChevronUp, { class: 'ml-2 h-4 w-4' })
+            : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
+        ],
+      );
+    },
+    cell: (info) => {
+      const cssClass = info.getValue() === 'ELIMINADO' ? 'text-red-500' : 'text-green-500';
+
+      return h('div', { class: cssClass }, info.getValue());
+    },
+  }),
   columnHelper.display({
     id: 'actions',
     enableHiding: false,

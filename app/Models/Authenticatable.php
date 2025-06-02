@@ -18,7 +18,7 @@ class Authenticatable extends User
      *
      * @var array
      */
-    protected $appends = ['created_at_human', 'updated_at_human', 'deleted_at_human'];
+    protected $appends = ['created_at_human', 'updated_at_human', 'deleted_at_human', 'record_status'];
 
     protected function createdAtHuman(): Attribute
     {
@@ -75,6 +75,23 @@ class Authenticatable extends User
                 else
                 {
                     return null;
+                }
+            },
+        );
+    }
+
+    protected function recordStatus(): Attribute
+    {
+        return Attribute::make(
+            get: function (mixed $value, array $attributes)
+            {
+                if ($attributes['deleted_at'] ?? null)
+                {
+                    return __('DELETED');
+                }
+                else
+                {
+                    return __('REGISTERED');
                 }
             },
         );

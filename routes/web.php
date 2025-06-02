@@ -39,10 +39,16 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
 
     Route::resource('activity-logs', ActivityLogController::class)->only(['index', 'show',]);
 
+    Route::put('users/{user}/restore', [UserController::class, 'restore'])
+        ->withTrashed()
+        ->name('users.restore');
+    Route::resource('users', UserController::class)
+        ->withTrashed(['show', 'edit', 'update', 'destroy'])
+        ->middleware(HandlePrecognitiveRequests::class);
+
     Route::resources([
         'permissions' => PermissionController::class,
         'roles' => RoleController::class,
-        'users' => UserController::class,
         'organizations' => OrganizationController::class,
         'organizational-units' => OrganizationalUnitController::class,
     ], [

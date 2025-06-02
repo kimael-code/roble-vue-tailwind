@@ -90,6 +90,6 @@ class UserPolicy
             return Response::deny(__('You cannot delete yourself.'));
         }
 
-        return $user->can('delete users');
+        return $user->can('force delete users');
     }
 }
