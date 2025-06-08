@@ -99,7 +99,8 @@ const table = useVueTable({
 
 watch(
   () => props.logs.data,
-  (newData) => table.setOptions((prev) => ({ ...prev, data: newData })),
+  (newData) => table.setOptions((prev) => ({ ...prev, data: [...newData] })),
+  { deep:true }
 );
 watchEffect(() => (requestingRead.value === false ? (processingRowId.value = null) : false));
 </script>

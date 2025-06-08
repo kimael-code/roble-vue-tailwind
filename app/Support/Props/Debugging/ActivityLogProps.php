@@ -27,27 +27,11 @@ class ActivityLogProps
     {
         $filtersOnly = Request::only([
             'search',
-            'orderBy',
-            'd',
-            'cn',
-            'cah',
-            'user_ids',
-            'event_types',
-            'ts_b',
-            'ts_e',
-            'ts_h',
+            'sortBy',
         ]);
         $filtersAll = Request::all([
             'search',
-            'orderBy',
-            'd',
-            'cn',
-            'cah',
-            'user_ids',
-            'event_types',
-            'ts_b',
-            'ts_e',
-            'ts_h',
+            'sortBy',
         ]);
 
         return [
@@ -57,6 +41,14 @@ class ActivityLogProps
             'events' => Inertia::lazy(fn() => ActivityLog::select('event')->distinct()->get()->pluck('event')),
             'logs' => new ActivityLogCollection(
                 ActivityLog::filter($filtersOnly)
+                    ->select([
+                        'activity_log.id',
+                        'activity_log.description',
+                        'activity_log.causer_id',
+                        'activity_log.causer_type',
+                        'activity_log.created_at',
+                        'activity_log.updated_at',
+                    ])
                     ->with('causer')
                     ->paginate()
                     ->withQueryString()

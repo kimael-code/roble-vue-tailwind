@@ -2,9 +2,9 @@
 
 namespace App\Models\Debugging;
 
-use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Carbon;
 use Spatie\Activitylog\Models\Activity;
 
@@ -31,6 +31,11 @@ class ActivityLog extends Activity
         );
     }
 
+    public function causer(): MorphTo
+    {
+        return $this->morphTo()->withTrashed();
+    }
+
     public function scopeFilter(Builder $query, array $filters): void
     {
         $query->when($filters['search'] ?? null, function (Builder $query, $term)
@@ -40,94 +45,28 @@ class ActivityLog extends Activity
                 $query->whereRaw('unaccent(description) ilike unaccent(?)', ["%$term%"]);
             });
         })
-        ->when($filters['user'] ?? null, function (Builder $query, $userID)
-        {
-            $query->whereHasMorph(
-                'causer',
-                User::class,
-                function (Builder $query) use ($userID)
-                {
-                    $query->where('users.id', '=', $userID);
-                }
-            );
-        })
-        ->when($filters['user_ids'] ?? null, function (Builder $query, $ids)
-        {
-            $query->whereIn('causer_id', $ids);
-        })
-        ->when($filters['event_types'] ?? null, function (Builder $query, $ids)
-        {
-            $query->whereIn('event', $ids);
-        })
-        ->when($filters['ts_b'] ?? null, function (Builder $query, $ts)
-        {
-            $query->where('created_at', '>=', $ts);
-        })
-        ->when($filters['ts_e'] ?? null, function (Builder $query, $ts)
-        {
-            $query->where('created_at', '<=', $ts);
-        })
-        ->when($filters['ts_h'] ?? null, function (Builder $query, $ts)
-        {
-            if (in_array('ytd', $ts, true) && in_array('now', $ts, true))
+            ->when($filters['sortBy'] ?? null, function (Builder $query, array $sorts)
             {
-                $query->whereDate('created_at', now()->toDateString())
-                    ->orWhereDate('created_at', Carbon::yesterday()->toDateString());
-            }
-            else
-            {
-                foreach ($ts as $value)
+                foreach ($sorts as $field => $direction)
                 {
-                    if ($value === 'now')
+                    switch ($field)
                     {
-                        $query->whereDate('created_at', now()->toDateString());
-                    }
-                    if ($value === 'ytd')
-                    {
-                        $query->whereDate('created_at', Carbon::yesterday()->toDateString());
+                        case 'causer':
+                            $query->join('users', 'users.id', '=', 'activity_log.causer_id')
+                                ->orderBy('users.name', $direction);
+                            break;
+                        case 'created_at_human':
+                            $query->orderBy('activity_log.created_at', $direction);
+                            break;
+
+                        default:
+                            break;
                     }
                 }
-            }
-        })
-        ->when($filters['d'] ?? null, function (Builder $query, $way)
-        {
-            switch ($way)
+            })
+            ->when(empty($filters) ?? null, function (Builder $query)
             {
-                case 'u':
-                    $query->orderBy('description');
-                    break;
-                case 'd':
-                    $query->orderBy('description', 'desc');
-                    break;
-            }
-        })
-        ->when($filters['cn'] ?? null, function (Builder $query, $way)
-        {
-            switch ($way)
-            {
-                case 'u':
-                    $query->orderBy('causer_id');
-                    break;
-                case 'd':
-                    $query->orderBy('causer_id', 'desc');
-                    break;
-            }
-        })
-        ->when($filters['cah'] ?? null, function (Builder $query, $way)
-        {
-            switch ($way)
-            {
-                case 'u':
-                    $query->orderBy('created_at');
-                    break;
-                case 'd':
-                    $query->orderBy('created_at', 'desc');
-                    break;
-            }
-        })
-        ->when(empty($filters) ?? null, function (Builder $query)
-        {
-            $query->latest();
-        });
+                $query->latest();
+            });
     }
 }
