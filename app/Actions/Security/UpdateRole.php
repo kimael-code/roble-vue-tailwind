@@ -49,9 +49,9 @@ class UpdateRole
                 activity()
                     ->causedBy($authUser)
                     ->performedOn($role)
-                    ->event('auth')
+                    ->event('authorizated')
                     ->withProperties([
-                        'permission' => $permission->toJson(),
+                        'permission' => $permission,
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -80,9 +80,9 @@ class UpdateRole
                 activity()
                     ->causedBy($authUser)
                     ->performedOn($role)
-                    ->event('auth')
+                    ->event('authorizated')
                     ->withProperties([
-                        'permission' => $assignedPermission->toJson(),
+                        'permission' => $assignedPermission,
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),

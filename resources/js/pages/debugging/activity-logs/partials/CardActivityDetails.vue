@@ -20,8 +20,10 @@ const props = defineProps<{
 
 const cardTitle = computed(() => {
   switch (props.log.event) {
-    case 'auth':
-      return 'AUTH';
+    case 'authenticated':
+      return 'AUTHENTICATED';
+    case 'authorizated':
+      return 'AUTHORIZATED';
     case 'created':
       return 'CREATED';
     case 'updated':
@@ -36,7 +38,7 @@ const cardTitle = computed(() => {
 
 const cardDescription = computed(() => {
   switch (props.log.event) {
-    case 'auth':
+    case 'authenticated':
       return 'Este evento no posee más detalles de los ya mostrados en la tarjeta "Detalles de la Petición".';
     case 'created':
       return props.log.subject_type;

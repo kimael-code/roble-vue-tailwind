@@ -24,7 +24,7 @@ class LogFailed
         $causer = $event->user;
 
         activity()
-            ->event('auth')
+            ->event('authenticated')
             ->causedBy($causer)
             ->withProperty('request', [
                 'ip_address'      => request()->ip(),

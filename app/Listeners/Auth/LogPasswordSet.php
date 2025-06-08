@@ -25,7 +25,7 @@ class LogPasswordSet
         activity()
             ->performedOn($event->user)
             ->causedBy($event->user)
-            ->event('auth')
+            ->event('authenticated')
             ->tap(function (Activity $activity)
             {
                 $activity->properties = $activity->properties->put('request', [

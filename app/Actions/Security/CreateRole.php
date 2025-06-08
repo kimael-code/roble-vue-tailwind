@@ -30,9 +30,9 @@ class CreateRole
                 activity()
                     ->causedBy($user)
                     ->performedOn($role)
-                    ->event('auth')
+                    ->event('authorizated')
                     ->withProperties([
-                        'permission' => $permission->toJson(),
+                        'permission' => $permission,
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->userAgent(),
