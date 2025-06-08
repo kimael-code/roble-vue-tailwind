@@ -28,9 +28,9 @@ class PermissionProps
     {
         return [
             'can' => self::getPermissions(),
-            'filters' => Request::all(['search', 'name', 'description']),
+            'filters' => Request::all(['search', 'sortBy',]),
             'permissions' => fn() => new PermissionCollection(
-                Permission::filter(Request::only(['search', 'name', 'description']))
+                Permission::filter(Request::only(['search', 'sortBy',]))
                     ->paginate(10)
                     ->withQueryString()
             ),

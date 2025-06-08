@@ -1,17 +1,7 @@
 <script setup lang="ts">
 import DataTable from '@/components/DataTable.vue';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { valueUpdater } from '@/components/ui/table/utils';
-import { useConfirmAction } from '@/composables/useConfirmAction';
+import { useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { ActivityLog, BreadcrumbItem, Can, PaginatedCollection, SearchFilter, User } from '@/types';
@@ -27,8 +17,8 @@ import {
   useVueTable,
 } from '@tanstack/vue-table';
 import { LogsIcon } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
-import { columns, permissions } from './partials/columns';
+import { ref, watch, watchEffect } from 'vue';
+import { columns, permissions, processingRowId } from './partials/columns';
 
 const props = defineProps<{
   can: Can;
@@ -38,8 +28,6 @@ const props = defineProps<{
   logs: PaginatedCollection<ActivityLog>;
 }>();
 
-permissions.value = props.can;
-
 const breadcrumbs: BreadcrumbItem[] = [
   {
     title: 'Trazas',
@@ -47,8 +35,9 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { confirmAction, dataRow, openDialog } = useConfirmAction();
+const { requestRead, requestingRead } = useRequestActions('activity-logs');
 
+permissions.value = props.can;
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const globalFilter = ref('');
@@ -67,20 +56,13 @@ function handleSortingChange(item: any) {
     });
 
     router.visit(route('activity-logs.index'), {
-      data,
-      only: ['organizationalUnits'],
+      data: { sortBy: data },
+      only: ['logs'],
       preserveScroll: true,
       preserveState: true,
       onSuccess: () => (sorting.value = sortValue),
     });
   }
-}
-
-function handleBatchDeletion() {
-  router.post(route('batch-deletion', { resource: 'organizationalUnits' }), rowSelection.value, {
-    preserveState: false,
-    onFinish: () => (rowSelection.value = {}),
-  });
 }
 
 const table = useVueTable({
@@ -119,6 +101,7 @@ watch(
   () => props.logs.data,
   (newData) => table.setOptions((prev) => ({ ...prev, data: newData })),
 );
+watchEffect(() => (requestingRead.value === false ? (processingRowId.value = null) : false));
 </script>
 
 <template>
@@ -134,36 +117,12 @@ watch(
         :columns="columns"
         :data="logs"
         :filters="filters"
-        :search-only="['organizationalUnits']"
+        :search-only="['logs']"
         :search-route="route('activity-logs.index')"
         :table="table"
-        @batch-destroy="handleBatchDeletion"
         @search="(s) => (globalFilter = s)"
-        @new="router.get(route('activity-logs.create'))"
-        @read="(row) => router.get(route('activity-logs.show', row?.id))"
-        @update="(row) => router.get(route('activity-logs.edit', row?.id))"
-        @destroy="(row) => confirmAction(row)"
+        @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
       />
-
-      <AlertDialog v-model:open="openDialog">
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{{ `¿Eliminar la unidad administrativa «${dataRow.name}» permanentemente?` }}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {{ `Los datos de la unidad administrativa se perderán permanentemente.` }}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              @click="router.delete(route('activity-logs.destroy', dataRow.id), { preserveState: false })"
-            >
-              Continuar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </ContentLayout>
   </AppLayout>
 </template>

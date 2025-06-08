@@ -21,7 +21,7 @@ const props = defineProps<{
 const cardTitle = computed(() => {
   switch (props.log.event) {
     case 'auth':
-      return 'Autenticación';
+      return 'AUTH';
     case 'created':
       return 'CREATED';
     case 'updated':
@@ -65,14 +65,15 @@ function compareObjects(obj1: GenericModel, obj2: GenericModel) {
     // Manejo de tipos de datos complejos (objetos y arrays)
     if (typeof value1 === 'object' && value1 !== null && typeof value2 === 'object' && value2 !== null) {
       if (Array.isArray(value1) && Array.isArray(value2)) {
-        // Comparar arrays (orden no importa si solo comparamos elementos)
+        // Comparar arrays (el orden no importa si sólo comparamos elementos)
+        // @ts-expect-error: la propiedad no existe en el objeto
         if (value1.length !== value2.length || !value1.every((item) => value2.includes(item)) || !value2.every((item) => value1.includes(item))) {
           areEqual = false;
         }
         displayValue1 = JSON.stringify(value1);
         displayValue2 = JSON.stringify(value2);
       } else {
-        // Comparar objetos anidados (superficialmente, puedes extender esto para una comparación profunda)
+        // Comparar objetos anidados (superficialmente, se puede extender esto para una comparación profunda)
         if (JSON.stringify(value1) !== JSON.stringify(value2)) {
           areEqual = false;
         }

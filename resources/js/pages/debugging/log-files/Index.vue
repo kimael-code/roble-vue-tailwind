@@ -161,8 +161,10 @@ function deleteLog() {
           <AlertDialogDescription> Antes de eliminarlo asegúrese de haberlo descargado previamente. </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel @click="selectedFile = ''">Cancelar</AlertDialogCancel>
-          <AlertDialogAction @click="deleteLog">Continuar</AlertDialogAction>
+          <AlertDialogCancel @click="selectedFile = ''"> Cancelar </AlertDialogCancel>
+          <AlertDialogAction class="bg-destructive text-destructive-foreground hover:bg-destructive/90" @click="deleteLog">
+            Eliminar
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

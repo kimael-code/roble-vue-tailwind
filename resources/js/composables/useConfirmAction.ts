@@ -1,13 +1,12 @@
-import { Ref, ref, toValue } from 'vue';
+import { Ref, ref } from 'vue';
 
 export function useConfirmAction() {
-  const openDialog = ref(false);
-  const dataRow: Ref<{ [index: string]: any }> = ref({});
+  const alertOpen = ref(false);
+  const alertAction = ref('Continuar');
+  const alertActionCss = ref('');
+  const alertTitle = ref('¿Está seguro?');
+  const alertDescription = ref('Si realmente está seguro haga clic en el botón "Continuar"');
+  const alertData: Ref<Record<string, any>> = ref({});
 
-  function confirmAction(withData: Ref<{ [index: string]: any }> | { [index: string]: any }) {
-    openDialog.value = true;
-    dataRow.value = toValue(withData);
-  }
-
-  return { confirmAction, dataRow, openDialog };
+  return { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData };
 }

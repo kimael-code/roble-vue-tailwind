@@ -3,7 +3,7 @@ import { Can, PaginatedCollection } from '@/types';
 import { router, useForm } from '@inertiajs/vue3';
 import { ColumnDef, FlexRender, Table as TanstackTable } from '@tanstack/vue-table';
 import { watchDebounced } from '@vueuse/core';
-import { Delete, Plus } from 'lucide-vue-next';
+import { Delete, EllipsisIcon, LoaderCircleIcon, PlusIcon } from 'lucide-vue-next';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -28,10 +28,14 @@ interface Props {
   table: TanstackTable<any>;
   hasNewButton?: boolean;
   hasBatchActionsButton?: boolean;
+  isLoadingNew?: boolean;
+  isLoadingDropdown?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   hasNewButton: true,
   hasBatchActionsButton: true,
+  isLoadingNew: false,
+  isLoadingDropdown: false,
 });
 
 const emit = defineEmits([
@@ -88,7 +92,10 @@ watchDebounced(
       </div>
       <DropdownMenu v-if="can && (can.delete || can.export)">
         <DropdownMenuTrigger as-child>
-          <Button variant="outline" class="ml-auto"> ... </Button>
+          <Button variant="outline" class="ml-auto">
+            <LoaderCircleIcon v-if="isLoadingDropdown" class="animate-spin" />
+            <EllipsisIcon v-else />
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuGroup>
@@ -101,7 +108,8 @@ watchDebounced(
         </DropdownMenuContent>
       </DropdownMenu>
       <Button v-if="can && can.create" class="ml-3" @click="$emit('new')">
-        <Plus class="mr-2 h-4 w-4" />
+        <LoaderCircleIcon v-if="isLoadingNew" class="h-4 w-4 animate-spin" />
+        <PlusIcon v-else class="mr-2 h-4 w-4" />
         Nuevo
       </Button>
     </div>

@@ -103,6 +103,21 @@ class Organization extends BaseModel
                         ->orWhereRaw('unaccent(acronym) ilike unaccent(?)', ["%$term%"]);
                 });
             })
+            ->when($filters['sortBy'] ?? null, function (Builder $query, array $sorts)
+            {
+                foreach ($sorts as $field => $direction)
+                {
+                    if ($field === 'status')
+                    {
+                        $newDirection = $direction === 'asc' ? 'desc' : 'asc';
+                        $query->orderBy('disabled_at', $newDirection);
+                    }
+                    else
+                    {
+                        $query->orderBy($field, $direction);
+                    }
+                }
+            })
             ->when(empty($filters) ?? null, function (Builder $query)
             {
                 $query->latest();

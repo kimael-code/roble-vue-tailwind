@@ -26,9 +26,15 @@ class OrganizationalUnitProps
     {
         return [
             'can' => self::getPermissions(),
-            'filters' => Request::all(['search', 'name', 'organization', 'disabled_at']),
-            'organizationalUnits' => fn() => new OrganizationalUnitCollection(
-                OrganizationalUnit::filter(Request::only(['search', 'name', 'organization', 'disabled_at']))
+            'filters' => Request::all(['search', 'sortBy',]),
+            'organizationalUnits' => new OrganizationalUnitCollection(
+                OrganizationalUnit::filter(Request::only(['search', 'sortBy',]))
+                    ->select([
+                        'organizational_units.id',
+                        'organizational_units.name',
+                        'organizational_units.disabled_at',
+                        'organization_id',
+                    ])
                     ->with(['organization'])
                     ->paginate(10)
                     ->withQueryString()

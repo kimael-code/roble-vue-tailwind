@@ -6,6 +6,8 @@ import { createColumnHelper } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { h, ref } from 'vue';
 
+const columnHelper = createColumnHelper<Organization>();
+
 export const permissions = ref<Can>({
   create: false,
   read: false,
@@ -16,7 +18,7 @@ export const permissions = ref<Can>({
   export: false,
 });
 
-const columnHelper = createColumnHelper<Organization>();
+export const processingRowId = ref<number | string | null>(null);
 
 export const columns = [
   columnHelper.display({
@@ -59,7 +61,7 @@ export const columns = [
     },
     cell: (info) => h('div', info.getValue()),
   }),
-  columnHelper.accessor('disabled_at', {
+  columnHelper.accessor('status', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       const isSortedDesc = column.getIsSorted() === 'desc';
@@ -81,23 +83,19 @@ export const columns = [
       );
     },
     cell: (info) => {
-      const isDisabled = info.getValue() ? true : false;
-      const cssClass = isDisabled ? 'text-red-500' : 'text-green-500';
-      const text = isDisabled ? 'INACTIVO' : 'ACTIVO';
+      const cssClass = info.getValue() === 'INACTIVO' ? 'text-red-500' : 'text-green-500';
 
-      return h('div', { class: cssClass }, text);
+      return h('div', { class: cssClass }, info.getValue());
     },
   }),
   columnHelper.display({
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const data = row.original;
-      const can = permissions.value;
-
       return h(DataTableActions, {
-        row: data,
-        can,
+        row: row.original,
+        can: permissions.value,
+        loading: processingRowId.value === row.original.id,
         onExpand: row.toggleExpanded,
       });
     },

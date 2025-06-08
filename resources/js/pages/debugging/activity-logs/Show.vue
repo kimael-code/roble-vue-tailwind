@@ -35,7 +35,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         <LogsIcon />
       </template>
       <section class="grid gap-4 md:grid-cols-4">
-        <div class="col-1 col-span-3 md:col-span-1">
+        <div class="col-span-3 md:col-span-1">
           <Card class="container">
             <CardHeader>
               <CardTitle>Detalles de la Petición</CardTitle>
@@ -58,7 +58,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             </CardContent>
           </Card>
         </div>
-        <div class="col-1 col-span-3">
+        <div class="col-span-3">
           <Tabs default-value="user" class="w-auto">
             <TabsList class="grid w-full grid-cols-2">
               <TabsTrigger value="user">DATOS DEL USUARIO</TabsTrigger>

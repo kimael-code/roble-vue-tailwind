@@ -103,28 +103,18 @@ class Permission extends SpatiePermission
                         ->orWhere('description', 'ilike', "%$term%");
                 });
             })
-            ->when($filters['name'] ?? null, function (Builder $query, $dir)
+            ->when($filters['sortBy'] ?? null, function (Builder $query, array $sorts)
             {
-                switch ($dir)
+                foreach ($sorts as $field => $direction)
                 {
-                    case 'asc':
-                        $query->orderBy('name');
-                        break;
-                    case 'desc':
-                        $query->orderBy('name', 'desc');
-                        break;
-                }
-            })
-            ->when($filters['description'] ?? null, function (Builder $query, $dir)
-            {
-                switch ($dir)
-                {
-                    case 'asc':
-                        $query->orderBy('description');
-                        break;
-                    case 'desc':
-                        $query->orderBy('description', 'desc');
-                        break;
+                    if ($field === 'record_status')
+                    {
+                        $query->orderBy('deleted_at', $direction);
+                    }
+                    else
+                    {
+                        $query->orderBy($field, $direction);
+                    }
                 }
             })
             ->when(empty($filters) ?? null, function (Builder $query)
