@@ -11,10 +11,10 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { valueUpdater } from '@/components/ui/table/utils';
-import { useRunAction } from '@/composables/useRunAction';
+import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, PaginatedCollection, User } from '@/types';
+import { BreadcrumbItem, Can, OperationType, PaginatedCollection, User } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import {
   ColumnFiltersState,
@@ -27,15 +27,14 @@ import {
   useVueTable,
 } from '@tanstack/vue-table';
 import { UserIcon } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
-import { columns, permissions } from './partials/columns';
+import { ref, watch, watchEffect } from 'vue';
+import { columns, permissions, processingRowId } from './partials/columns';
 
-interface Props {
+const props = defineProps<{
   can: Can;
   filters: object;
   users: PaginatedCollection<User>;
-}
-const props = defineProps<Props>();
+}>();
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -44,13 +43,11 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, subject, runAction } = useRunAction('users');
-const dialogOpen = ref(false);
-const dialogAction = ref('Continuar');
-const dialogTitle = ref('¿Está seguro?');
-const dialogDescription = ref('Si realmente está seguro haga clic en el botón "Continuar"');
+const { action, resourceID, requestingCreate, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('users');
+const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
 
 permissions.value = props.can;
+const dropdownBtn = ref(false);
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const globalFilter = ref('');
@@ -79,10 +76,21 @@ function handleSortingChange(item: any) {
 }
 
 function handleBatchDeletion() {
+  dropdownBtn.value = true;
+
   router.post(route('batch-deletion', { resource: 'users' }), rowSelection.value, {
     preserveState: false,
-    onFinish: () => (rowSelection.value = {}),
+    onFinish: () => {
+      dropdownBtn.value = false;
+      rowSelection.value = {};
+    },
   });
+}
+
+function handleAction(act: OperationType, rowData: Record<string, any>) {
+  alertData.value = rowData;
+  action.value = act;
+  processingRowId.value = rowData.id;
 }
 
 const table = useVueTable({
@@ -123,29 +131,33 @@ watch(
 );
 watch(action, () => {
   switch (action.value) {
-    case 'delete':
-      dialogAction.value = 'Eliminar';
-      dialogTitle.value = `¿Eliminar usuario(a) «${subject.value?.name}»?`;
-      dialogDescription.value = `«${subject.value?.name}» perderá el acceso al sistema. Sus datos se conservarán.`;
-      dialogOpen.value = true;
+    case 'destroy':
+      alertAction.value = 'Eliminar';
+      alertActionCss.value = 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
+      alertTitle.value = `¿Eliminar usuario(a) «${alertData.value?.name}»?`;
+      alertDescription.value = `«${alertData.value?.name}» perderá el acceso al sistema. Sus datos se conservarán.`;
+      alertOpen.value = true;
       break;
     case 'restore':
-      dialogAction.value = 'Restaurar';
-      dialogTitle.value = `¿Restaurar usuario(a) «${subject.value?.name}»?`;
-      dialogDescription.value = `«${subject.value?.name}» recuperará el acceso al sistema. Sus datos se restaurarán.`;
-      dialogOpen.value = true;
+      alertAction.value = 'Restaurar';
+      alertActionCss.value = '';
+      alertTitle.value = `¿Restaurar usuario(a) «${alertData.value?.name}»?`;
+      alertDescription.value = `«${alertData.value?.name}» recuperará el acceso al sistema. Sus datos se restaurarán.`;
+      alertOpen.value = true;
       break;
-    case 'f_delete':
-      dialogAction.value = 'Eliminar permanentemente';
-      dialogTitle.value = `¿Eliminar usuario(a) «${subject.value?.name}» permanentemente?`;
-      dialogDescription.value = `Esta acción no podrá revertirse. «${subject.value?.name}» perderá el acceso al sistema. Sus datos se eliminarán.`;
-      dialogOpen.value = true;
+    case 'force_destroy':
+      alertAction.value = 'Eliminar permanentemente';
+      alertActionCss.value = 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
+      alertTitle.value = `¿Eliminar usuario(a) «${alertData.value?.name}» permanentemente?`;
+      alertDescription.value = `Esta acción no podrá revertirse. «${alertData.value?.name}» perderá el acceso al sistema. Sus datos se eliminarán.`;
+      alertOpen.value = true;
       break;
 
     default:
       break;
   }
 });
+watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : false));
 </script>
 
 <template>
@@ -164,26 +176,28 @@ watch(action, () => {
         :search-only="['users']"
         :search-route="route('users.index')"
         :table="table"
+        :is-loading-new="requestingCreate"
+        :is-loading-dropdown="dropdownBtn"
         @batch-destroy="handleBatchDeletion"
         @search="(s) => (globalFilter = s)"
-        @new="router.get(route('users.create'))"
-        @read="(row) => router.get(route('users.show', row?.id))"
-        @update="(row) => router.get(route('users.edit', row?.id))"
-        @destroy="(row) => ((action = 'delete'), (subject = row))"
-        @force-destroy="(row) => ((action = 'f_delete'), (subject = row))"
-        @restore="(row) => ((action = 'restore'), (subject = row))"
+        @new="requestCreate"
+        @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
+        @update="(row) => (requestEdit(row.id), (processingRowId = row.id))"
+        @destroy="(row) => handleAction('destroy', row)"
+        @force-destroy="(row) => handleAction('force_destroy', row)"
+        @restore="(row) => handleAction('restore', row)"
       />
 
-      <AlertDialog v-model:open="dialogOpen">
+      <AlertDialog v-model:open="alertOpen">
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{{ dialogTitle }}</AlertDialogTitle>
-            <AlertDialogDescription>{{ dialogDescription }}</AlertDialogDescription>
+            <AlertDialogTitle>{{ alertTitle }}</AlertDialogTitle>
+            <AlertDialogDescription>{{ alertDescription }}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel @click="action = ''">Cancelar</AlertDialogCancel>
-            <AlertDialogAction @click="runAction(subject.id)">
-              {{ dialogAction }}
+            <AlertDialogCancel @click="((action = null), (processingRowId = null))">Cancelar</AlertDialogCancel>
+            <AlertDialogAction :class="alertActionCss" @click="requestAction(alertData.id, { preserveState: false })">
+              {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

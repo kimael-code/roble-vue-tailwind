@@ -26,9 +26,9 @@ class OrganizationProps
     {
         return [
             'can' => self::getPermissions(),
-            'filters' => Request::all(['search', 'name', 'rif', 'acronym']),
+            'filters' => Request::all(['search', 'sortBy',]),
             'organizations' => fn() => new OrganizationCollection(
-                Organization::filter(Request::only(['search', 'name', 'rif', 'acronym']))
+                Organization::filter(Request::only(['search', 'sortBy',]))
                     ->paginate(10)
                     ->withQueryString()
             ),

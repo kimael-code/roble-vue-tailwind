@@ -21,13 +21,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useRunAction } from '@/composables/useRunAction';
+import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { BreadcrumbItem, Can, PaginatedCollection, Permission, Role, SearchFilter, User } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import { EllipsisIcon, LoaderCircle, Plus, UserIcon } from 'lucide-vue-next';
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 import Permisos from './partials/Permisos.vue';
 import Roles from './partials/Roles.vue';
 
@@ -51,11 +51,8 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, request, runAction } = useRunAction('users');
-const dialogOpen = ref(false);
-const dialogAction = ref('Continuar');
-const dialogTitle = ref('¿Está seguro?');
-const dialogDescription = ref('Si realmente está seguro haga clic en el botón "Continuar"');
+const { action, requestCreate, requestAction, requestEdit, requestingCreate, resourceID } = useRequestActions('users');
+const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription } = useConfirmAction();
 
 const userOUs = computed(() => {
   let result = 'Usuario Externo';
@@ -71,23 +68,26 @@ const userOUs = computed(() => {
 
 watch(action, () => {
   switch (action.value) {
-    case 'delete':
-      dialogAction.value = 'Eliminar';
-      dialogTitle.value = `¿Eliminar usuario(a) «${props.user.name}»?`;
-      dialogDescription.value = `«${props.user.name}» perderá el acceso al sistema. Sus datos se conservarán.`;
-      dialogOpen.value = true;
+    case 'destroy':
+      alertAction.value = 'Eliminar';
+      alertActionCss.value = 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
+      alertTitle.value = `¿Eliminar usuario(a) «${props.user.name}»?`;
+      alertDescription.value = `«${props.user.name}» perderá el acceso al sistema. Sus datos se conservarán.`;
+      alertOpen.value = true;
       break;
     case 'restore':
-      dialogAction.value = 'Restaurar';
-      dialogTitle.value = `¿Restaurar usuario(a) «${props.user.name}»?`;
-      dialogDescription.value = `«${props.user.name}» recuperará el acceso al sistema. Sus datos se restaurarán.`;
-      dialogOpen.value = true;
+      alertAction.value = 'Restaurar';
+      alertActionCss.value = '';
+      alertTitle.value = `¿Restaurar usuario(a) «${props.user.name}»?`;
+      alertDescription.value = `«${props.user.name}» recuperará el acceso al sistema. Sus datos se restaurarán.`;
+      alertOpen.value = true;
       break;
-    case 'f_delete':
-      dialogAction.value = 'Eliminar permanentemente';
-      dialogTitle.value = `¿Eliminar usuario(a) «${props.user.name}» permanentemente?`;
-      dialogDescription.value = `Esta acción no podrá revertirse. «${props.user.name}» perderá el acceso al sistema. Sus datos se eliminarán.`;
-      dialogOpen.value = true;
+    case 'force_destroy':
+      alertAction.value = 'Eliminar permanentemente';
+      alertActionCss.value = 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
+      alertTitle.value = `¿Eliminar usuario(a) «${props.user.name}» permanentemente?`;
+      alertDescription.value = `Esta acción no podrá revertirse. «${props.user.name}» perderá el acceso al sistema. Sus datos se eliminarán.`;
+      alertOpen.value = true;
       break;
 
     default:
@@ -104,7 +104,7 @@ watch(action, () => {
         <UserIcon />
       </template>
       <section class="grid gap-4 md:grid-cols-4">
-        <div class="col-1 col-span-3 md:col-span-1">
+        <div class="col-span-3 md:col-span-1">
           <Card class="container">
             <CardHeader>
               <CardTitle>Detalles</CardTitle>
@@ -135,36 +135,36 @@ watch(action, () => {
             </CardContent>
           </Card>
         </div>
-        <div class="col-1 col-span-3">
+        <div class="col-span-3">
           <div class="flex items-center justify-end pb-3">
             <DropdownMenu>
               <DropdownMenuTrigger as-child>
-                <Button variant="outline" :disabled="request.processing">
-                  <LoaderCircle v-if="request.processing" class="animate-spin" />
-                  <EllipsisIcon v-else />
+                <Button variant="outline" :disabled="resourceID !== null">
+                  <EllipsisIcon v-if="resourceID === null" />
+                  <LoaderCircle v-else class="animate-spin" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuLabel>Acciones</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem @click="request.get(route('users.edit', props.user.id))">
+                  <DropdownMenuItem @click="requestEdit(props.user.id, { preserveState: false })">
                     <span>Editar</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem :disabled="!user.deleted_at" @click="action = 'restore'">
                     <span>Restaurar</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem :disabled="user.deleted_at ? true : false" @click="action = 'delete'">
+                  <DropdownMenuItem :disabled="user.deleted_at ? true : false" @click="action = 'destroy'">
                     <span>Eliminar</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem :disabled="!user.deleted_at" @click="action = 'f_delete'">
+                  <DropdownMenuItem :disabled="!user.deleted_at" @click="action = 'force_destroy'">
                     <span>Eliminar permanentemente</span>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button v-if="can.create" class="ml-3" @click="request.get(route('users.create'))" :disabled="request.processing">
-              <LoaderCircle v-if="request.processing" class="h-4 w-4 animate-spin" />
+            <Button v-if="can.create" class="ml-3" @click="requestCreate" :disabled="requestingCreate">
+              <LoaderCircle v-if="requestingCreate" class="h-4 w-4 animate-spin" />
               <Plus v-else class="mr-2 h-4 w-4" />
               Nuevo
             </Button>
@@ -184,16 +184,16 @@ watch(action, () => {
         </div>
       </section>
 
-      <AlertDialog v-model:open="dialogOpen">
+      <AlertDialog v-model:open="alertOpen">
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{{ dialogTitle }}</AlertDialogTitle>
-            <AlertDialogDescription>{{ dialogDescription }}</AlertDialogDescription>
+            <AlertDialogTitle>{{ alertTitle }}</AlertDialogTitle>
+            <AlertDialogDescription>{{ alertDescription }}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction @click="runAction(user.id)">
-              {{ dialogAction }}
+            <AlertDialogCancel @click="action = null">Cancelar</AlertDialogCancel>
+            <AlertDialogAction :class="alertActionCss" @click="requestAction(user.id, { preserveState: false })">
+              {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

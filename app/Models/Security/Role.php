@@ -103,16 +103,18 @@ class Role extends SpatieRole
                         ->orWhere('description', 'ilike', "%$term%");
                 });
             })
-            ->when($filters['name'] ?? null, function (Builder $query, $way)
+            ->when($filters['sortBy'] ?? null, function (Builder $query, array $sorts)
             {
-                switch ($way)
+                foreach ($sorts as $field => $direction)
                 {
-                    case 'u':
-                        $query->orderBy('name');
-                        break;
-                    case 'd':
-                        $query->orderBy('name', 'desc');
-                        break;
+                    if ($field === 'record_status')
+                    {
+                        $query->orderBy('deleted_at', $direction);
+                    }
+                    else
+                    {
+                        $query->orderBy($field, $direction);
+                    }
                 }
             })
             ->when(empty($filters) ?? null, function (Builder $query)

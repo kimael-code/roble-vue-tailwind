@@ -6,6 +6,8 @@ import { createColumnHelper } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { h, ref } from 'vue';
 
+const columnHelper = createColumnHelper<User>();
+
 export const permissions = ref<Can>({
   create: false,
   read: false,
@@ -16,7 +18,7 @@ export const permissions = ref<Can>({
   export: false,
 });
 
-const columnHelper = createColumnHelper<User>();
+export const processingRowId = ref<number | string | null>(null);
 
 export const columns = [
   columnHelper.display({
@@ -113,12 +115,10 @@ export const columns = [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const data = row.original;
-      const can = permissions.value;
-
       return h(DataTableActions, {
-        row: data,
-        can,
+        row: row.original,
+        can: permissions.value,
+        loading: processingRowId.value === row.original.id,
         onExpand: row.toggleExpanded,
       });
     },

@@ -2,6 +2,8 @@ import type { PageProps } from '@inertiajs/core';
 import type { LucideIcon } from 'lucide-vue-next';
 import type { Config } from 'ziggy-js';
 
+type OperationType = 'destroy' | 'force_destroy' | 'restore' | null;
+
 export interface Auth {
   user: User;
   menu: Array<string>;

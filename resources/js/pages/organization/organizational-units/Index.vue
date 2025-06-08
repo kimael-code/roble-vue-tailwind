@@ -11,10 +11,10 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { valueUpdater } from '@/components/ui/table/utils';
-import { useConfirmAction } from '@/composables/useConfirmAction';
+import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, OrganizationalUnit, PaginatedCollection } from '@/types';
+import { BreadcrumbItem, Can, OperationType, OrganizationalUnit, PaginatedCollection } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import {
   ColumnFiltersState,
@@ -27,16 +27,14 @@ import {
   useVueTable,
 } from '@tanstack/vue-table';
 import { Workflow } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
-import { columns, permissions } from './partials/columns';
+import { ref, watch, watchEffect } from 'vue';
+import { columns, permissions, processingRowId } from './partials/columns';
 
 const props = defineProps<{
   can: Can;
   filters: object;
   organizationalUnits: PaginatedCollection<OrganizationalUnit>;
 }>();
-
-permissions.value = props.can;
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -45,8 +43,11 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { confirmAction, dataRow, openDialog } = useConfirmAction();
+const { action, resourceID, requestingCreate, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('organizational-units');
+const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
 
+permissions.value = props.can;
+const dropdownBtn = ref(false);
 const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const globalFilter = ref('');
@@ -65,7 +66,7 @@ function handleSortingChange(item: any) {
     });
 
     router.visit(route('organizational-units.index'), {
-      data,
+      data: { sortBy: data },
       only: ['organizationalUnits'],
       preserveScroll: true,
       preserveState: true,
@@ -75,10 +76,21 @@ function handleSortingChange(item: any) {
 }
 
 function handleBatchDeletion() {
+  dropdownBtn.value = true;
+
   router.post(route('batch-deletion', { resource: 'organizationalUnits' }), rowSelection.value, {
     preserveState: false,
-    onFinish: () => (rowSelection.value = {}),
+    onFinish: () => {
+      dropdownBtn.value = false;
+      rowSelection.value = {};
+    },
   });
+}
+
+function handleAction(act: OperationType, rowData: Record<string, any>) {
+  alertData.value = rowData;
+  action.value = act;
+  processingRowId.value = rowData.id;
 }
 
 const table = useVueTable({
@@ -115,8 +127,24 @@ const table = useVueTable({
 
 watch(
   () => props.organizationalUnits.data,
-  (newData) => table.setOptions((prev) => ({ ...prev, data: newData })),
+  (newData) => table.setOptions((prev) => ({ ...prev, data: [...newData] })),
+  { deep: true },
 );
+watch(action, () => {
+  switch (action.value) {
+    case 'destroy':
+      alertAction.value = 'Eliminar permanentemente';
+      alertActionCss.value = 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
+      alertTitle.value = `¿Eliminar unidad administrativa «${alertData.value.name}» permanentemente?`;
+      alertDescription.value = `Esta acción no podrá revertirse. Los datos de «${alertData.value.name}» se perderán permanentemente.`;
+      alertOpen.value = true;
+      break;
+
+    default:
+      break;
+  }
+});
+watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : false));
 </script>
 
 <template>
@@ -135,29 +163,26 @@ watch(
         :search-only="['organizationalUnits']"
         :search-route="route('organizational-units.index')"
         :table="table"
+        :is-loading-new="requestingCreate"
+        :is-loading-dropdown="dropdownBtn"
         @batch-destroy="handleBatchDeletion"
         @search="(s) => (globalFilter = s)"
-        @new="router.get(route('organizational-units.create'))"
-        @read="(row) => router.get(route('organizational-units.show', row?.id))"
-        @update="(row) => router.get(route('organizational-units.edit', row?.id))"
-        @destroy="(row) => confirmAction(row)"
+        @new="requestCreate"
+        @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
+        @update="(row) => (requestEdit(row.id), (processingRowId = row.id))"
+        @destroy="(row) => handleAction('destroy', row)"
       />
 
-      <AlertDialog v-model:open="openDialog">
+      <AlertDialog v-model:open="alertOpen">
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{{ `¿Eliminar la unidad administrativa «${dataRow.name}» permanentemente?` }}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {{ `Los datos de la unidad administrativa se perderán permanentemente.` }}
-            </AlertDialogDescription>
+            <AlertDialogTitle>{{ alertTitle }}</AlertDialogTitle>
+            <AlertDialogDescription>{{ alertDescription }}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction
-              class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              @click="router.delete(route('organizational-units.destroy', dataRow.id), { preserveState: false })"
-            >
-              Continuar
+            <AlertDialogCancel @click="((action = null), (processingRowId = null))">Cancelar</AlertDialogCancel>
+            <AlertDialogAction :class="alertActionCss" @click="requestAction(alertData.id, { preserveState: false })">
+              {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

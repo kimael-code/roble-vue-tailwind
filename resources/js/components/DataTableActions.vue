@@ -9,13 +9,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Can } from '@/types';
-import { Eye, FileDown, MoreHorizontal, Pencil, RotateCcwIcon, ToggleLeft, ToggleRight, Trash2, XIcon } from 'lucide-vue-next';
+import { EllipsisIcon, Eye, FileDown, LoaderCircleIcon, Pencil, RotateCcwIcon, ToggleLeft, ToggleRight, Trash2, XIcon } from 'lucide-vue-next';
 
 defineProps<{
   row: {
     [index: string]: any;
   };
   can: Can;
+  loading?: boolean;
 }>();
 
 defineEmits<{
@@ -33,9 +34,9 @@ defineEmits<{
 <template>
   <DropdownMenu>
     <DropdownMenuTrigger as-child>
-      <Button variant="ghost" class="h-8 w-8 p-0">
-        <span class="sr-only">...</span>
-        <MoreHorizontal class="h-4 w-4" />
+      <Button variant="ghost" class="h-8 w-8 p-0" :disabled="loading">
+        <LoaderCircleIcon v-if="loading" class="animate-spin" />
+        <EllipsisIcon v-else />
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
