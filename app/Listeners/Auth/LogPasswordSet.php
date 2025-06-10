@@ -37,6 +37,6 @@ class LogPasswordSet
                     'request_url'     => request()->fullUrl(),
                 ]);
             })
-            ->log(__('password set by user'));
+            ->log(__(':username: set their own password', ['username' => $event->user->name]));
     }
 }

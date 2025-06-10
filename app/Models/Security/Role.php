@@ -24,7 +24,7 @@ class Role extends SpatieRole
      * Nombre usado para trazar el tipo de objeto.
      * @var string
      */
-    protected $traceObjectName = 'rol';
+    protected $traceObjectName = 'role';
 
     /**
      * The accessors to append to the model's array form.

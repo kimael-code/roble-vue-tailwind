@@ -21,11 +21,9 @@ class LogCurrentDeviceLogout
      */
     public function handle(CurrentDeviceLogout $event): void
     {
-        $causer = $event->user;
-
         activity()
             ->event('authenticated')
-            ->causedBy($causer)
+            ->causedBy($event->user)
             ->withProperty('request', [
                 'ip_address'      => request()->ip(),
                 'user_agent'      => request()->header('user-agent'),
@@ -35,6 +33,6 @@ class LogCurrentDeviceLogout
                 'request_url'     => request()->fullUrl(),
                 'guard_name'      => $event->guard,
             ])
-            ->log(__('current device logged out'));
+            ->log(__(':username: logged out from their current device', ['username' => $event->user->name]));
     }
 }

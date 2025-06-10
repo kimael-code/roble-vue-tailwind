@@ -35,6 +35,6 @@ class LogLockout
                 'request_url'     => $event->request->fullUrl(),
                 'credentials'     => $event->request->all(),
             ])
-            ->log(__('locked user out'));
+            ->log(__(':username: locked out', ['username' => $event->request->user()->name ?? '']));
     }
 }

@@ -24,7 +24,7 @@ class Permission extends SpatiePermission
      * Nombre usado para trazar el tipo de objeto.
      * @var string
      */
-    protected $traceObjectName = 'permiso';
+    protected $traceObjectName = 'permission';
 
     /**
      * The accessors to append to the model's array form.

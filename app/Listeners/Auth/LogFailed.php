@@ -21,11 +21,9 @@ class LogFailed
      */
     public function handle(Failed $event): void
     {
-        $causer = $event->user;
-
         activity()
             ->event('authenticated')
-            ->causedBy($causer)
+            ->causedBy($event->user)
             ->withProperty('request', [
                 'ip_address'      => request()->ip(),
                 'user_agent'      => request()->header('user-agent'),
@@ -36,6 +34,6 @@ class LogFailed
                 'guard_name'      => $event->guard,
                 'credentials'     => $event->credentials,
             ])
-            ->log(__('failed login'));
+            ->log(__(':username: failed login', ['username' => $event->user->name ?? $event->credentials['name']]));
     }
 }

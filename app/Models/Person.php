@@ -16,7 +16,7 @@ class Person extends BaseModel
      * Nombre usado para trazar el tipo de objeto.
      * @var string
      */
-    protected $traceObjectName = 'persona';
+    protected $traceObjectName = 'person';
 
     /**
      * The attributes that are mass assignable.

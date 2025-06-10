@@ -23,7 +23,7 @@ class OrganizationalUnit extends BaseModel
      * Nombre usado para trazar el tipo de objeto.
      * @var string
      */
-    protected $traceObjectName = 'unidad administrativa';
+    protected $traceObjectName = 'administrative unit';
 
     /**
      * The attributes that are mass assignable.

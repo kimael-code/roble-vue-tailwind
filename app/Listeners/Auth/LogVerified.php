@@ -21,11 +21,9 @@ class LogVerified
      */
     public function handle(Verified $event): void
     {
-        $causer = $event->user;
-
         activity()
             ->event('authenticated')
-            ->causedBy($causer)
+            ->causedBy($event->user)
             ->withProperty('request', [
                 'ip_address'      => request()->ip(),
                 'user_agent'      => request()->header('user-agent'),
@@ -34,6 +32,6 @@ class LogVerified
                 'http_method'     => request()->method(),
                 'request_url'     => request()->fullUrl(),
             ])
-            ->log(__('user verified'));
+            ->log(__(':username: was verified', ['username' => $event->user->name]));
     }
 }

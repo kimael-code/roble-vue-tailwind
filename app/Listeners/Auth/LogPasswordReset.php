@@ -21,11 +21,9 @@ class LogPasswordReset
      */
     public function handle(PasswordReset $event): void
     {
-        $causer = $event->user;
-
         activity()
             ->event('authenticated')
-            ->causedBy($causer)
+            ->causedBy($event->user)
             ->withProperty('request', [
                 'ip_address'      => request()->ip(),
                 'user_agent'      => request()->header('user-agent'),
@@ -34,6 +32,6 @@ class LogPasswordReset
                 'http_method'     => request()->method(),
                 'request_url'     => request()->fullUrl(),
             ])
-            ->log(__('password reset'));
+            ->log(__(':username: reset their password', ['username' => $event->user->name]));
     }
 }

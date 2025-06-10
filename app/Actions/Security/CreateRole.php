@@ -42,7 +42,11 @@ class CreateRole
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__('permission assigned to role'));
+                    ->log(__(':username: assigned permission [:permission] to role [:role]', [
+                        'username' => $user->mame,
+                        'permission' => $permission->description,
+                        'role' => $role->name,
+                    ]));
             }
         });
     }

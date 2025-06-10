@@ -21,11 +21,9 @@ class LogLogout
      */
     public function handle(Logout $event): void
     {
-        $causer = $event->user;
-
         activity()
             ->event('authenticated')
-            ->causedBy($causer)
+            ->causedBy($event->user)
             ->withProperty('request', [
                 'ip_address'      => request()->ip(),
                 'user_agent'      => request()->header('user-agent'),
@@ -35,6 +33,6 @@ class LogLogout
                 'request_url'     => request()->fullUrl(),
                 'guard_name'      => $event->guard,
             ])
-            ->log(__('logged out'));
+            ->log(__(':username: logged out', ['username' => $event->user->name]));
     }
 }

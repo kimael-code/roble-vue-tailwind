@@ -61,7 +61,11 @@ class UpdateRole
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__('permission revoked to role'));
+                    ->log(__(':username: revoked the [:permission] permission from the [:role] role', [
+                        'username' => $authUser,
+                        'permission' => $permission->description,
+                        'role' => $role->name,
+                    ]));
                 self::$permissionsChanged = true;
             }
         }
@@ -92,7 +96,11 @@ class UpdateRole
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__('permission given to role'));
+                    ->log(__(':username: granted the [:permission] permission to role [:role]', [
+                        'username' => $authUser,
+                        'permission' => $assignedPermission->description,
+                        'role' => $role->name,
+                    ]));
                 self::$permissionsChanged = true;
             }
         }

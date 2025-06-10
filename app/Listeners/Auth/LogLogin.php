@@ -21,11 +21,9 @@ class LogLogin
      */
     public function handle(Login $event): void
     {
-        $causer = $event->user;
-
         activity()
             ->event('authenticated')
-            ->causedBy($causer)
+            ->causedBy($event->user)
             ->withProperty('request', [
                 'ip_address'      => request()->ip(),
                 'user_agent'      => request()->header('user-agent'),
@@ -36,6 +34,6 @@ class LogLogin
                 'guard_name'      => $event->guard,
                 'remembered'      => $event->remember,
             ])
-            ->log(__('logged in'));
+            ->log(__(':username: logged in', ['username' => $event->user->name]));
     }
 }

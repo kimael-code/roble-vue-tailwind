@@ -59,7 +59,11 @@ class CreateUser
                         'request_url' => request()->fullUrl(),
                     ]
                 ])
-                ->log(__("{$role->name} role assigned to the user {$user->name}"));
+                ->log(__(':username: assigned the role [:rolename] to user [:user]', [
+                    'username' => $authUser,
+                    'rolename' => $role->name,
+                    'user' => $user->name,
+                ]));
         }
     }
 
@@ -87,7 +91,11 @@ class CreateUser
                         'request_url' => request()->fullUrl(),
                     ]
                 ])
-                ->log(__("{$permission->description} permission given to the user {$user->name}"));
+                ->log(__(':username: granted the [:permission] permission to user [:user]', [
+                    'username' => $authUser,
+                    'permission' => $permission->description,
+                    'user' => $user->name,
+                ]));
         }
     }
 
@@ -136,7 +144,11 @@ class CreateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("user {$user->name} attached to the administrative unit {$ou->name}"));
+                    ->log(__(':username: associated user [:user] with the administrative unit [:ou]', [
+                        'username' => $authUser,
+                        'user' => $user->name,
+                        'ou' => $ou->name,
+                    ]));
             }
         }
     }

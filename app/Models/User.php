@@ -26,7 +26,7 @@ class User extends Authenticatable
      * Nombre usado para trazar el tipo de objeto.
      * @var string
      */
-    protected $traceObjectName = 'usuario';
+    protected $traceObjectName = 'user';
 
     /**
      * The attributes that are mass assignable.

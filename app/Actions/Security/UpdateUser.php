@@ -92,7 +92,11 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("{$role->name} role unassigned to the user {$user->name}"));
+                    ->log(__(':username: unassigned the [:role] role to user [:user]', [
+                        'username' => $authUser,
+                        'role' => $role->name,
+                        'user' => $user->name,
+                    ]));
 
                 self::$notify = true;
             }
@@ -126,7 +130,11 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("{$role->name} role assigned to the user {$user->name}"));
+                    ->log(__(':username: assigned the [:role] role to user [:user]', [
+                        'username' => $authUser,
+                        'role' => $role->name,
+                        'user' => $user->name,
+                    ]));
 
                 self::$notify = true;
             }
@@ -158,7 +166,11 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("{$permission->description} permission revoked to the user {$user->name}"));
+                    ->log(__(':username: revoked the [:permission] permission from the [:user] user', [
+                        'username' => $authUser,
+                        'permission' => $permission->description,
+                        'user' => $user->name,
+                    ]));
 
                 self::$notify = true;
             }
@@ -193,7 +205,11 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("{$permission->description} permission given to the user {$user->name}"));
+                    ->log(__(':username: granted the [:permission] permission to user [:user]', [
+                        'username' => $authUser,
+                        'permission' => $permission->description,
+                        'user' => $user->name,
+                    ]));
 
                 self::$notify = true;
             }
@@ -227,7 +243,11 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("user {$user->name} detached from the organizational unit {$ou->name}"));
+                    ->log(__(':username: disassociated user [:user] from the administrative unit [:ou]', [
+                        'username' => $authUser,
+                        'user' => $user->name,
+                        'ou' => $ou->name,
+                    ]));
 
                 self::$notify = true;
             }
@@ -260,7 +280,11 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__("user {$user->name} disabled in the organizational unit {$ou->name}"));
+                        ->log(__(':username: deactivated user [:user] in the administrative unit [:ou]', [
+                            'username' => $authUser,
+                            'user' => $user->name,
+                            'ou' => $ou->name,
+                        ]));
 
                     self::$notify = true;
                 }
@@ -289,7 +313,11 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__("user {$user->name} attached to the administrative unit {$ou->name}"));
+                        ->log(__(':username: associated user [:user] with the administrative unit [:ou]', [
+                            'username' => $authUser,
+                            'user' => $user->name,
+                            'ou' => $ou->name,
+                        ]));
 
                     self::$notify = true;
                 }
@@ -311,7 +339,11 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__("user {$user->name} enabled in the organizational unit {$ou->name}"));
+                        ->log(__(':username: activated user [:user] in the administrative unit [:ou]', [
+                            'username' => $authUser,
+                            'user' => $user->name,
+                            'ou' => $ou->name,
+                        ]));
 
                     self::$notify = true;
                 }
