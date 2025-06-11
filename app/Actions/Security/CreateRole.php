@@ -4,6 +4,7 @@ namespace App\Actions\Security;
 
 use App\Models\Security\Permission;
 use App\Models\Security\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class CreateRole
@@ -30,9 +31,11 @@ class CreateRole
                 activity()
                     ->causedBy($user)
                     ->performedOn($role)
-                    ->event('authorizated')
+                    ->event('authorized')
                     ->withProperties([
-                        'permission' => $permission,
+                        __('assigned_permission') => $permission,
+                        __('to_role') => $role,
+                        'causer' => User::find($user->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->userAgent(),

@@ -22,8 +22,8 @@ const cardTitle = computed(() => {
   switch (props.log.event) {
     case 'authenticated':
       return 'AUTHENTICATED';
-    case 'authorizated':
-      return 'AUTHORIZATED';
+    case 'authorized':
+      return 'AUTHORIZED';
     case 'created':
       return 'CREATED';
     case 'updated':
@@ -39,7 +39,9 @@ const cardTitle = computed(() => {
 const cardDescription = computed(() => {
   switch (props.log.event) {
     case 'authenticated':
-      return 'Este evento no posee más detalles de los ya mostrados en la tarjeta "Detalles de la Petición".';
+      return 'Datos técnicos de la petición';
+    case 'authorized':
+      return 'Datos técnicos de los objetos procesados en la autorización';
     case 'created':
       return props.log.subject_type;
     case 'updated':
@@ -51,6 +53,21 @@ const cardDescription = computed(() => {
       return 'Detalle del evento.';
   }
 });
+
+const authorizedObjects = computed(() => {
+  const authObjects: { [index: string]: any } = {};
+
+  Object.keys({ ...props.log.properties }).filter((d) => {
+      // @ts-expect-error: deja la ladilla typescript
+    if (d !== 'request' || d !== 'causer') {
+      // @ts-expect-error: deja la ladilla typescript
+      authObjects[d] = props.log.properties[d];
+    }
+  });
+
+  return authObjects;
+});
+console.log(authorizedObjects.value);
 
 function compareObjects(obj1: GenericModel, obj2: GenericModel) {
   const comparisonResults: Array<ComparisonResult> = [];
@@ -144,6 +161,14 @@ function compareObjects(obj1: GenericModel, obj2: GenericModel) {
           </div>
         </div>
       </template>
+    </CardContent>
+    <CardContent v-if="log.event === 'authorized'">
+      <div class="grid w-full items-center gap-4">
+        <div class="space-y-1">
+          <p class="text-sm leading-none font-medium">Propiedades de los Registros:</p>
+          <pre class="text-muted-foreground text-pretty">{{ authorizedObjects }}</pre>
+        </div>
+      </div>
     </CardContent>
   </Card>
 </template>

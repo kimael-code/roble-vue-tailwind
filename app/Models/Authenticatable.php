@@ -128,5 +128,6 @@ class Authenticatable extends User
             'http_method'     => request()->method(),
             'request_url'     => request()->fullUrl(),
         ]);
+        $activity->properties = $activity->properties->put('causer', User::find(auth()->user()->id)->toArray());
     }
 }

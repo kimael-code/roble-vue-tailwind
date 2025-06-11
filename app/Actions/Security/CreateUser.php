@@ -49,7 +49,9 @@ class CreateUser
                 ->performedOn($user)
                 ->event('created')
                 ->withProperties([
-                    'role' => $role,
+                    __('assigned_role') => $role,
+                    __('to_user') => $user,
+                    'causer' => User::find($authUser->id)->toArray(),
                     'request' => [
                         'ip_address' => request()->ip(),
                         'user_agent' => request()->header('user-agent'),
@@ -60,7 +62,7 @@ class CreateUser
                     ]
                 ])
                 ->log(__(':username: assigned the role [:rolename] to user [:user]', [
-                    'username' => $authUser,
+                    'username' => $authUser->name,
                     'rolename' => $role->name,
                     'user' => $user->name,
                 ]));
@@ -81,7 +83,9 @@ class CreateUser
                 ->performedOn($user)
                 ->event('created')
                 ->withProperties([
-                    'permission' => $permission,
+                    __('granted_permission') => $permission,
+                    __('to_user') => $user,
+                    'causer' => User::find($authUser->id)->toArray(),
                     'request' => [
                         'ip_address' => request()->ip(),
                         'user_agent' => request()->header('user-agent'),
@@ -92,7 +96,7 @@ class CreateUser
                     ]
                 ])
                 ->log(__(':username: granted the [:permission] permission to user [:user]', [
-                    'username' => $authUser,
+                    'username' => $authUser->name,
                     'permission' => $permission->description,
                     'user' => $user->name,
                 ]));
@@ -134,7 +138,9 @@ class CreateUser
                     ->performedOn($user)
                     ->event('created')
                     ->withProperties([
-                        'ou' => $ou,
+                        __('associated_user') => $user,
+                        __('with_administrative_unit') => $ou,
+                        'causer' => User::find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -145,7 +151,7 @@ class CreateUser
                         ]
                     ])
                     ->log(__(':username: associated user [:user] with the administrative unit [:ou]', [
-                        'username' => $authUser,
+                        'username' => $authUser->name,
                         'user' => $user->name,
                         'ou' => $ou->name,
                     ]));

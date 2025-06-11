@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -34,6 +35,7 @@ class LogLogin
                 'guard_name'      => $event->guard,
                 'remembered'      => $event->remember,
             ])
+            ->withProperty('causer', User::find($event->user->id)->toArray())
             ->log(__(':username: logged in', ['username' => $event->user->name]));
     }
 }

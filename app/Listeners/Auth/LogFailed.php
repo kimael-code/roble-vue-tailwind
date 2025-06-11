@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -34,6 +35,7 @@ class LogFailed
                 'guard_name'      => $event->guard,
                 'credentials'     => $event->credentials,
             ])
+            ->withProperty('causer', User::find($event->user->id)?->toArray() ?? $event->credentials['name'])
             ->log(__(':username: failed login', ['username' => $event->user->name ?? $event->credentials['name']]));
     }
 }

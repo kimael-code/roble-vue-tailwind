@@ -227,6 +227,7 @@ export interface ActivityLog {
       guard_name?: string;
       remembered?: boolean;
     };
+    causer: string | User;
     attributes?: {
       [index: string]: string | number | null;
     };
