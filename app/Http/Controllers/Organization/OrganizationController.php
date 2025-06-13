@@ -6,10 +6,10 @@ use App\Actions\Organization\CreateOrganization;
 use App\Actions\Organization\DeleteOrganization;
 use App\Actions\Organization\UpdateOrganization;
 use App\Http\Controllers\Controller;
+use App\Http\Props\Organization\OrganizationProps;
 use App\Http\Requests\Organization\StoreOrganizationRequest;
 use App\Http\Requests\Organization\UpdateOrganizationRequest;
 use App\Models\Organization\Organization;
-use App\Support\Props\Organization\OrganizationProps;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 

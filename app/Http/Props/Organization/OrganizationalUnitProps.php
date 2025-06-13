@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Props\Organization;
+namespace App\Http\Props\Organization;
 
 use App\Http\Resources\Organization\OrganizationalUnitCollection;
 use App\Models\Organization\Organization;

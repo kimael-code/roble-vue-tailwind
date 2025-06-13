@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Props\Security;
+namespace App\Http\Props\Security;
 
 use App\Http\Resources\Security\PermissionCollection;
 use App\Http\Resources\Security\RoleCollection;

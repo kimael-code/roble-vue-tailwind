@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Organization;
 use App\Actions\Organization\CreateOrganizationalUnit;
 use App\Actions\Organization\UpdateOrganizationalUnit;
 use App\Http\Controllers\Controller;
+use App\Http\Props\Organization\OrganizationalUnitProps;
 use App\Http\Requests\Organization\StoreOrganizationalUnitRequest;
 use App\Http\Requests\Organization\UpdateOrganizationalUnitRequest;
 use App\Models\Organization\OrganizationalUnit;
-use App\Support\Props\Organization\OrganizationalUnitProps;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\Props\DashboardProps;
+use App\Http\Props\DashboardProps;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 

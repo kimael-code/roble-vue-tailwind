@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\BulkDeletion\PermissionBulkDeletion;
+use App\Actions\Security\BatchDeletePermission;
 use Illuminate\Http\Request;
 
 class BatchDeletionController extends Controller
@@ -15,7 +15,7 @@ class BatchDeletionController extends Controller
         switch ($resource)
         {
             case 'permissions':
-                $result = PermissionBulkDeletion::execute($request->all());
+                $result = BatchDeletePermission::execute($request->all());
                 return redirect(route('permissions.index'))->with('msg', $result);
 
             default:

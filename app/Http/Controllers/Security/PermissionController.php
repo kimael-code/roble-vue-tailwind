@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Security;
 use App\Actions\Security\CreatePermission;
 use App\Actions\Security\UpdatePermission;
 use App\Http\Controllers\Controller;
+use App\Http\Props\Security\PermissionProps;
 use App\Http\Requests\Security\StorePermissionRequest;
 use App\Http\Requests\Security\UpdatePermissionRequest;
 use App\Models\Security\Permission;
-use App\Support\Props\Security\PermissionProps;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 

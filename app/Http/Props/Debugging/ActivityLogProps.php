@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Props\Debugging;
+namespace App\Http\Props\Debugging;
 
 use App\Http\Resources\Debugging\ActivityLogCollection;
 use App\Models\Debugging\ActivityLog;

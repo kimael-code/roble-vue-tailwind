@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Debugging;
 use App\Actions\Debugging\DeleteLogFile;
 use App\Actions\Debugging\ExportLogFile;
 use App\Http\Controllers\Controller;
-use App\Support\Props\Debugging\LogFileProps;
+use App\Http\Props\Debugging\LogFileProps;
 use Inertia\Inertia;
 
 class LogFileController extends Controller
