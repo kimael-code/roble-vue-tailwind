@@ -6,7 +6,7 @@ import { User, UserAgent } from '@/types';
 import { CalendarIcon } from 'lucide-vue-next';
 
 defineProps<{
-  causer: User;
+  causer?: User;
   userAgent: UserAgent;
 }>();
 </script>
@@ -18,7 +18,7 @@ defineProps<{
       <CardDescription>Detalles del usuario causante del evento.</CardDescription>
     </CardHeader>
     <CardContent>
-      <div class="flex justify-start space-x-4">
+      <div v-if="causer" class="flex justify-start space-x-4">
         <Avatar>
           <AvatarImage v-if="causer.avatar" :src="causer.avatar" />
           <AvatarFallback>{{ getInitials(causer.name) }}</AvatarFallback>
@@ -32,6 +32,11 @@ defineProps<{
             <span class="text-muted-foreground text-xs"> {{ `Creado ${causer.created_at_human}` }} </span>
           </div>
         </div>
+      </div>
+      <div v-else class="flex justify-start space-x-4">
+        <p class="text-sm">
+          No es posible recuperar los datos del usuario causante del evento porque éste no está registrado en el sistema.
+        </p>
       </div>
     </CardContent>
   </Card>

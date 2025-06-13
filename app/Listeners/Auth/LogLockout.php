@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -24,7 +25,7 @@ class LogLockout
         $causer = $event->request->user();
 
         activity()
-            ->event('auth')
+            ->event('authenticated')
             ->causedBy($causer)
             ->withProperty('request', [
                 'ip_address'      => $event->request->ip(),
@@ -35,6 +36,7 @@ class LogLockout
                 'request_url'     => $event->request->fullUrl(),
                 'credentials'     => $event->request->all(),
             ])
-            ->log(__('locked user out'));
+            ->withProperty('causer', User::find($causer->id)->toArray() ?? '')
+            ->log(__(':username: locked out', ['username' => $event->request->user()->name ?? '']));
     }
 }

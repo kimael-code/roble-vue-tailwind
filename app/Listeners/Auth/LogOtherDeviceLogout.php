@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\OtherDeviceLogout;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -21,11 +22,9 @@ class LogOtherDeviceLogout
      */
     public function handle(OtherDeviceLogout $event): void
     {
-        $causer = $event->user;
-
         activity()
-            ->event('auth')
-            ->causedBy($causer)
+            ->event('authenticated')
+            ->causedBy($event->user)
             ->withProperty('request', [
                 'ip_address'      => request()->ip(),
                 'user_agent'      => request()->header('user-agent'),
@@ -35,6 +34,7 @@ class LogOtherDeviceLogout
                 'request_url'     => request()->fullUrl(),
                 'guard_name'      => $event->guard,
             ])
-            ->log(__('other device logged out'));
+            ->withProperty('causer', User::find($event->user->id)->toArray())
+            ->log(__(':username: logged out from other device', ['username' => $event->user->name]));
     }
 }

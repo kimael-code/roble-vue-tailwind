@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Props\Debugging;
+namespace App\Http\Props\Debugging;
 
 use App\Support\Logs\Logfile;
 use Illuminate\Support\Facades\Auth;

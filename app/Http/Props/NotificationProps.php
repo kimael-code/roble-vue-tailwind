@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Props;
+namespace App\Http\Props;
 
 use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;

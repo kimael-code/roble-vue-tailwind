@@ -7,6 +7,20 @@ import { h } from 'vue';
 const columnHelper = createColumnHelper<Role>();
 
 export const columns = [
+  columnHelper.display({
+    id: 'serial',
+    header: '#',
+    cell: ({ row, table }) => {
+      const meta = table.options.meta as { currentPage: number; pageSize: number };
+
+      const startingIndex = (meta.currentPage - 1) * meta.pageSize;
+      const trueIndex = startingIndex + row.index + 1;
+
+      return h('div', trueIndex);
+    },
+    enableSorting: false,
+    enableHiding: false,
+  }),
   columnHelper.accessor('name', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();

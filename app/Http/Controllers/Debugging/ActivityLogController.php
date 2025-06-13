@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Debugging;
 
 use App\Http\Controllers\Controller;
+use App\Http\Props\Debugging\ActivityLogProps;
 use App\Models\Debugging\ActivityLog;
-use App\Support\Props\Debugging\ActivityLogProps;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 

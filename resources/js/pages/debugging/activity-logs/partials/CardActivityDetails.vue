@@ -20,8 +20,10 @@ const props = defineProps<{
 
 const cardTitle = computed(() => {
   switch (props.log.event) {
-    case 'auth':
-      return 'AUTH';
+    case 'authenticated':
+      return 'AUTHENTICATED';
+    case 'authorized':
+      return 'AUTHORIZED';
     case 'created':
       return 'CREATED';
     case 'updated':
@@ -36,8 +38,10 @@ const cardTitle = computed(() => {
 
 const cardDescription = computed(() => {
   switch (props.log.event) {
-    case 'auth':
-      return 'Este evento no posee más detalles de los ya mostrados en la tarjeta "Detalles de la Petición".';
+    case 'authenticated':
+      return 'Datos técnicos de la petición';
+    case 'authorized':
+      return 'Datos técnicos de los objetos procesados en la autorización';
     case 'created':
       return props.log.subject_type;
     case 'updated':
@@ -48,6 +52,20 @@ const cardDescription = computed(() => {
     default:
       return 'Detalle del evento.';
   }
+});
+
+const authorizedObjects = computed(() => {
+  const authObjects: { [index: string]: any } = {};
+
+  Object.keys({ ...props.log.properties }).filter((d) => {
+      // @ts-expect-error: deja la ladilla typescript
+    if (d !== 'request' || d !== 'causer') {
+      // @ts-expect-error: deja la ladilla typescript
+      authObjects[d] = props.log.properties[d];
+    }
+  });
+
+  return authObjects;
 });
 
 function compareObjects(obj1: GenericModel, obj2: GenericModel) {
@@ -142,6 +160,21 @@ function compareObjects(obj1: GenericModel, obj2: GenericModel) {
           </div>
         </div>
       </template>
+    </CardContent>
+    <CardContent v-if="log.event === 'authorized'">
+      <div class="grid w-full items-center gap-4">
+        <div class="space-y-1">
+          <p class="text-sm leading-none font-medium">Propiedades de los Registros:</p>
+          <pre class="text-muted-foreground text-pretty text-xs">{{ authorizedObjects }}</pre>
+        </div>
+      </div>
+    </CardContent>
+    <CardContent v-else>
+      <div class="grid w-full items-center gap-4">
+        <div class="space-y-1">
+          <pre class="text-muted-foreground text-pretty text-xs">{{ log.properties }}</pre>
+        </div>
+      </div>
     </CardContent>
   </Card>
 </template>

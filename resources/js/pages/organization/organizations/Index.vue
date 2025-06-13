@@ -16,18 +16,9 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { BreadcrumbItem, Can, OperationType, Organization, PaginatedCollection } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
-import {
-  ColumnFiltersState,
-  ExpandedState,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
-  RowSelectionState,
-  SortingState,
-  useVueTable,
-} from '@tanstack/vue-table';
+import { getCoreRowModel, RowSelectionState, SortingState, TableOptions, useVueTable } from '@tanstack/vue-table';
 import { Building } from 'lucide-vue-next';
-import { ref, watch, watchEffect } from 'vue';
+import { reactive, ref, watch, watchEffect } from 'vue';
 import { columns, permissions, processingRowId } from './partials/columns';
 
 const props = defineProps<{
@@ -49,10 +40,8 @@ const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, al
 permissions.value = props.can;
 const dropdownBtn = ref(false);
 const sorting = ref<SortingState>([]);
-const columnFilters = ref<ColumnFiltersState>([]);
 const globalFilter = ref('');
 const rowSelection = ref<RowSelectionState>({});
-const expanded = ref<ExpandedState>({});
 
 function handleSortingChange(item: any) {
   if (typeof item === 'function') {
@@ -93,25 +82,28 @@ function handleAction(act: OperationType, rowData: Record<string, any>) {
   processingRowId.value = rowData.id;
 }
 
-const table = useVueTable({
-  data: props.organizations.data,
-  columns: columns,
+const tableOptions = reactive<TableOptions<Organization>>({
+  get data() {
+    return props.organizations.data;
+  },
+  get columns() {
+    return columns;
+  },
   manualPagination: true,
-  pageCount: props.organizations.meta.per_page,
+  manualSorting: true,
+  get meta() {
+    return {
+      currentPage: props.organizations.meta.current_page,
+      pageSize: props.organizations.meta.per_page,
+    };
+  },
   getCoreRowModel: getCoreRowModel(),
-  getFilteredRowModel: getFilteredRowModel(),
-  getSortedRowModel: getSortedRowModel(),
   getRowId: (row) => row.id,
-  onSortingChange: (updaterOrValue) => handleSortingChange(updaterOrValue),
-  onColumnFiltersChange: (updaterOrValue) => valueUpdater(updaterOrValue, columnFilters),
-  onGlobalFilterChange: (updaterOrValue) => valueUpdater(updaterOrValue, globalFilter),
+  onSortingChange: handleSortingChange,
   onRowSelectionChange: (updaterOrValue) => valueUpdater(updaterOrValue, rowSelection),
   state: {
     get sorting() {
       return sorting.value;
-    },
-    get columnFilters() {
-      return columnFilters.value;
     },
     get globalFilter() {
       return globalFilter.value;
@@ -119,16 +111,11 @@ const table = useVueTable({
     get rowSelection() {
       return rowSelection.value;
     },
-    get expanded() {
-      return expanded.value;
-    },
   },
 });
 
-watch(
-  () => props.organizations.data,
-  (newData) => table.setOptions((prev) => ({ ...prev, data: newData })),
-);
+const table = useVueTable(tableOptions);
+
 watch(action, () => {
   switch (action.value) {
     case 'destroy':
@@ -143,6 +130,7 @@ watch(action, () => {
       break;
   }
 });
+
 watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : false));
 </script>
 

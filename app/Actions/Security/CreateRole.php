@@ -4,6 +4,7 @@ namespace App\Actions\Security;
 
 use App\Models\Security\Permission;
 use App\Models\Security\Role;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class CreateRole
@@ -30,9 +31,11 @@ class CreateRole
                 activity()
                     ->causedBy($user)
                     ->performedOn($role)
-                    ->event('auth')
+                    ->event('authorized')
                     ->withProperties([
-                        'permission' => $permission->toJson(),
+                        __('assigned_permission') => $permission,
+                        __('to_role') => $role,
+                        'causer' => User::find($user->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->userAgent(),
@@ -42,7 +45,11 @@ class CreateRole
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__('permission assigned to role'));
+                    ->log(__(':username: assigned permission [:permission] to role [:role]', [
+                        'username' => $user->mame,
+                        'permission' => $permission->description,
+                        'role' => $role->name,
+                    ]));
             }
         });
     }

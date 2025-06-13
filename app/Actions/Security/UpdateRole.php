@@ -4,6 +4,7 @@ namespace App\Actions\Security;
 
 use App\Models\Security\Permission;
 use App\Models\Security\Role;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -49,9 +50,11 @@ class UpdateRole
                 activity()
                     ->causedBy($authUser)
                     ->performedOn($role)
-                    ->event('auth')
+                    ->event('authorized')
                     ->withProperties([
-                        'permission' => $permission->toJson(),
+                        __('revoked_permission') => $permission,
+                        __('from_role') => $role,
+                        'causer' => User::find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -61,7 +64,11 @@ class UpdateRole
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__('permission revoked to role'));
+                    ->log(__(':username: revoked the [:permission] permission from the [:role] role', [
+                        'username' => $authUser->name,
+                        'permission' => $permission->description,
+                        'role' => $role->name,
+                    ]));
                 self::$permissionsChanged = true;
             }
         }
@@ -80,9 +87,11 @@ class UpdateRole
                 activity()
                     ->causedBy($authUser)
                     ->performedOn($role)
-                    ->event('auth')
+                    ->event('authorized')
                     ->withProperties([
-                        'permission' => $assignedPermission->toJson(),
+                        __('granted_permission') => $assignedPermission,
+                        __('to_role') => $role,
+                        'causer' => User::find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -92,7 +101,11 @@ class UpdateRole
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__('permission given to role'));
+                    ->log(__(':username: granted the [:permission] permission to role [:role]', [
+                        'username' => $authUser->name,
+                        'permission' => $assignedPermission->description,
+                        'role' => $role->name,
+                    ]));
                 self::$permissionsChanged = true;
             }
         }

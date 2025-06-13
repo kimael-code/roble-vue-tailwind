@@ -111,7 +111,11 @@ class Authenticatable extends User
                 'updated_at',
             ])
             ->dontLogIfAttributesChangedOnly(['remember_token'])
-            ->setDescriptionForEvent(fn(string $eventName) => $this->traceObjectName.' '.__($eventName));
+            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model', [
+                'username' => auth()->user()->name,
+                'event' => __($eventName),
+                'model' => __($this->traceObjectName),
+            ]));
     }
 
     public function tapActivity(Activity $activity): void
@@ -124,5 +128,6 @@ class Authenticatable extends User
             'http_method'     => request()->method(),
             'request_url'     => request()->fullUrl(),
         ]);
+        $activity->properties = $activity->properties->put('causer', User::find(auth()->user()->id)->toArray());
     }
 }

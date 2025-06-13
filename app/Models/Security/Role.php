@@ -24,7 +24,7 @@ class Role extends SpatieRole
      * Nombre usado para trazar el tipo de objeto.
      * @var string
      */
-    protected $traceObjectName = 'rol';
+    protected $traceObjectName = 'role';
 
     /**
      * The accessors to append to the model's array form.
@@ -77,7 +77,11 @@ class Role extends SpatieRole
     {
         return LogOptions::defaults()
             ->logAll()
-            ->setDescriptionForEvent(fn(string $eventName) => $this->traceObjectName.' '.__($eventName));
+            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model', [
+                'username' => auth()->user()->name,
+                'event' => __($eventName),
+                'model' => __($this->traceObjectName),
+            ]));
     }
 
     public function tapActivity(Activity $activity): void

@@ -163,21 +163,21 @@ watchDebounced(
       <div class="space-x-2">
         <Pagination :page="data.meta.current_page" :items-per-page="data.meta.per_page" :total="data.meta.total">
           <PaginationList class="flex items-center gap-1">
-            <PaginationFirst @click="router.visit(data.links.first, { preserveScroll: true })" />
-            <PaginationPrev @click="router.visit(data.links.prev, { preserveScroll: true })" />
+            <PaginationFirst @click="router.visit(data.links.first, { preserveScroll: true, preserveState: true })" />
+            <PaginationPrev @click="router.visit(data.links.prev, { preserveScroll: true, preserveState: true })" />
             <template v-for="(item, i) in data.meta.links" :key="i">
               <PaginationListItem :value="item.label" as-child>
                 <Button
                   class="h-10 w-10 p-0"
                   :variant="item?.active ? 'default' : 'outline'"
-                  @click="router.visit(item.url, { preserveScroll: true })"
+                  @click="router.visit(item.url, { preserveScroll: true, preserveState: true })"
                 >
                   {{ item?.label }}
                 </Button>
               </PaginationListItem>
             </template>
-            <PaginationNext @click="router.visit(data.links.next, { preserveScroll: true })" />
-            <PaginationLast @click="router.visit(data.links.last, { preserveScroll: true })" />
+            <PaginationNext @click="router.visit(data.links.next, { preserveScroll: true, preserveState: true })" />
+            <PaginationLast @click="router.visit(data.links.last, { preserveScroll: true, preserveState: true })" />
           </PaginationList>
         </Pagination>
       </div>

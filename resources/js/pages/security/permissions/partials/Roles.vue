@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import DataTable from '@/components/DataTable.vue';
-import { valueUpdater } from '@/components/ui/table/utils';
 import { PaginatedCollection, Role } from '@/types';
 import { router } from '@inertiajs/vue3';
-import { ColumnFiltersState, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useVueTable } from '@tanstack/vue-table';
-import { ref, watch } from 'vue';
+import { getCoreRowModel, SortingState, TableOptions, useVueTable } from '@tanstack/vue-table';
+import { reactive, ref } from 'vue';
 import { columns } from './columnsRole';
 
 interface Props {
@@ -15,7 +14,6 @@ interface Props {
 const props = defineProps<Props>();
 
 const sorting = ref<SortingState>([]);
-const columnFilters = ref<ColumnFiltersState>([]);
 const globalFilter = ref('');
 
 function handleSortingChange(item: any) {
@@ -39,24 +37,27 @@ function handleSortingChange(item: any) {
   }
 }
 
-const table = useVueTable({
-  columns: columns,
-  data: props.roles.data,
+const tableOptions = reactive<TableOptions<Role>>({
+  get data() {
+    return props.roles.data;
+  },
+  get columns() {
+    return columns;
+  },
   manualPagination: true,
-  pageCount: props.roles.meta.per_page,
+  manualSorting: true,
+  get meta() {
+    return {
+      currentPage: props.roles.meta.current_page,
+      pageSize: props.roles.meta.per_page,
+    };
+  },
   getCoreRowModel: getCoreRowModel(),
-  getFilteredRowModel: getFilteredRowModel(),
-  getSortedRowModel: getSortedRowModel(),
   getRowId: (row) => row.id,
-  onSortingChange: (updateOrValue) => handleSortingChange(updateOrValue),
-  onColumnFiltersChange: (updateOrValue) => valueUpdater(updateOrValue, columnFilters),
-  onGlobalFilterChange: (updateOrValue) => valueUpdater(updateOrValue, globalFilter),
+  onSortingChange: handleSortingChange,
   state: {
     get sorting() {
       return sorting.value;
-    },
-    get columnFilters() {
-      return columnFilters.value;
     },
     get globalFilter() {
       return globalFilter.value;
@@ -64,10 +65,7 @@ const table = useVueTable({
   },
 });
 
-watch(
-  () => props.roles.data,
-  (newData) => table.setOptions((prev) => ({ ...prev, data: newData })),
-);
+const table = useVueTable(tableOptions);
 </script>
 
 <template>

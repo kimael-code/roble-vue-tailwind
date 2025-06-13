@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Security;
 use App\Actions\Security\CreateRole;
 use App\Actions\Security\UpdateRole;
 use App\Http\Controllers\Controller;
+use App\Http\Props\Security\RoleProps;
 use App\Http\Requests\Security\StoreRoleRequest;
 use App\Http\Requests\Security\UpdateRoleRequest;
 use App\Models\Security\Role;
-use App\Support\Props\Security\RoleProps;
 use Gate;
 use Inertia\Inertia;
 

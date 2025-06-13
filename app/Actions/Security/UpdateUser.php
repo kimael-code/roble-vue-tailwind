@@ -82,7 +82,9 @@ class UpdateUser
                     ->performedOn($user)
                     ->event('deleted')
                     ->withProperties([
-                        'role' => $role,
+                        __('unassigned_role') => $role,
+                        __('to_user') => $user,
+                        'causer' => User::find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -92,7 +94,11 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("{$role->name} role unassigned to the user {$user->name}"));
+                    ->log(__(':username: unassigned the [:role] role to user [:user]', [
+                        'username' => $authUser->name,
+                        'role' => $role->name,
+                        'user' => $user->name,
+                    ]));
 
                 self::$notify = true;
             }
@@ -116,7 +122,9 @@ class UpdateUser
                     ->performedOn($user)
                     ->event('created')
                     ->withProperties([
-                        'role' => $role,
+                        __('assigned_role') => $role,
+                        __('to_user') => $user,
+                        'causer' => User::find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -126,7 +134,11 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("{$role->name} role assigned to the user {$user->name}"));
+                    ->log(__(':username: assigned the [:role] role to user [:user]', [
+                        'username' => $authUser->name,
+                        'role' => $role->name,
+                        'user' => $user->name,
+                    ]));
 
                 self::$notify = true;
             }
@@ -148,7 +160,9 @@ class UpdateUser
                     ->performedOn($user)
                     ->event('deleted')
                     ->withProperties([
-                        'permission' => $permission,
+                        __('revoked_permission') => $permission,
+                        __('to_user') => $user,
+                        'causer' => User::find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -158,7 +172,11 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("{$permission->description} permission revoked to the user {$user->name}"));
+                    ->log(__(':username: revoked the [:permission] permission from the [:user] user', [
+                        'username' => $authUser->name,
+                        'permission' => $permission->description,
+                        'user' => $user->name,
+                    ]));
 
                 self::$notify = true;
             }
@@ -183,7 +201,9 @@ class UpdateUser
                     ->performedOn($user)
                     ->event('created')
                     ->withProperties([
-                        'permission' => $permission,
+                        __('granted_permission') => $permission,
+                        __('to_user') => $user,
+                        'causer' => User::find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -193,7 +213,11 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("{$permission->description} permission given to the user {$user->name}"));
+                    ->log(__(':username: granted the [:permission] permission to user [:user]', [
+                        'username' => $authUser->name,
+                        'permission' => $permission->description,
+                        'user' => $user->name,
+                    ]));
 
                 self::$notify = true;
             }
@@ -217,7 +241,9 @@ class UpdateUser
                     ->performedOn($user)
                     ->event('deleted')
                     ->withProperties([
-                        'organizationalUnit' => $ou,
+                        __('disassociated_user') => $user,
+                        __('from_administrative_unit') => $ou,
+                        'causer' => User::find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -227,7 +253,11 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__("user {$user->name} detached from the organizational unit {$ou->name}"));
+                    ->log(__(':username: disassociated user [:user] from the administrative unit [:ou]', [
+                        'username' => $authUser->name,
+                        'user' => $user->name,
+                        'ou' => $ou->name,
+                    ]));
 
                 self::$notify = true;
             }
@@ -250,7 +280,9 @@ class UpdateUser
                         ->performedOn($user)
                         ->event('updated')
                         ->withProperties([
-                            'organizationalUnit' => $ou,
+                            __('deactivated_user') => $user,
+                            __('in_administrative_unit') => $ou,
+                            'causer' => User::find($authUser->id)->toArray(),
                             'request' => [
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->header('user-agent'),
@@ -260,7 +292,11 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__("user {$user->name} disabled in the organizational unit {$ou->name}"));
+                        ->log(__(':username: deactivated user [:user] in the administrative unit [:ou]', [
+                            'username' => $authUser->name,
+                            'user' => $user->name,
+                            'ou' => $ou->name,
+                        ]));
 
                     self::$notify = true;
                 }
@@ -279,7 +315,9 @@ class UpdateUser
                         ->performedOn($user)
                         ->event('created')
                         ->withProperties([
-                            'organizationalUnit' => $ou,
+                            __('associated_user') => $user,
+                            __('with_administrative_unit') => $ou,
+                            'causer' => User::find($authUser->id)->toArray(),
                             'request' => [
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->header('user-agent'),
@@ -289,7 +327,11 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__("user {$user->name} attached to the administrative unit {$ou->name}"));
+                        ->log(__(':username: associated user [:user] with the administrative unit [:ou]', [
+                            'username' => $authUser->name,
+                            'user' => $user->name,
+                            'ou' => $ou->name,
+                        ]));
 
                     self::$notify = true;
                 }
@@ -301,7 +343,9 @@ class UpdateUser
                         ->performedOn($user)
                         ->event('updated')
                         ->withProperties([
-                            'organizationalUnit' => $ou,
+                            __('activated_user') => $user,
+                            __('in_administrative_unit') => $ou,
+                            'causer' => User::find($authUser->id)->toArray(),
                             'request' => [
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->header('user-agent'),
@@ -311,7 +355,11 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__("user {$user->name} enabled in the organizational unit {$ou->name}"));
+                        ->log(__(':username: activated user [:user] in the administrative unit [:ou]', [
+                            'username' => $authUser->name,
+                            'user' => $user->name,
+                            'ou' => $ou->name,
+                        ]));
 
                     self::$notify = true;
                 }

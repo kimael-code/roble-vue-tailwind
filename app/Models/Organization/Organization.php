@@ -21,7 +21,7 @@ class Organization extends BaseModel
      * Nombre usado para trazar el tipo de objeto.
      * @var string
      */
-    protected $traceObjectName = 'organización';
+    protected $traceObjectName = 'organization';
 
     /**
      * The attributes that are mass assignable.

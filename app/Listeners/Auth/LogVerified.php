@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -21,11 +22,9 @@ class LogVerified
      */
     public function handle(Verified $event): void
     {
-        $causer = $event->user;
-
         activity()
-            ->event('auth')
-            ->causedBy($causer)
+            ->event('authenticated')
+            ->causedBy($event->user)
             ->withProperty('request', [
                 'ip_address'      => request()->ip(),
                 'user_agent'      => request()->header('user-agent'),
@@ -34,6 +33,7 @@ class LogVerified
                 'http_method'     => request()->method(),
                 'request_url'     => request()->fullUrl(),
             ])
-            ->log(__('user verified'));
+            ->withProperty('causer', User::find($event->user->id)->toArray())
+            ->log(__(':username: was verified', ['username' => $event->user->name]));
     }
 }

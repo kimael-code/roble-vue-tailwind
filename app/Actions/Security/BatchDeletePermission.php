@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Support\BulkDeletion;
+namespace App\Actions\Security;
 
 use App\Models\Security\Permission;
 
-class PermissionBulkDeletion
+class BatchDeletePermission
 {
     public static function execute(array $ids): array
     {
         $msg = [
-            'msg'   => 'registros eliminados.',
+            'msg' => 'registros eliminados.',
             'title' => 'PROCESADO',
-            'type'  => 'success',
+            'type' => 'success',
         ];
         $deleteCount = 0;
         $nonDeleteCount = 0;

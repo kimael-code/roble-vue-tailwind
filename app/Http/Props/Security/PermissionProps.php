@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Props\Security;
+namespace App\Http\Props\Security;
 
 use App\Http\Resources\Security\PermissionCollection;
 use App\Http\Resources\Security\RoleCollection;
@@ -46,13 +46,13 @@ class PermissionProps
             'roles'      => fn() => new RoleCollection(
                 $permission->roles()->filter(Request::only(['search', 'name']))
                     ->latest()
-                    ->paginate(10)
+                    ->paginate(10, pageName: 'page_r')
             ),
             'users'      => fn() => new UserCollection(
                 User::filter(Request::only(['search', 'name']))
                     ->permission($permission->name)
                     ->latest()
-                    ->paginate(10)
+                    ->paginate(10, pageName: 'page_u')
             ),
         ];
     }

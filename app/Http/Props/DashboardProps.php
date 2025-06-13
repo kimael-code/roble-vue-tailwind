@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Support\Props;
+namespace App\Http\Props;
 
 use App\Models\Security\Role;
 use App\Models\User;
