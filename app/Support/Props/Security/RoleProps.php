@@ -61,14 +61,14 @@ class RoleProps
             'permissions' => fn() => new PermissionCollection(
                 $role->permissions()->filter(Request::only(['search']))
                     ->latest()
-                    ->paginate(10)
+                    ->paginate(10, pageName: 'page_p')
             ),
             'role'        => $role,
             'users'       => fn() => new UserCollection(
                 User::filter(Request::only(['search']))
                     ->role($role->name)
                     ->latest()
-                    ->paginate(10)
+                    ->paginate(10, pageName: 'page_u')
             ),
         ];
     }

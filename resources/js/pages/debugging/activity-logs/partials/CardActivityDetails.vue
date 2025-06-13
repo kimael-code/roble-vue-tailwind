@@ -67,7 +67,6 @@ const authorizedObjects = computed(() => {
 
   return authObjects;
 });
-console.log(authorizedObjects.value);
 
 function compareObjects(obj1: GenericModel, obj2: GenericModel) {
   const comparisonResults: Array<ComparisonResult> = [];
@@ -166,7 +165,14 @@ function compareObjects(obj1: GenericModel, obj2: GenericModel) {
       <div class="grid w-full items-center gap-4">
         <div class="space-y-1">
           <p class="text-sm leading-none font-medium">Propiedades de los Registros:</p>
-          <pre class="text-muted-foreground text-pretty">{{ authorizedObjects }}</pre>
+          <pre class="text-muted-foreground text-pretty text-xs">{{ authorizedObjects }}</pre>
+        </div>
+      </div>
+    </CardContent>
+    <CardContent v-else>
+      <div class="grid w-full items-center gap-4">
+        <div class="space-y-1">
+          <pre class="text-muted-foreground text-pretty text-xs">{{ log.properties }}</pre>
         </div>
       </div>
     </CardContent>

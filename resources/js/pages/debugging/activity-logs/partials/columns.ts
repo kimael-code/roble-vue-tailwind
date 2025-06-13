@@ -38,6 +38,20 @@ export const columns = [
     enableSorting: false,
     enableHiding: false,
   }),
+  columnHelper.display({
+    id: 'serial',
+    header: '#',
+    cell: ({ row, table }) => {
+      const meta = table.options.meta as { currentPage: number; pageSize: number };
+
+      const startingIndex = (meta.currentPage - 1) * meta.pageSize;
+      const trueIndex = startingIndex + row.index + 1;
+
+      return h('div', trueIndex);
+    },
+    enableSorting: false,
+    enableHiding: false,
+  }),
   columnHelper.accessor('description', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
@@ -51,30 +65,6 @@ export const columns = [
         },
         () => [
           'Descripción',
-          isSorted
-            ? isSortedDesc
-              ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
-              : h(ChevronUp, { class: 'ml-2 h-4 w-4' })
-            : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
-        ],
-      );
-    },
-    cell: (info) => h('div', info.getValue()),
-  }),
-  columnHelper.accessor((row) => row.causer?.name, {
-    id: 'causer',
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted();
-      const isSortedDesc = column.getIsSorted() === 'desc';
-
-      return h(
-        Button,
-        {
-          variant: isSorted ? 'default' : 'ghost',
-          class: 'ml-auto',
-        },
-        () => [
-          'Usuario',
           isSorted
             ? isSortedDesc
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })

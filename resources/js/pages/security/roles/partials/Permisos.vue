@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import DataTable from '@/components/DataTable.vue';
-import { valueUpdater } from '@/components/ui/table/utils';
 import { PaginatedCollection, Permission } from '@/types';
 import { router } from '@inertiajs/vue3';
-import { ColumnFiltersState, getCoreRowModel, getFilteredRowModel, getSortedRowModel, SortingState, useVueTable } from '@tanstack/vue-table';
-import { ref, watch } from 'vue';
-import { columns } from './columnsRole';
+import { getCoreRowModel, SortingState, TableOptions, useVueTable } from '@tanstack/vue-table';
+import { reactive, ref } from 'vue';
+import { columns } from './columnsPermission';
 
 interface Props {
   filters: object;
@@ -15,7 +14,6 @@ interface Props {
 const props = defineProps<Props>();
 
 const sorting = ref<SortingState>([]);
-const columnFilters = ref<ColumnFiltersState>([]);
 const globalFilter = ref('');
 
 function handleSortingChange(item: any) {
@@ -39,24 +37,27 @@ function handleSortingChange(item: any) {
   }
 }
 
-const table = useVueTable({
-  columns: columns,
-  data: props.permissions.data,
+const tableOptions = reactive<TableOptions<Permission>>({
+  get data() {
+    return props.permissions.data;
+  },
+  get columns() {
+    return columns;
+  },
   manualPagination: true,
-  pageCount: props.permissions.meta.per_page,
+  manualSorting: true,
+  get meta() {
+    return {
+      currentPage: props.permissions.meta.current_page,
+      pageSize: props.permissions.meta.per_page,
+    };
+  },
   getCoreRowModel: getCoreRowModel(),
-  getFilteredRowModel: getFilteredRowModel(),
-  getSortedRowModel: getSortedRowModel(),
   getRowId: (row) => row.id,
-  onSortingChange: (updateOrValue) => handleSortingChange(updateOrValue),
-  onColumnFiltersChange: (updateOrValue) => valueUpdater(updateOrValue, columnFilters),
-  onGlobalFilterChange: (updateOrValue) => valueUpdater(updateOrValue, globalFilter),
+  onSortingChange: handleSortingChange,
   state: {
     get sorting() {
       return sorting.value;
-    },
-    get columnFilters() {
-      return columnFilters.value;
     },
     get globalFilter() {
       return globalFilter.value;
@@ -64,10 +65,7 @@ const table = useVueTable({
   },
 });
 
-watch(
-  () => props.permissions.data,
-  (newData) => table.setOptions((prev) => ({ ...prev, data: newData })),
-);
+const table = useVueTable(tableOptions);
 </script>
 
 <template>
