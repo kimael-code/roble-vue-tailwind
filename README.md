@@ -5,10 +5,20 @@ Starter kit for developing monolithic web applications based on Laravel, Inertia
 ## Made with
 
 - Laravel
-- Vue
+- Vue (shadcn-vue)
 - Inertia
-- Tailwind CSS (shadcn-vue)
-- PosrgreSQL
+- Tailwind CSS
+- PostgreSQL
+
+## Users
+
+Several users are created depending on the value of the `APP_ENV` variable:
+
+- for local environment only:
+  - `admin.dev` with password `12345678`
+- for any other environment:
+  - `root`with password `root`
+  - `admin` with password `admin`
 
 ## Getting started in Local Environment (`localhost`) using Docker & Laravel Sail
 
@@ -17,7 +27,7 @@ Starter kit for developing monolithic web applications based on Laravel, Inertia
 - Docker Engine v28.1 or higher
 - Docker Compose v2.35 or higher
 - Internet connection
-- Shell alias configured to use Laravel Sail
+- Shell alias configured to use Laravel Sail (<https://laravel.com/docs/12.x/sail#configuring-a-shell-alias>)
 
 1. Clone this repo
 
@@ -31,7 +41,19 @@ Starter kit for developing monolithic web applications based on Laravel, Inertia
     cd roble-vue-tailwind && cp .env.example .env
     ```
 
-3. Install Composer dependencies
+3. Set the credentials for Laravel Reverb
+
+    ```env
+    REVERB_APP_ID=my-reverb-app-id
+    REVERB_APP_KEY=my-reverb-app-key
+    REVERB_APP_SECRET=my-reverb-app-secret
+    ```
+
+    *More info here*: <https://laravel.com/docs/12.x/reverb#main-content>  
+    *To generate random numbers*: <https://www.random.org/integers>  
+    *To generate random strings*: <https://www.random.org/strings>
+
+4. Install Composer dependencies
 
     ```sh
     docker run --rm --interactive --tty \
@@ -40,37 +62,37 @@ Starter kit for developing monolithic web applications based on Laravel, Inertia
     composer install --ignore-platform-reqs
     ```
 
-4. Start the containers (*it's necessary to configure a shell alias*)
+5. Start the containers (*it's necessary to configure a shell alias*)
 
     ```sh
     sail up -d
     ```
 
-5. Create the app encryption key
+6. Create the app encryption key
 
     ```sh
     sail artisan key:generate
     ```
 
-6. Run database migrations and seeders
+7. Run database migrations and seeders
 
     ```sh
     sail artisan migrate:fresh --seed
     ```
 
-7. Install Node dependencies
+8. Install Node dependencies
 
     ```sh
     sail npm i
     ```
 
-8. Build Node dependencies
+9. Build Node dependencies
 
     ```sh
     sail npm run build
     ```
 
-9. Oper your favorite web browser and go to <http://localhost>
+10. Oper your favorite web browser and go to <http://localhost>.
 
 ## Getting started in Local Environment (`localhost`) using Laravel Herd
 
@@ -97,37 +119,49 @@ Starter kit for developing monolithic web applications based on Laravel, Inertia
     - `DB_PASSWORD=your_postgres_user_password`.  
     *You need to set the values of these variables according to your PostgreSQL installation and configurations (port, user, password, etc.)*
 
-4. Install Composer dependencies
+4. Set the credentials for Laravel Reverb
+
+    ```env
+    REVERB_APP_ID=my-reverb-app-id
+    REVERB_APP_KEY=my-reverb-app-key
+    REVERB_APP_SECRET=my-reverb-app-secret
+    ```
+
+    *More info here*: <https://laravel.com/docs/12.x/reverb#main-content>  
+    *To generate random numbers*: <https://www.random.org/integers>  
+    *To generate random strings*: <https://www.random.org/strings>
+
+5. Install Composer dependencies
 
     ```sh
     composer install --ignore-platform-reqs
     ```
 
-5. Create the app encryption key
+6. Create the app encryption key
 
     ```sh
     php artisan key:generate
     ```
 
-6. Run database migrations and seeders
+7. Run database migrations and seeders
 
     ```sh
     php artisan migrate:fresh --seed
     ```
 
-7. Install Node dependencies
+8. Install Node dependencies
 
     ```sh
     npm i
     ```
 
-8. Build Node dependencies
+9. Build Node dependencies
 
     ```sh
     npm run build
     ```
 
-9. Run the app
+10. Run the app
 
     ```sh
     herd open
