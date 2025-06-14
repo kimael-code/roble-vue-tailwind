@@ -13,8 +13,8 @@ export const permissions = ref<Can>({
   read: false,
   update: false,
   delete: false,
-  enable: false,
-  disable: false,
+  activate: false,
+  deactivate: false,
   export: false,
 });
 
@@ -98,7 +98,7 @@ export const columns = [
     },
     cell: (info) => h('div', info.getValue()),
   }),
-  columnHelper.accessor('record_status', {
+  columnHelper.accessor('disabled_at_human', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
       const isSortedDesc = column.getIsSorted() === 'desc';
@@ -110,7 +110,7 @@ export const columns = [
           class: 'ml-auto',
         },
         () => [
-          'Estatus',
+          'Desactivado',
           isSorted
             ? isSortedDesc
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
@@ -120,9 +120,36 @@ export const columns = [
       );
     },
     cell: (info) => {
-      const cssClass = info.getValue() === 'ELIMINADO' ? 'text-red-500' : 'text-green-500';
+      const css = info.getValue() ? 'text-amber-500' : 'text-green-500';
 
-      return h('div', { class: cssClass }, info.getValue());
+      return h('div', { class: css }, info.getValue() ?? 'N/A');
+    },
+  }),
+  columnHelper.accessor('deleted_at_human', {
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
+      const isSortedDesc = column.getIsSorted() === 'desc';
+
+      return h(
+        Button,
+        {
+          variant: isSorted ? 'default' : 'ghost',
+          class: 'ml-auto',
+        },
+        () => [
+          'Eliminado',
+          isSorted
+            ? isSortedDesc
+              ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
+              : h(ChevronUp, { class: 'ml-2 h-4 w-4' })
+            : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
+        ],
+      );
+    },
+    cell: (info) => {
+      const css = info.getValue() ? 'text-red-500' : 'text-green-500';
+
+      return h('div', { class: css }, info.getValue() ?? 'N/A');
     },
   }),
   columnHelper.display({

@@ -139,6 +139,20 @@ watch(action, () => {
       alertDescription.value = `Esta acción no podrá revertirse. «${alertData.value?.name}» perderá el acceso al sistema. Sus datos se eliminarán.`;
       alertOpen.value = true;
       break;
+    case 'enable':
+      alertAction.value = 'Activar';
+      alertActionCss.value = '';
+      alertTitle.value = `Activar usuario(a) «${alertData.value?.name}»?`;
+      alertDescription.value = `«${alertData.value?.name}» recuperará el acceso al sistema. Sus datos se restaurarán.`;
+      alertOpen.value = true;
+      break;
+    case 'disable':
+      alertAction.value = 'Desactivar';
+      alertActionCss.value = 'bg-yellow-500 text-foreground hover:bg-yellow-500/90';
+      alertTitle.value = `Desactivar usuario(a) «${alertData.value?.name}»?`;
+      alertDescription.value = `«${alertData.value?.name}» perderá el acceso al sistema. Sus datos se conservarán.`;
+      alertOpen.value = true;
+      break;
 
     default:
       break;
@@ -173,6 +187,8 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
         @destroy="(row) => handleAction('destroy', row)"
         @force-destroy="(row) => handleAction('force_destroy', row)"
         @restore="(row) => handleAction('restore', row)"
+        @activate="(row) => handleAction('enable', row)"
+        @deactivate="(row) => handleAction('disable', row)"
       />
 
       <AlertDialog v-model:open="alertOpen">

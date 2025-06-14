@@ -40,6 +40,8 @@
   "force delete users": "eliminar permanentemente cualquier usuario",
   "export users": "exportar datos de usuarios a archivo",
   "restore users": "restaurar cualquier usuario",
+  "activate users": "activar cualquier usuario",
+  "deactivate users": "desactivar cualquier usuario",
 
   "read any system log": "ver listado de registros de depuración",
   "read system log": "ver detalles de un registro de depuración",
@@ -54,8 +56,12 @@
 
   "person attached to organizational unit": "persona asociada a unidad administrativa",
   "This is the only user with Systems Administrator permissions.": "Este usuario es el único con permisos de Administrador de Sistemas.",
-  "DELETED": "ELIMINADO",
-  "REGISTERED": "REGISTRADO",
+  "SAVED!": "¡GUARDADO!",
+  "DELETED!": "¡ELIMINADO!",
+  "HARD DELETED!": "¡ELIMINADO PERMANENTEMENTE!",
+  "RESTORED!": "¡RESTAURADO!",
+  "ENABLED!": "¡ACTIVADO!",
+  "DISABLED!": "¡DESACTIVADO!",
   "created": "creó",
   "updated": "actualizó",
   "deleted": "eliminó",

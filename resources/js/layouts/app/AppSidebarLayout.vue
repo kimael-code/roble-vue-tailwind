@@ -9,6 +9,7 @@ import { useEchoModel } from '@laravel/echo-vue';
 import { watchImmediate } from '@vueuse/core';
 import { DateTime } from 'luxon';
 import { toast } from 'vue-sonner';
+import 'vue-sonner/style.css';
 
 interface Props {
   breadcrumbs?: BreadcrumbItemType[];

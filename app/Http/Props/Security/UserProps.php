@@ -27,6 +27,8 @@ class UserProps
             'f_delete' => Auth::user()->can('force delete users'),
             'export' => Auth::user()->can('export users'),
             'restore' => Auth::user()->can('restore users'),
+            'activate' => Auth::user()->can('activate users'),
+            'deactivate' => Auth::user()->can('deactivate users'),
         ];
     }
 

@@ -94,9 +94,17 @@ class User extends Authenticatable
             {
                 foreach ($sorts as $field => $direction)
                 {
-                    if ($field === 'record_status')
+                    if ($field === 'deleted_at_human')
                     {
                         $query->orderBy('deleted_at', $direction);
+                    }
+                    elseif ($field === 'disabled_at_human')
+                    {
+                        $query->orderBy('disabled_at', $direction);
+                    }
+                    else
+                    {
+                        $query->orderBy($field, $direction);
                     }
                 }
             })
