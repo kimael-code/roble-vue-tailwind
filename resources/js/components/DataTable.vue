@@ -49,8 +49,8 @@ const emit = defineEmits([
   'forceDestroy',
   'restore',
   'export',
-  'enable',
-  'disable',
+  'activate',
+  'deactivate',
 ]);
 
 const form = useForm({
@@ -136,8 +136,8 @@ watchDebounced(
                     @force-destroy="(row) => $emit('forceDestroy', row)"
                     @restore="(row) => $emit('restore', row)"
                     @export="(row) => $emit('export', row)"
-                    @enable="(row) => $emit('enable', row)"
-                    @disable="(row) => $emit('disable', row)"
+                    @activate="(row) => $emit('activate', row)"
+                    @deactivate="(row) => $emit('deactivate', row)"
                   />
                 </TableCell>
               </TableRow>

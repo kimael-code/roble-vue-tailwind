@@ -70,6 +70,8 @@ class SysadmiRolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'force delete users', 'description' => __('force delete users')])->assignRole([$sysadminRole,]);
         Permission::create(['name' => 'export users', 'description' => __('export users')])->assignRole([$sysadminRole,]);
         Permission::create(['name' => 'restore users', 'description' => __('restore users')])->assignRole([$sysadminRole,]);
+        Permission::create(['name' => 'activate users', 'description' => __('activate users')])->assignRole([$sysadminRole,]);
+        Permission::create(['name' => 'deactivate users', 'description' => __('deactivate users')])->assignRole([$sysadminRole,]);
         // permisos para gestionar los logs del sistema
         Permission::create(['name' => 'read any system log', 'description' => __('read any system log'), 'set_menu' => true])->assignRole([$sysadminRole,]);
         Permission::create(['name' => 'read system log', 'description' => __('read system log')])->assignRole([$sysadminRole,]);

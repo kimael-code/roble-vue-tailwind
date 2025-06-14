@@ -2,7 +2,7 @@ import type { PageProps } from '@inertiajs/core';
 import type { LucideIcon } from 'lucide-vue-next';
 import type { Config } from 'ziggy-js';
 
-type OperationType = 'destroy' | 'force_destroy' | 'restore' | null;
+type OperationType = 'destroy' | 'force_destroy' | 'restore' | 'enable' | 'disable' | null;
 
 export interface Auth {
   user: User;
@@ -46,7 +46,7 @@ export interface User {
   created_at_human?: string | null;
   updated_at_human?: string | null;
   deleted_at_human?: string | null;
-  record_status?: string;
+  disabled_at_human?: string | null;
   person?: Person;
   active_organizational_units?: Array<OrganizationalUnit>;
   organizational_units?: Array<OrganizationalUnit>;
@@ -108,8 +108,8 @@ export interface Can {
   delete: boolean;
   f_delete?: boolean;
   restore?: boolean;
-  enable?: boolean;
-  disable?: boolean;
+  activate?: boolean;
+  deactivate?: boolean;
   export?: boolean;
 }
 

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Security;
 
 use App\Actions\Security\CreateUser;
+use App\Actions\Security\DisableUser;
+use App\Actions\Security\EnableUser;
 use App\Actions\Security\UpdateUser;
 use App\Http\Controllers\Controller;
 use App\Http\Props\Security\UserProps;
@@ -92,6 +94,24 @@ class UserController extends Controller
         Gate::authorize('restore', $user);
 
         $user->restore();
+
+        return redirect()->back();
+    }
+
+    public function enable(User $user)
+    {
+        Gate::authorize('enable', $user);
+
+        EnableUser::handle($user);
+
+        return redirect()->back();
+    }
+
+    public function disable(User $user)
+    {
+        Gate::authorize('disable', $user);
+
+        DisableUser::handle($user);
 
         return redirect()->back();
     }

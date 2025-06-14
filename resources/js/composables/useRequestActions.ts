@@ -36,6 +36,8 @@ export function useRequestActions(resourceName: string) {
   const requestingDestroy = ref(false);
   const requestingForceDestroy = ref(false);
   const requestingRestore = ref(false);
+  const requestingEnable = ref(false);
+  const requestingDisable = ref(false);
 
   function requestAction(id: number | string, options?: RequestOptions) {
     resourceID.value = id;
@@ -49,6 +51,12 @@ export function useRequestActions(resourceName: string) {
         break;
       case 'restore':
         requestRestore(id, options);
+        break;
+      case 'enable':
+        requestEnable(id, options);
+        break;
+      case 'disable':
+        requestDisable(id, options);
         break;
 
       default:
@@ -146,6 +154,36 @@ export function useRequestActions(resourceName: string) {
     });
   }
 
+  function requestEnable(id: number | string, options?: RequestOptions) {
+    requestingEnable.value = false;
+    resourceID.value = id;
+
+    request.put(route(`${resourceName}.enable`, id), {
+      ...options,
+      onStart: () => (requestingEnable.value = true),
+      onFinish: () => {
+        requestingEnable.value = false;
+        action.value = null;
+        resourceID.value = null;
+      },
+    });
+  }
+
+  function requestDisable(id: number | string, options?: RequestOptions) {
+    requestingDisable.value = false;
+    resourceID.value = id;
+
+    request.put(route(`${resourceName}.disable`, id), {
+      ...options,
+      onStart: () => (requestingDisable.value = true),
+      onFinish: () => {
+        requestingDisable.value = false;
+        action.value = null;
+        resourceID.value = null;
+      },
+    });
+  }
+
   return {
     action,
     request,
@@ -157,11 +195,15 @@ export function useRequestActions(resourceName: string) {
     requestDestroy,
     requestForceDestroy,
     requestRestore,
+    requestEnable,
+    requestDisable,
     requestingCreate,
     requestingRead,
     requestingEdit,
     requestingDestroy,
     requestingForceDestroy,
     requestingRestore,
+    requestingEnable,
+    requestingDisable,
   };
 }

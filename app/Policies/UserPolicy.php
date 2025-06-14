@@ -92,4 +92,35 @@ class UserPolicy
 
         return $user->can('force delete users');
     }
+
+    /**
+     * Determine whether the user can enable the model.
+     */
+    public function enable(User $user, User $model): bool
+    {
+        return $user->can('activate users');
+    }
+
+    /**
+     * Determine whether the user can disable the model.
+     */
+    public function disable(User $user, User $model): bool|Response
+    {
+        $sysAdminRole = __('Systems Administrator');
+        $sysadminsCount = User::with('roles')->get()->filter(
+            fn ($user) => $user->roles->where('name', $sysAdminRole)->toArray()
+        )->count();
+
+        if ($sysadminsCount === 1 && $model->hasRole($sysAdminRole))
+        {
+            return Response::deny(__('This is the only existing System Administrator, therefore it cannot be deactivated.'));
+        }
+
+        if ($user->is($model))
+        {
+            return Response::deny(__('You cannot deactivate yourself.'));
+        }
+
+        return $user->can('deactivate users');
+    }
 }

@@ -18,7 +18,7 @@ class Authenticatable extends User
      *
      * @var array
      */
-    protected $appends = ['created_at_human', 'updated_at_human', 'deleted_at_human', 'record_status'];
+    protected $appends = ['created_at_human', 'updated_at_human', 'deleted_at_human', 'disabled_at_human',];
 
     protected function createdAtHuman(): Attribute
     {
@@ -80,18 +80,21 @@ class Authenticatable extends User
         );
     }
 
-    protected function recordStatus(): Attribute
+    protected function disabledAtHuman(): Attribute
     {
         return Attribute::make(
             get: function (mixed $value, array $attributes)
             {
-                if ($attributes['deleted_at'] ?? null)
+                if ($attributes['disabled_at'] ?? null)
                 {
-                    return __('DELETED');
+                    return Carbon::createFromTimeString($attributes['disabled_at'])->isoFormat('L LT')
+                        . ' ('
+                        . Carbon::createFromTimeString($attributes['disabled_at'])->diffForHumans()
+                        . ')';
                 }
                 else
                 {
-                    return __('REGISTERED');
+                    return null;
                 }
             },
         );
