@@ -272,7 +272,7 @@ class UpdateUser
                 if (!in_array($ou->name, $inputs['ou_names'], true))
                 {
                     $user->activeOrganizationalUnits()->updateExistingPivot($ou->id, [
-                        'disabled_at' => now()->toISOString(),
+                        'disabled_at' => now()->toIso8601String(),
                     ]);
 
                     activity()

@@ -92,7 +92,7 @@ class OrganizationObserver
                 [
                     'type' => __('organization'),
                     'name' => "{$organization->rif} ({$organization->name})",
-                    'timestamp' => now()->toISOString(),
+                    'timestamp' => now()->toIso8601String(),
                 ],
                 'deleted',
                 ['routeName' => 'organizations', 'routeParam' => 'organization']

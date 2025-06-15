@@ -92,7 +92,7 @@ class PermissionObserver
                 [
                     'type' => __('permission'),
                     'name' => "{$permission->name} ({$permission->description})",
-                    'timestamp' => now()->toISOString(),
+                    'timestamp' => now()->toIso8601String(),
                 ],
                 'deleted',
                 ['routeName' => 'permissions', 'routeParam' => 'permission']

@@ -34,6 +34,8 @@ services:
             POSTGRES_DB: '${DB_DATABASE}'
             POSTGRES_USER: '${DB_USERNAME}'
             POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+            PGTZ: '${APP_TIMEZONE:-America/Caracas}'
+            TZ: '${APP_TIMEZONE:-America/Caracas}'
         volumes:
             - 'sail-pgsql:/var/lib/postgresql/data'
             - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'

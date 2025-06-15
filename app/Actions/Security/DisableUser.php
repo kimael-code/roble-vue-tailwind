@@ -9,7 +9,7 @@ class DisableUser
 {
     public static function handle(User $user): void
     {
-        $user->disabled_at = now()->toISOString();
+        $user->disabled_at = now()->toIso8601String();
         $user->save();
 
         session()->flash('message', [
@@ -29,7 +29,7 @@ class DisableUser
                 [
                     'type' => __('user'),
                     'name' => "({$user->name})",
-                    'timestamp' => now()->toISOString(),
+                    'timestamp' => now()->toIso8601String(),
                 ],
                 'enabled',
                 ['routeName' => 'users', 'routeParam' => 'user']
