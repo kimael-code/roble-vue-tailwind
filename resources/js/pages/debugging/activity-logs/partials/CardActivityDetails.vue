@@ -160,14 +160,14 @@ function compareObjects(obj1: GenericModel, obj2: GenericModel) {
         <TableHeader>
           <TableRow>
             <TableHead>Propiedad</TableHead>
-            <TableHead>Valor Anterior</TableHead>
+            <TableHead class="text-right">Valor Anterior</TableHead>
             <TableHead>Valor Actual</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody v-if="log.properties.attributes && log.properties.old">
           <TableRow v-for="(item, i) in compareObjects(log.properties.old, log.properties.attributes)" :key="i">
             <TableCell class="font-mono text-xs">{{ item.key }}</TableCell>
-            <TableCell class="text-muted-foreground font-mono text-xs" :class="{ 'bg-red-100 font-medium text-red-700': !item.areEqual }">
+            <TableCell class="text-muted-foreground font-mono text-xs text-right" :class="{ 'bg-red-100 font-medium text-red-700': !item.areEqual }">
               {{ item.value1 !== undefined ? item.value1 : 'N/A' }}
             </TableCell>
             <TableCell
