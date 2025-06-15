@@ -84,7 +84,7 @@ class UpdateUser
                     ->withProperties([
                         __('unassigned_role') => $role,
                         __('to_user') => $user,
-                        'causer' => User::find($authUser->id)->toArray(),
+                        'causer' => User::with('person')->find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -124,7 +124,7 @@ class UpdateUser
                     ->withProperties([
                         __('assigned_role') => $role,
                         __('to_user') => $user,
-                        'causer' => User::find($authUser->id)->toArray(),
+                        'causer' => User::with('person')->find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -162,7 +162,7 @@ class UpdateUser
                     ->withProperties([
                         __('revoked_permission') => $permission,
                         __('to_user') => $user,
-                        'causer' => User::find($authUser->id)->toArray(),
+                        'causer' => User::with('person')->find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -203,7 +203,7 @@ class UpdateUser
                     ->withProperties([
                         __('granted_permission') => $permission,
                         __('to_user') => $user,
-                        'causer' => User::find($authUser->id)->toArray(),
+                        'causer' => User::with('person')->find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -243,7 +243,7 @@ class UpdateUser
                     ->withProperties([
                         __('disassociated_user') => $user,
                         __('from_administrative_unit') => $ou,
-                        'causer' => User::find($authUser->id)->toArray(),
+                        'causer' => User::with('person')->find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -272,7 +272,7 @@ class UpdateUser
                 if (!in_array($ou->name, $inputs['ou_names'], true))
                 {
                     $user->activeOrganizationalUnits()->updateExistingPivot($ou->id, [
-                        'disabled_at' => now()->toISOString(),
+                        'disabled_at' => now()->toIso8601String(),
                     ]);
 
                     activity()
@@ -282,7 +282,7 @@ class UpdateUser
                         ->withProperties([
                             __('deactivated_user') => $user,
                             __('in_administrative_unit') => $ou,
-                            'causer' => User::find($authUser->id)->toArray(),
+                            'causer' => User::with('person')->find($authUser->id)->toArray(),
                             'request' => [
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->header('user-agent'),
@@ -317,7 +317,7 @@ class UpdateUser
                         ->withProperties([
                             __('associated_user') => $user,
                             __('with_administrative_unit') => $ou,
-                            'causer' => User::find($authUser->id)->toArray(),
+                            'causer' => User::with('person')->find($authUser->id)->toArray(),
                             'request' => [
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->header('user-agent'),
@@ -345,7 +345,7 @@ class UpdateUser
                         ->withProperties([
                             __('activated_user') => $user,
                             __('in_administrative_unit') => $ou,
-                            'causer' => User::find($authUser->id)->toArray(),
+                            'causer' => User::with('person')->find($authUser->id)->toArray(),
                             'request' => [
                                 'ip_address' => request()->ip(),
                                 'user_agent' => request()->header('user-agent'),

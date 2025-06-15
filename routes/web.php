@@ -48,6 +48,9 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
     Route::put('users/{user}/disable', [UserController::class, 'disable'])
         ->withTrashed()
         ->name('users.disable');
+    Route::delete('users/{user}/force-destroy', [UserController::class, 'forceDestroy'])
+        ->withTrashed()
+        ->name('users.force-destroy');
     Route::resource('users', UserController::class)
         ->withTrashed(['show', 'edit', 'update', 'destroy'])
         ->middleware(HandlePrecognitiveRequests::class);

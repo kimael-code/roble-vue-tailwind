@@ -35,7 +35,7 @@ class CreateRole
                     ->withProperties([
                         __('assigned_permission') => $permission,
                         __('to_role') => $role,
-                        'causer' => User::find($user->id)->toArray(),
+                        'causer' => User::with('person')->find($user->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->userAgent(),

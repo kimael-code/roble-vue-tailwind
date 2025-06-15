@@ -101,6 +101,6 @@ class BaseModel extends Model
             'http_method'     => request()->method(),
             'request_url'     => request()->fullUrl(),
         ]);
-        $activity->properties = $activity->properties->put('causer', User::find(auth()->user()->id)->toArray());
+        $activity->properties = $activity->properties->put('causer', User::with('person')->find(auth()->user()->id)->toArray());
     }
 }

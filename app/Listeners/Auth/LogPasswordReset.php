@@ -33,7 +33,7 @@ class LogPasswordReset
                 'http_method'     => request()->method(),
                 'request_url'     => request()->fullUrl(),
             ])
-            ->withProperty('causer', User::find($event->user->id)->toArray())
+            ->withProperty('causer', User::with('person')->find($event->user->id)->toArray())
             ->log(__(':username: reset their password', ['username' => $event->user->name]));
     }
 }

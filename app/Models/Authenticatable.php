@@ -108,10 +108,12 @@ class Authenticatable extends User
                 'name',
                 'email',
                 'email_verified_at',
-                'current_team_id',
-                'profile_photo_path',
                 'created_at',
                 'updated_at',
+                'deleted_at',
+                'is_password_set',
+                'is_external',
+                'disabled_at',
             ])
             ->dontLogIfAttributesChangedOnly(['remember_token'])
             ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model', [
@@ -131,6 +133,6 @@ class Authenticatable extends User
             'http_method'     => request()->method(),
             'request_url'     => request()->fullUrl(),
         ]);
-        $activity->properties = $activity->properties->put('causer', User::find(auth()->user()->id)->toArray());
+        $activity->properties = $activity->properties->put('causer', \App\Models\User::with('person')->find(auth()->user()->id)->toArray());
     }
 }

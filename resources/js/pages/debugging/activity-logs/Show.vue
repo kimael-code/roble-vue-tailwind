@@ -61,11 +61,11 @@ const breadcrumbs: BreadcrumbItem[] = [
         <div class="col-span-3">
           <Tabs default-value="user" class="w-auto">
             <TabsList class="grid w-full grid-cols-2">
-              <TabsTrigger value="user">DATOS DEL USUARIO</TabsTrigger>
+              <TabsTrigger value="user">DATOS DEL CAUSANTE</TabsTrigger>
               <TabsTrigger value="ous">DATOS DEL EVENTO</TabsTrigger>
             </TabsList>
             <TabsContent value="user">
-              <CardUserDetails :causer="log.causer" :user-agent="userAgent" />
+              <CardUserDetails :causer="log.causer ?? log.properties.causer" :user-agent="userAgent" />
             </TabsContent>
             <TabsContent value="ous">
               <CardActivityDetails :log />

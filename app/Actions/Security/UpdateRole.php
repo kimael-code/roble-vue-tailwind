@@ -54,7 +54,7 @@ class UpdateRole
                     ->withProperties([
                         __('revoked_permission') => $permission,
                         __('from_role') => $role,
-                        'causer' => User::find($authUser->id)->toArray(),
+                        'causer' => User::with('person')->find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),
@@ -91,7 +91,7 @@ class UpdateRole
                     ->withProperties([
                         __('granted_permission') => $assignedPermission,
                         __('to_role') => $role,
-                        'causer' => User::find($authUser->id)->toArray(),
+                        'causer' => User::with('person')->find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),

@@ -51,7 +51,7 @@ class CreateUser
                 ->withProperties([
                     __('assigned_role') => $role,
                     __('to_user') => $user,
-                    'causer' => User::find($authUser->id)->toArray(),
+                    'causer' => User::with('person')->find($authUser->id)->toArray(),
                     'request' => [
                         'ip_address' => request()->ip(),
                         'user_agent' => request()->header('user-agent'),
@@ -85,7 +85,7 @@ class CreateUser
                 ->withProperties([
                     __('granted_permission') => $permission,
                     __('to_user') => $user,
-                    'causer' => User::find($authUser->id)->toArray(),
+                    'causer' => User::with('person')->find($authUser->id)->toArray(),
                     'request' => [
                         'ip_address' => request()->ip(),
                         'user_agent' => request()->header('user-agent'),
@@ -140,7 +140,7 @@ class CreateUser
                     ->withProperties([
                         __('associated_user') => $user,
                         __('with_administrative_unit') => $ou,
-                        'causer' => User::find($authUser->id)->toArray(),
+                        'causer' => User::with('person')->find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
                             'user_agent' => request()->header('user-agent'),

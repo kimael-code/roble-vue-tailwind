@@ -94,6 +94,7 @@ class Role extends SpatieRole
             'http_method' => request()->method(),
             'request_url' => request()->fullUrl(),
         ]);
+        $activity->properties = $activity->properties->put('causer', \App\Models\User::with('person')->find(auth()->user()->id)->toArray());
     }
 
     public function scopeFilter(Builder $query, array $filters): void

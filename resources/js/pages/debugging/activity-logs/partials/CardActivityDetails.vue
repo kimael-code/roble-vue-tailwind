@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ActivityLog } from '@/types';
 import { computed } from 'vue';
 
@@ -57,9 +58,8 @@ const cardDescription = computed(() => {
 const authorizedObjects = computed(() => {
   const authObjects: { [index: string]: any } = {};
 
-  Object.keys({ ...props.log.properties }).filter((d) => {
-      // @ts-expect-error: deja la ladilla typescript
-    if (d !== 'request' || d !== 'causer') {
+  Object.keys(props.log.properties).forEach((d) => {
+    if (d !== 'request' && d !== 'causer') {
       // @ts-expect-error: deja la ladilla typescript
       authObjects[d] = props.log.properties[d];
     }
@@ -121,58 +121,77 @@ function compareObjects(obj1: GenericModel, obj2: GenericModel) {
       <CardDescription>{{ cardDescription }}</CardDescription>
     </CardHeader>
     <CardContent v-if="log.event === 'created'">
-      <div class="grid w-full items-center gap-4">
-        <div class="space-y-1">
-          <p class="text-sm leading-none font-medium">Propiedades del Registro:</p>
-          <pre class="text-muted-foreground text-pretty">{{ log.properties.attributes }}</pre>
-        </div>
-      </div>
+      <Table>
+        <TableCaption>Datos del registro creado.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Propiedad</TableHead>
+            <TableHead>Valor</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-for="(value, key) in log.properties.attributes" :key="key">
+            <TableCell class="font-mono text-xs">{{ key }}</TableCell>
+            <TableCell class="font-mono text-xs">{{ value }}</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </CardContent>
-    <CardContent v-if="log.event === 'deleted'">
-      <div class="grid w-full items-center gap-4">
-        <div class="space-y-1">
-          <p class="text-sm leading-none font-medium">Propiedades del Registro:</p>
-          <pre class="text-muted-foreground text-pretty">{{ log.properties.old }}</pre>
-        </div>
-      </div>
+    <CardContent v-else-if="log.event === 'deleted'">
+      <Table>
+        <TableCaption>Datos del registro eliminado.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Propiedad</TableHead>
+            <TableHead>Valor</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-for="(value, key) in log.properties.old" :key="key">
+            <TableCell class="font-mono text-xs">{{ key }}</TableCell>
+            <TableCell class="font-mono text-xs">{{ value }}</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </CardContent>
-    <CardContent v-if="log.event === 'updated'">
-      <div class="grid grid-cols-3 gap-x-4 gap-y-2 border-b border-gray-200 p-1 text-sm font-semibold">
-        <div>Propiedad</div>
-        <div>Valor Anterior</div>
-        <div>Valor Actual</div>
-      </div>
-      <template v-if="log.properties.attributes && log.properties.old">
-        <div
-          v-for="(item, i) in compareObjects(log.properties.old, log.properties.attributes)"
-          class="grid grid-cols-3 gap-x-4 gap-y-2 border-b border-gray-100 p-1"
-          :key="i"
-        >
-          <div class="text-muted-foreground p-1 font-mono text-xs">{{ item.key }}</div>
-          <div class="text-muted-foreground p-1 font-mono text-xs" :class="{ 'bg-red-100 font-medium text-red-700': !item.areEqual }">
-            {{ item.value1 !== undefined ? item.value1 : 'N/A' }}
-          </div>
-          <div
-            class="p-1 font-mono text-xs"
-            :class="{ 'bg-green-100 font-medium text-green-700': !item.areEqual, 'text-muted-foreground': item.areEqual }"
-          >
-            {{ item.value2 !== undefined ? item.value2 : 'N/A' }}
-          </div>
-        </div>
-      </template>
+    <CardContent v-else-if="log.event === 'updated'">
+      <Table>
+        <TableCaption>Datos del registro modificado.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Propiedad</TableHead>
+            <TableHead>Valor Anterior</TableHead>
+            <TableHead>Valor Actual</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody v-if="log.properties.attributes && log.properties.old">
+          <TableRow v-for="(item, i) in compareObjects(log.properties.old, log.properties.attributes)" :key="i">
+            <TableCell class="font-mono text-xs">{{ item.key }}</TableCell>
+            <TableCell class="text-muted-foreground font-mono text-xs" :class="{ 'bg-red-100 font-medium text-red-700': !item.areEqual }">
+              {{ item.value1 !== undefined ? item.value1 : 'N/A' }}
+            </TableCell>
+            <TableCell
+              class="text-muted-foreground font-mono text-xs"
+              :class="{ 'bg-green-100 font-medium text-green-700': !item.areEqual, 'text-muted-foreground': item.areEqual }"
+            >
+              {{ item.value2 !== undefined ? item.value2 : 'N/A' }}
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
     </CardContent>
-    <CardContent v-if="log.event === 'authorized'">
+    <CardContent v-else-if="log.event === 'authorized'">
       <div class="grid w-full items-center gap-4">
         <div class="space-y-1">
           <p class="text-sm leading-none font-medium">Propiedades de los Registros:</p>
-          <pre class="text-muted-foreground text-pretty text-xs">{{ authorizedObjects }}</pre>
+          <pre class="text-muted-foreground text-xs text-pretty">{{ authorizedObjects }}</pre>
         </div>
       </div>
     </CardContent>
     <CardContent v-else>
       <div class="grid w-full items-center gap-4">
         <div class="space-y-1">
-          <pre class="text-muted-foreground text-pretty text-xs">{{ log.properties }}</pre>
+          <pre class="text-muted-foreground text-xs text-pretty">{{ log.properties.request }}</pre>
         </div>
       </div>
     </CardContent>

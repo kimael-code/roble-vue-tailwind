@@ -92,7 +92,7 @@ class OrganizationalUnitObserver
                 [
                     'type' => __('organizational unit'),
                     'name' => $organizationalUnit->name,
-                    'timestamp' => now()->toISOString(),
+                    'timestamp' => now()->toIso8601String(),
                 ],
                 'deleted',
                 ['routeName' => 'organizational-units', 'routeParam' => 'organizational_unit']

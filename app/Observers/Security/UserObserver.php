@@ -45,7 +45,7 @@ class UserObserver
                 [
                     'type' => __('user'),
                     'name' => "({$user->name})",
-                    'timestamp' => now()->toISOString(),
+                    'timestamp' => now()->toIso8601String(),
                 ],
                 'deleted',
                 ['routeName' => 'users', 'routeParam' => 'user']
@@ -106,7 +106,7 @@ class UserObserver
                 [
                     'type' => __('user'),
                     'name' => "({$user->name})",
-                    'timestamp' => now()->toISOString(),
+                    'timestamp' => now()->toIso8601String(),
                 ],
                 'f_deleted',
                 ['routeName' => 'users', 'routeParam' => 'user']

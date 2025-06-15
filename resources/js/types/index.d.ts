@@ -43,6 +43,7 @@ export interface User {
   deleted_at: string | null;
   is_password_set: boolean;
   is_external: boolean;
+  disabled_at: string;
   created_at_human?: string | null;
   updated_at_human?: string | null;
   deleted_at_human?: string | null;

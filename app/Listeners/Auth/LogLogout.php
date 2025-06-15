@@ -34,7 +34,7 @@ class LogLogout
                 'request_url'     => request()->fullUrl(),
                 'guard_name'      => $event->guard,
             ])
-            ->withProperty('causer', User::find($event->user->id)->toArray())
+            ->withProperty('causer', User::with('person')->find($event->user->id)->toArray())
             ->log(__(':username: logged out', ['username' => $event->user->name]));
     }
 }

@@ -35,7 +35,7 @@ class LogFailed
                 'guard_name'      => $event->guard,
                 'credentials'     => $event->credentials,
             ])
-            ->withProperty('causer', User::find($event->user?->id)?->toArray() ?? $event->credentials['name'])
+            ->withProperty('causer', User::with('person')->find($event->user?->id)?->toArray() ?? $event->credentials['name'])
             ->log(__(':username: failed login', ['username' => $event->user->name ?? $event->credentials['name']]));
     }
 }

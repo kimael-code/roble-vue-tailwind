@@ -14,7 +14,7 @@ class CreateOrganization
         {
             foreach (Organization::all() as $currentOrganization)
             {
-                $currentOrganization->disabled_at = now()->toISOString();
+                $currentOrganization->disabled_at = now()->toIso8601String();
                 $currentOrganization->save();
             }
 
