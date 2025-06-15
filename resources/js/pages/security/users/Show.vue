@@ -18,7 +18,11 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -27,7 +31,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { ActivityLog, BreadcrumbItem, Can, PaginatedCollection, Permission, Role, SearchFilter, User } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { EllipsisIcon, LoaderCircle, Plus, UserIcon } from 'lucide-vue-next';
+import { EllipsisIcon, LoaderCircle, PencilIcon, Plus, RotateCcwIcon, ToggleLeftIcon, ToggleRightIcon, Trash2Icon, UserIcon, XIcon } from 'lucide-vue-next';
 import { computed, watch } from 'vue';
 import Permisos from './partials/Permisos.vue';
 import Roles from './partials/Roles.vue';
@@ -91,6 +95,20 @@ watch(action, () => {
       alertDescription.value = `Esta acción no podrá revertirse. «${props.user.name}» perderá el acceso al sistema. Sus datos se eliminarán.`;
       alertOpen.value = true;
       break;
+    case 'enable':
+      alertAction.value = 'Activar';
+      alertActionCss.value = '';
+      alertTitle.value = `Activar usuario(a) «${props.user.name}»?`;
+      alertDescription.value = `«${props.user.name}» recuperará el acceso al sistema. Sus datos se restaurarán.`;
+      alertOpen.value = true;
+      break;
+    case 'disable':
+      alertAction.value = 'Desactivar';
+      alertActionCss.value = 'bg-amber-500 text-foreground hover:bg-amber-500/90';
+      alertTitle.value = `Desactivar usuario(a) «${props.user.name}»?`;
+      alertDescription.value = `«${props.user.name}» perderá el acceso al sistema. Sus datos se conservarán.`;
+      alertOpen.value = true;
+      break;
 
     default:
       break;
@@ -131,9 +149,11 @@ watch(action, () => {
               <p class="text-muted-foreground text-sm">{{ user.updated_at_human }}</p>
               <br />
               <p class="text-sm font-medium">Estatus</p>
+              <p v-if="user.disabled_at" class="text-sm text-amber-500">DESACTIVADO</p>
+              <p v-if="user.disabled_at" class="text-sm text-amber-500">{{ user.disabled_at_human }}</p>
               <p v-if="user.deleted_at" class="text-sm text-red-500">ELIMINADO</p>
-              <p v-if="user.deleted_at" class="text-muted-foreground text-sm">{{ user.deleted_at_human }}</p>
-              <p v-else class="text-sm text-green-500">REGISTRADO</p>
+              <p v-if="user.deleted_at" class="text-sm text-red-500 ">{{ user.deleted_at_human }}</p>
+              <p v-if="!user.disabled_at && !user.deleted_at" class="text-sm text-green-500">ACTIVO</p>
             </CardContent>
           </Card>
         </div>
@@ -150,18 +170,48 @@ watch(action, () => {
                 <DropdownMenuLabel>Acciones</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem @click="requestEdit(props.user.id, { preserveState: false })">
+                  <DropdownMenuItem v-if="can.update" @click="requestEdit(user.id, { preserveState: false })">
+                    <PencilIcon />
                     <span>Editar</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem :disabled="!user.deleted_at" @click="action = 'restore'">
-                    <span>Restaurar</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem :disabled="user.deleted_at ? true : false" @click="action = 'destroy'">
-                    <span>Eliminar</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem :disabled="!user.deleted_at" @click="action = 'force_destroy'">
-                    <span>Eliminar permanentemente</span>
-                  </DropdownMenuItem>
+
+                  <DropdownMenuSub v-if="can.activate || can.deactivate">
+                    <DropdownMenuSubTrigger>
+                      <span>Activación</span>
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem v-if="can.activate" :disabled="user.disabled_at === null" @click="action = 'enable'">
+                          <ToggleRightIcon />
+                          <span>Activar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem v-if="can.deactivate" :disabled="user.disabled_at !== null" @click="action = 'disable'">
+                          <ToggleLeftIcon />
+                          <span>Desactivar</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+
+                  <DropdownMenuSub v-if="can.restore || can.delete || can.f_delete">
+                    <DropdownMenuSubTrigger> Eliminación </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem v-if="can.restore" :disabled="!user.deleted_at" @click="action = 'restore'">
+                          <RotateCcwIcon />
+                          <span>Restaurar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem v-if="can.delete" :disabled="user.deleted_at ? true : false" @click="action = 'destroy'">
+                          <Trash2Icon />
+                          <span>Eliminar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem v-if="can.f_delete" :disabled="!user.deleted_at" @click="action = 'force_destroy'">
+                          <XIcon />
+                          <span>Eliminar permanentemente</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -128,7 +128,7 @@ export function useRequestActions(resourceName: string) {
     requestingForceDestroy.value = false;
     resourceID.value = id;
 
-    request.delete(route(`${resourceName}.destroy`, id), {
+    request.delete(route(`${resourceName}.force-destroy`, id), {
       ...options,
       onStart: () => (requestingForceDestroy.value = true),
       onFinish: () => {

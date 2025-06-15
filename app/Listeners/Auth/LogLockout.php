@@ -36,7 +36,7 @@ class LogLockout
                 'request_url'     => $event->request->fullUrl(),
                 'credentials'     => $event->request->all(),
             ])
-            ->withProperty('causer', User::find($causer->id)->toArray() ?? '')
+            ->withProperty('causer', User::with('person')->find($causer->id)->toArray() ?? '')
             ->log(__(':username: locked out', ['username' => $event->request->user()->name ?? '']));
     }
 }

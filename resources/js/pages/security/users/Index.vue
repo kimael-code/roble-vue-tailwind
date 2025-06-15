@@ -148,7 +148,7 @@ watch(action, () => {
       break;
     case 'disable':
       alertAction.value = 'Desactivar';
-      alertActionCss.value = 'bg-yellow-500 text-foreground hover:bg-yellow-500/90';
+      alertActionCss.value = 'bg-amber-500 text-foreground hover:bg-amber-500/90';
       alertTitle.value = `Desactivar usuario(a) «${alertData.value?.name}»?`;
       alertDescription.value = `«${alertData.value?.name}» perderá el acceso al sistema. Sus datos se conservarán.`;
       alertOpen.value = true;

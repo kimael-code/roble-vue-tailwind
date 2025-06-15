@@ -84,7 +84,16 @@ class UserController extends Controller
     {
         Gate::authorize('delete', $user);
 
-        $user->trashed() ? $user->forceDelete() : $user->delete();
+        $user->delete();
+
+        return redirect(route('users.index'));
+    }
+
+    public function forceDestroy(User $user)
+    {
+        Gate::authorize('forceDelete', $user);
+
+        $user->forceDelete();
 
         return redirect(route('users.index'));
     }

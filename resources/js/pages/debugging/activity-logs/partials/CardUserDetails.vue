@@ -6,7 +6,7 @@ import { User, UserAgent } from '@/types';
 import { CalendarIcon } from 'lucide-vue-next';
 
 defineProps<{
-  causer?: User;
+  causer?: User | string;
   userAgent: UserAgent;
 }>();
 </script>
@@ -18,13 +18,13 @@ defineProps<{
       <CardDescription>Detalles del usuario causante del evento.</CardDescription>
     </CardHeader>
     <CardContent>
-      <div v-if="causer" class="flex justify-start space-x-4">
+      <div v-if="typeof causer === 'object'" class="flex justify-start space-x-4">
         <Avatar>
           <AvatarImage v-if="causer.avatar" :src="causer.avatar" />
           <AvatarFallback>{{ getInitials(causer.name) }}</AvatarFallback>
         </Avatar>
         <div class="space-y-1">
-          <h4 class="text-sm font-semibold">{{ `@${causer.name}` }}</h4>
+          <h4 class="font-mono text-sm font-semibold">{{ `${causer.name}` }}</h4>
           <p class="text-sm">{{ causer.email }}</p>
           <p v-if="causer.person" class="text-sm">{{ `${causer.person?.names} ${causer.person?.surnames}` }}</p>
           <div class="flex items-center pt-2">
@@ -33,9 +33,16 @@ defineProps<{
           </div>
         </div>
       </div>
-      <div v-else class="flex justify-start space-x-4">
+      <div v-else class="">
+        <p class="text-sm">No es posible recuperar completamente los datos del usuario causante del evento. Verifique que:</p>
+        <ul class="list-inside list-disc text-sm">
+          <li>El usuario esté registrado en el sistema.</li>
+          <li>El usuario no esté con estatus "Inactivo".</li>
+          <li>El usuario no esté con estatus "Eliminado"</li>
+        </ul>
+        <br />
         <p class="text-sm">
-          No es posible recuperar los datos del usuario causante del evento porque éste no está registrado en el sistema.
+          <span class="font-mono">{{ causer }}</span> fue quien intentó ejecutar la acción.
         </p>
       </div>
     </CardContent>
