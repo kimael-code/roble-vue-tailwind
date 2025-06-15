@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ActivityLogs from '@/components/activity-logs/ActivityLogs.vue';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, OrganizationalUnit, PaginatedCollection } from '@/types';
+import { ActivityLog, BreadcrumbItem, Can, OrganizationalUnit, PaginatedCollection, SearchFilter } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import { EllipsisIcon, LoaderCircle, Plus, Workflow } from 'lucide-vue-next';
 import { watch } from 'vue';
@@ -33,9 +34,10 @@ import OrganizationalUnits from './partials/OrganizationalUnits.vue';
 
 const props = defineProps<{
   can: Can;
-  filters: object;
+  filters: SearchFilter;
   organizationalUnit: OrganizationalUnit;
   organizationalUnits: PaginatedCollection<OrganizationalUnit>;
+  logs: PaginatedCollection<ActivityLog>;
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -130,15 +132,19 @@ watch(action, () => {
             </Button>
           </div>
           <Tabs default-value="organization" class="w-auto">
-            <TabsList class="grid w-full grid-cols-2">
+            <TabsList class="grid w-full grid-cols-3">
               <TabsTrigger value="organization">Ente</TabsTrigger>
               <TabsTrigger value="ous">Unidades Administrativas</TabsTrigger>
+              <TabsTrigger value="logs">Actividad</TabsTrigger>
             </TabsList>
             <TabsContent value="organization">
               <CardOrganization :organization="organizationalUnit.organization" :ou="organizationalUnit.organizational_unit" />
             </TabsContent>
             <TabsContent value="ous">
               <OrganizationalUnits :filters :resource-id="organizationalUnit.id" :ous="organizationalUnits" />
+            </TabsContent>
+            <TabsContent value="logs">
+              <ActivityLogs :filters :logs page-route-name="organizational-units.show" :resource-id="organizationalUnit.id" />
             </TabsContent>
           </Tabs>
         </div>

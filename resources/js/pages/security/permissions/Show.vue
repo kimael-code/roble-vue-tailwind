@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ActivityLogs from '@/components/activity-logs/ActivityLogs.vue';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, PaginatedCollection, Permission, Role, User } from '@/types';
+import { ActivityLog, BreadcrumbItem, Can, PaginatedCollection, Permission, Role, SearchFilter, User } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import { EllipsisIcon, KeySquare, LoaderCircle, Plus } from 'lucide-vue-next';
 import { watch } from 'vue';
@@ -33,10 +34,11 @@ import Usuarios from './partials/Usuarios.vue';
 
 const props = defineProps<{
   can: Can;
-  filters: object;
+  filters: SearchFilter;
   permission: Permission;
   roles: PaginatedCollection<Role>;
   users: PaginatedCollection<User>;
+  logs: PaginatedCollection<ActivityLog>;
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -123,15 +125,19 @@ watch(action, () => {
             </Button>
           </div>
           <Tabs default-value="roles" class="w-auto">
-            <TabsList class="grid w-full grid-cols-2">
+            <TabsList class="grid w-full grid-cols-3">
               <TabsTrigger value="roles">Roles</TabsTrigger>
               <TabsTrigger value="usuarios">Usuarios</TabsTrigger>
+              <TabsTrigger value="logs">Actividad</TabsTrigger>
             </TabsList>
             <TabsContent value="roles">
               <Roles :filters :permission-id="permission.id" :roles></Roles>
             </TabsContent>
             <TabsContent value="usuarios">
               <Usuarios :filters :permission-id="permission.id" :users></Usuarios>
+            </TabsContent>
+            <TabsContent value="logs">
+              <ActivityLogs :filters :logs page-route-name="permissions.show" :resource-id="permission.id" />
             </TabsContent>
           </Tabs>
         </div>

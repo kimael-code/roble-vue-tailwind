@@ -2,11 +2,14 @@
 
 namespace App\Http\Props\Security;
 
+use App\Http\Resources\Debugging\ActivityLogCollection;
 use App\Http\Resources\Security\PermissionCollection;
 use App\Http\Resources\Security\RoleCollection;
 use App\Http\Resources\Security\UserCollection;
+use App\Models\Debugging\ActivityLog;
 use App\Models\Security\Permission;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -53,6 +56,17 @@ class PermissionProps
                     ->permission($permission->name)
                     ->latest()
                     ->paginate(10, pageName: 'page_u')
+            ),
+            'logs' => fn() => new ActivityLogCollection(
+                ActivityLog::filter(Request::only(['search']))
+                    ->whereHasMorph(
+                        'subject',
+                        Permission::class,
+                        fn(Builder $query) => $query->where('id', $permission->id)
+                    )
+                    ->latest()
+                    ->paginate(10, pageName: 'page_l')
+                    ->withQueryString()
             ),
         ];
     }

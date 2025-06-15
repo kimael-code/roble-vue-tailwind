@@ -2,9 +2,12 @@
 
 namespace App\Http\Props\Organization;
 
+use App\Http\Resources\Debugging\ActivityLogCollection;
 use App\Http\Resources\Organization\OrganizationalUnitCollection;
+use App\Models\Debugging\ActivityLog;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationalUnit;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -62,6 +65,17 @@ class OrganizationalUnitProps
                 $ou->organizationalUnits()->filter(Request::only(['search', 'name']))
                     ->latest()
                     ->paginate(10)
+            ),
+            'logs' => fn() => new ActivityLogCollection(
+                ActivityLog::filter(Request::only(['search']))
+                    ->whereHasMorph(
+                        'subject',
+                        OrganizationalUnit::class,
+                        fn(Builder $query) => $query->where('id', $ou->id)
+                    )
+                    ->latest()
+                    ->paginate(10, pageName: 'page_l')
+                    ->withQueryString()
             ),
         ];
     }

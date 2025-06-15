@@ -86,7 +86,7 @@ defineEmits<{
           </DropdownMenuPortal>
         </DropdownMenuSub>
 
-        <DropdownMenuSub>
+        <DropdownMenuSub v-if="can.restore || can.delete || can.f_delete">
           <DropdownMenuSubTrigger> Eliminación </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
             <DropdownMenuSubContent>

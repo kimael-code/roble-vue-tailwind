@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ActivityLogs from '@/components/activity-logs/ActivityLogs.vue';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, PaginatedCollection, Permission, Role, SearchFilter, User } from '@/types';
+import { ActivityLog, BreadcrumbItem, Can, PaginatedCollection, Permission, Role, SearchFilter, User } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import { EllipsisIcon, LoaderCircle, Plus, UserIcon } from 'lucide-vue-next';
 import { computed, watch } from 'vue';
@@ -38,6 +39,7 @@ const props = defineProps<{
   permissions: PaginatedCollection<Permission>;
   permissionsCount: number;
   roles: PaginatedCollection<Role>;
+  logs: PaginatedCollection<ActivityLog>;
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -170,15 +172,19 @@ watch(action, () => {
             </Button>
           </div>
           <Tabs default-value="roles" class="w-auto">
-            <TabsList class="grid w-full grid-cols-2">
+            <TabsList class="grid w-full grid-cols-3">
               <TabsTrigger value="roles">Roles</TabsTrigger>
               <TabsTrigger value="permissions">Permisos</TabsTrigger>
+              <TabsTrigger value="logs">Actividad</TabsTrigger>
             </TabsList>
             <TabsContent value="roles">
               <Roles :filters :user-id="user.id" :roles></Roles>
             </TabsContent>
             <TabsContent value="permissions">
               <Permisos :filters :user-id="user.id" :permissions :permissions-count></Permisos>
+            </TabsContent>
+            <TabsContent value="logs">
+              <ActivityLogs :filters :logs page-route-name="users.show" :resource-id="user.id" />
             </TabsContent>
           </Tabs>
         </div>
