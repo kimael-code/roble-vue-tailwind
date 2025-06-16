@@ -41,6 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits([
   'batchDestroy',
   'export',
+  'exportRow',
   'search',
   'new',
   'read',
@@ -48,7 +49,6 @@ const emit = defineEmits([
   'destroy',
   'forceDestroy',
   'restore',
-  'export',
   'activate',
   'deactivate',
 ]);
@@ -135,7 +135,7 @@ watchDebounced(
                     @destroy="(row) => $emit('destroy', row)"
                     @force-destroy="(row) => $emit('forceDestroy', row)"
                     @restore="(row) => $emit('restore', row)"
-                    @export="(row) => $emit('export', row)"
+                    @export="(row) => $emit('exportRow', row)"
                     @activate="(row) => $emit('activate', row)"
                     @deactivate="(row) => $emit('deactivate', row)"
                   />

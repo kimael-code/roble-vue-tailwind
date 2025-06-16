@@ -12,6 +12,7 @@ use App\Http\Controllers\{
     Security\RoleController,
     Security\UserController,
 };
+use App\Http\Controllers\ExportDataController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,6 +37,8 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
         Route::get('log-files/{file}', 'export')->middleware('can:export system logs')->name('log-files.export');
         Route::delete('log-files/{file}', 'delete')->middleware('can:delete system logs')->name('log-files.destroy');
     });
+
+    Route::get('/export/{resource}', ExportDataController::class)->name('data.export');
 
     Route::resource('activity-logs', ActivityLogController::class)->only(['index', 'show',]);
 
