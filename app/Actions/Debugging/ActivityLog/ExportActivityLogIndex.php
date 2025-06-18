@@ -3,7 +3,6 @@
 namespace App\Actions\Debugging\ActivityLog;
 
 use App\Models\Debugging\ActivityLog;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class ExportActivityLogIndex
 {
@@ -11,7 +10,11 @@ class ExportActivityLogIndex
     {
         $data = ActivityLog::filter($inputs)->get();
 
-        return Pdf::loadView('pdf.activity-logs.index', ['data' => $data])
-            ->setPaper('a4', 'landscape')->output();
+        
+
+        // $pdf
+
+        // return Pdf::loadView('pdf.activity-logs.index', ['data' => $data])
+        //     ->setPaper('a4', 'landscape')->output();
     }
 }

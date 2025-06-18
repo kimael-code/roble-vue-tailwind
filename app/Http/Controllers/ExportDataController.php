@@ -10,10 +10,11 @@ class ExportDataController extends Controller
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request, string $resource)
+    public function __invoke(Request $request, string $resource, ?string $format = 'pdf')
     {
-        match ($resource) {
-            'activity-logs' => (new ExportActivityLogIndex)->handle($request->all()),
+        // dd($resource);
+        return match ("$resource/$format") {
+            'activity-logs/pdf' => (new ExportActivityLogIndex)->handle($request->all()),
             //  => ,
         };
     }

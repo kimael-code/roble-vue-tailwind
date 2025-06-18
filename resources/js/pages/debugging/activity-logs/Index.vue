@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import DataTable from '@/components/DataTable.vue';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogScrollContent, DialogTitle } from '@/components/ui/dialog';
 import { valueUpdater } from '@/components/ui/table/utils';
 import { useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -27,6 +29,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const { requestRead, requestingRead } = useRequestActions('activity-logs');
+const showPdf = ref(false);
 
 permissions.value = props.can;
 const sorting = ref<SortingState>([]);
@@ -109,7 +112,25 @@ watchEffect(() => (requestingRead.value === false ? (processingRowId.value = nul
         :table="table"
         @search="(s) => (globalFilter = s)"
         @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
+        @export="showPdf = true"
       />
+
+      <Dialog v-model:open="showPdf">
+        <DialogScrollContent>
+          <DialogHeader>
+            <DialogTitle>Exportar a PDF</DialogTitle>
+            <DialogDescription> Reporte de las trazas de actividades de los usuarios </DialogDescription>
+          </DialogHeader>
+          <div class="h-[300dvh]">
+            <iframe :src="route('data.export', { resource: 'activity-logs' })" frameborder="0" width="100%" height="100%"></iframe>
+          </div>
+          <DialogFooter>
+            <DialogClose as-child>
+              <Button type="button"> Cerrar </Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogScrollContent>
+      </Dialog>
     </ContentLayout>
   </AppLayout>
 </template>
