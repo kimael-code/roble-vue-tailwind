@@ -28,7 +28,7 @@ class CreateRole
 
                 $role->givePermissionTo($permission);
 
-                activity()
+                activity(__('Security/Roles'))
                     ->causedBy($user)
                     ->performedOn($role)
                     ->event('authorized')
@@ -46,7 +46,7 @@ class CreateRole
                         ]
                     ])
                     ->log(__(':username: assigned permission [:permission] to role [:role]', [
-                        'username' => $user->mame,
+                        'username' => $user->name,
                         'permission' => $permission->description,
                         'role' => $role->name,
                     ]));

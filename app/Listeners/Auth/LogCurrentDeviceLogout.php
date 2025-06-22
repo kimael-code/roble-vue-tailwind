@@ -22,7 +22,7 @@ class LogCurrentDeviceLogout
      */
     public function handle(CurrentDeviceLogout $event): void
     {
-        activity()
+        activity(__('Authentication'))
             ->event('authenticated')
             ->causedBy($event->user)
             ->withProperty('request', [

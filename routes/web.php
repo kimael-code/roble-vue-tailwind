@@ -38,8 +38,6 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
         Route::delete('log-files/{file}', 'delete')->middleware('can:delete system logs')->name('log-files.destroy');
     });
 
-    Route::get('/export/{resource}', ExportDataController::class)->name('data.export');
-
     Route::resource('activity-logs', ActivityLogController::class)->only(['index', 'show',]);
 
     Route::put('users/{user}/restore', [UserController::class, 'restore'])
@@ -70,3 +68,4 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
 
 require __DIR__ . '/settings.php';
 require __DIR__ . '/auth.php';
+require __DIR__ . '/reports.php';

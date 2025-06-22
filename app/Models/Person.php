@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\LogOptions;
 
 class Person extends BaseModel
 {
@@ -44,6 +45,19 @@ class Person extends BaseModel
             'phones' => AsCollection::class,
             'emails' => AsCollection::class,
         ];
+    }
+
+    public function getActivityLogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->useLogName(__('Security/Users'))
+            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model [:modelName]', [
+                'username' => auth()->user()->name,
+                'event' => __($eventName),
+                'model' => __($this->traceObjectName),
+                'modelName' => "{$this?->names} {$this?->surnames}",
+            ]));
     }
 
     public function user(): BelongsTo

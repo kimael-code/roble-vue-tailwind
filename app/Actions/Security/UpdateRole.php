@@ -47,7 +47,7 @@ class UpdateRole
             {
                 $role->revokePermissionTo($permission->name);
 
-                activity()
+                activity(__('Security/Roles'))
                     ->causedBy($authUser)
                     ->performedOn($role)
                     ->event('authorized')
@@ -84,7 +84,7 @@ class UpdateRole
             {
                 $role->givePermissionTo($assignedPermission->name);
 
-                activity()
+                activity(__('Security/Roles'))
                     ->causedBy($authUser)
                     ->performedOn($role)
                     ->event('authorized')

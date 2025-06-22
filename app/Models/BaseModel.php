@@ -84,10 +84,11 @@ class BaseModel extends Model
     {
         return LogOptions::defaults()
             ->logAll()
-            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model', [
+            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model [:modelName]', [
                 'username' => auth()->user()->name,
                 'event' => __($eventName),
                 'model' => __($this->traceObjectName),
+                'modelName' => $this?->name ?? $this?->title ?? '',
             ]));
     }
 

@@ -72,6 +72,12 @@
   "role": "rol",
   "person": "persona",
   "user": "usuario",
+  "Security/Users": "Seguridad/Usuarios",
+  "Security/Permissions": "Seguridad/Permisos",
+  "Security/Roles": "Seguridad/Roles",
+  "Organization/Organizations": "Ente/Entes",
+  "Organization/Administrative Units": "Ente/Unidades Administrativas",
+  "Authentication": "Autenticación",
 
   "unassigned_role": "rol_desasignado",
   "assigned_role": "rol asignado",

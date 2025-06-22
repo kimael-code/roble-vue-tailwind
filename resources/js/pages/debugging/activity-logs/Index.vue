@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import DataTable from '@/components/DataTable.vue';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogScrollContent, DialogTitle } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { valueUpdater } from '@/components/ui/table/utils';
 import { useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { ActivityLog, BreadcrumbItem, Can, PaginatedCollection, SearchFilter, User } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { getCoreRowModel, RowSelectionState, SortingState, TableOptions, useVueTable } from '@tanstack/vue-table';
 import { LogsIcon } from 'lucide-vue-next';
-import { reactive, ref, watchEffect } from 'vue';
+import { computed, reactive, ref, watchEffect } from 'vue';
 import { columns, permissions, processingRowId } from './partials/columns';
 
 const props = defineProps<{
@@ -92,6 +91,12 @@ const tableOptions = reactive<TableOptions<ActivityLog>>({
 const table = useVueTable(tableOptions);
 
 watchEffect(() => (requestingRead.value === false ? (processingRowId.value = null) : false));
+
+const urlQueryString = computed(() => {
+  const queryString = usePage().url.indexOf('?');
+
+  return queryString >= 0 ? usePage().url.substring(queryString) : '';
+});
 </script>
 
 <template>
@@ -115,22 +120,17 @@ watchEffect(() => (requestingRead.value === false ? (processingRowId.value = nul
         @export="showPdf = true"
       />
 
-      <Dialog v-model:open="showPdf">
-        <DialogScrollContent>
-          <DialogHeader>
-            <DialogTitle>Exportar a PDF</DialogTitle>
-            <DialogDescription> Reporte de las trazas de actividades de los usuarios </DialogDescription>
-          </DialogHeader>
-          <div class="h-[300dvh]">
-            <iframe :src="route('data.export', { resource: 'activity-logs' })" frameborder="0" width="100%" height="100%"></iframe>
+      <Sheet v-model:open="showPdf">
+        <SheetContent side="bottom">
+          <SheetHeader>
+            <SheetTitle>Exportar a PDF</SheetTitle>
+            <SheetDescription>Reporte: Trazas de Actividades de Usuarios</SheetDescription>
+          </SheetHeader>
+          <div class="h-[50dvh]">
+            <iframe :src="`${route('export-activity-logs-pdf.index')}${urlQueryString}`" frameborder="0" width="100%" height="100%"></iframe>
           </div>
-          <DialogFooter>
-            <DialogClose as-child>
-              <Button type="button"> Cerrar </Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogScrollContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </ContentLayout>
   </AppLayout>
 </template>

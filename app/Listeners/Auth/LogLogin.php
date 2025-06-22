@@ -22,7 +22,7 @@ class LogLogin
      */
     public function handle(Login $event): void
     {
-        activity()
+        activity(__('Authentication'))
             ->event('authenticated')
             ->causedBy($event->user)
             ->withProperty('request', [

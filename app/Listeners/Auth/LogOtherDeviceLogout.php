@@ -22,7 +22,7 @@ class LogOtherDeviceLogout
      */
     public function handle(OtherDeviceLogout $event): void
     {
-        activity()
+        activity(__('Authentication'))
             ->event('authenticated')
             ->causedBy($event->user)
             ->withProperty('request', [
