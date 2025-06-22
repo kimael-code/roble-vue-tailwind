@@ -44,7 +44,7 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Indicate that the model's password is not set by the user.
      */
     public function passwordNotSet(): static
     {

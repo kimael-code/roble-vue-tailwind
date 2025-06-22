@@ -16,6 +16,8 @@ class BasePdf extends TCPDF
             orientation: $orientation,
             format: $format,
         );
+
+        \TCPDF_FONTS::addTTFfont(fontfile: resource_path('fonts/iosevka-33.2.5/IosevkaFixedSS12-Regular.ttf'));
     }
 
     public function Header()
@@ -61,8 +63,6 @@ class BasePdf extends TCPDF
         $this->MultiCell(w: 0, h: 0, txt: $headerData['title'], align: 'L', x: 80);
         $this->setX(80);
         $this->Cell(w: 0, txt: config('app.name'), ln: 1);
-
-        \TCPDF_FONTS::addTTFfont(fontfile: resource_path('fonts/iosevka-33.2.5/IosevkaFixedSS12-Regular.ttf'));
 
         $this->setFont(family: 'iosevkafixedss12', size: 10);
         $this->Cell(w: 0, txt: "Generado en fecha: {$headerData['string']}", align: 'R');

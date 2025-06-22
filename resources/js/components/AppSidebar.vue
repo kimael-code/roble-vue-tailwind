@@ -3,7 +3,7 @@ import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { SharedData, type NavItem } from '@/types';
+import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Bug, Building, FolderGit2, KeySquare, LayoutGrid, LogsIcon, User, Users, Workflow } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
@@ -11,7 +11,7 @@ import NavCompany from './NavCompany.vue';
 import NavDebug from './NavDebug.vue';
 import NavSecurity from './NavSecurity.vue';
 
-const page = usePage<SharedData>();
+const page = usePage();
 
 const mainNavItems: NavItem[] = [
   {

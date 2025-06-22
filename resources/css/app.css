@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -8,9 +8,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans:
-    Instrument Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans: Instrument Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -82,9 +80,7 @@
   body,
   html {
     --font-sans:
-      'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
-      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-      'Noto Color Emoji';
+      'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   }
 }
 
@@ -180,20 +176,6 @@
   --vis-secondary-color: 160 81% 40%;
   --vis-text-color: var(--muted-foreground);
 }
-
-@layer base {
-    * {
-        @apply border-border;
-    }
-
-    body {
-        @apply bg-background text-foreground;
-    }
-}
-
-/*
-  ---break---
-*/
 
 @layer base {
   * {

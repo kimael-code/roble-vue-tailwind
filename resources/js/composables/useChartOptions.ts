@@ -1,9 +1,8 @@
-import { SharedData } from '@/types';
 import { usePage } from '@inertiajs/vue3';
 import { useDark } from '@vueuse/core';
 import { computed, ref, watch } from 'vue';
 
-const isOpen = usePage<SharedData>().props?.sidebarOpen;
+const isOpen = usePage().props?.sidebarOpen;
 
 export function useChartOptionsUsers(labels: Array<string>, colors = ['#2e93fa', '#e91e63']) {
   const isDark = useDark();
@@ -172,7 +171,7 @@ export function useChartOptionsUsers(labels: Array<string>, colors = ['#2e93fa',
   return { chartOptionsUsers };
 }
 
-export function useChartOptionsRoles(labels: Array<string>,) {
+export function useChartOptionsRoles(labels: Array<string>) {
   const isDark = useDark();
   const textColor = computed(() => (isDark.value ? '#f5f5f5' : '#373d3f'));
 
