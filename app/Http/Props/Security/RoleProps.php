@@ -21,11 +21,11 @@ class RoleProps
     private static function getPermissions(): array
     {
         return [
-            'create' => Auth::user()->can('create new roles'),
-            'read'   => Auth::user()->can('read role'),
-            'update' => Auth::user()->can('update roles'),
-            'delete' => Auth::user()->can('delete roles'),
-            'export' => Auth::user()->can('export roles'),
+            'create' => Auth::user()->can('create new roles') || Auth::user()->hasRole(__('Superuser')),
+            'read'   => Auth::user()->can('read role') || Auth::user()->hasRole(__('Superuser')),
+            'update' => Auth::user()->can('update roles') || Auth::user()->hasRole(__('Superuser')),
+            'delete' => Auth::user()->can('delete roles') || Auth::user()->hasRole(__('Superuser')),
+            'export' => Auth::user()->can('export roles') || Auth::user()->hasRole(__('Superuser')),
         ];
     }
 

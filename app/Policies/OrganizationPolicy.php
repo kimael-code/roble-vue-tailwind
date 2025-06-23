@@ -13,13 +13,13 @@ class OrganizationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('read any organization');
+        return $user->can('read any organization') ? true : null;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Organization $organization): bool
+    public function view(User $user, Organization $organization): bool|null
     {
         $userBelongsToOrganization = false;
 
@@ -31,42 +31,53 @@ class OrganizationPolicy
             }
         }
 
-        return $user->can('read any organization')
-            || ($user->can('read organization') && $userBelongsToOrganization);
+        if ($user->can('read any organization'))
+        {
+            return true;
+        }
+
+        if ($user->can('read organization') && $userBelongsToOrganization)
+        {
+            return true;
+        }
+
+        return null;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user): bool|null
     {
-        return $user->can('create new organizations');
+        return $user->can('create new organizations') ? true : null;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Organization $organization): bool
+    public function update(User $user, Organization $organization): bool|null
     {
-        return $user->can('update organizations');
+        return $user->can('update organizations') ? true : null;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Organization $organization): Response | bool
+    public function delete(User $user, Organization $organization): Response|bool|null
     {
-        $ThereIsOtherActiveOrganization = (bool)Organization::where('id', '<>', $organization->id)->active()->count();
+        $ThereIsOtherActiveOrganization = (bool) Organization::where('id', '<>', $organization->id)->active()->count();
 
         if (!$ThereIsOtherActiveOrganization)
         {
             return Response::deny('You cannot delete the only active Organization');
         }
 
-        return $user->can('delete organizations')
-            && $organization->organizationalUnits->isEmpty()
-            ? Response::allow()
-            : Response::deny(__('The organization has associated organizational units.'));
+        if ($organization->organizationalUnits->isNotEmpty())
+        {
+            return Response::deny(__('The organization has associated organizational units.'));
+        }
+
+        return $user->can('delete organizations') ? true : null;
     }
 
     /**

@@ -17,11 +17,11 @@ class OrganizationProps
     private static function getPermissions(): array
     {
         return [
-            'create' => Auth::user()->can('create new organizations'),
-            'read' => Auth::user()->can('read organization'),
-            'update' => Auth::user()->can('update organizations'),
-            'delete' => Auth::user()->can('delete organizations'),
-            'export' => Auth::user()->can('export organizations'),
+            'create' => Auth::user()->can('create new organizations') || Auth::user()->hasRole(__('Superuser')),
+            'read' => Auth::user()->can('read organization') || Auth::user()->hasRole(__('Superuser')),
+            'update' => Auth::user()->can('update organizations') || Auth::user()->hasRole(__('Superuser')),
+            'delete' => Auth::user()->can('delete organizations') || Auth::user()->hasRole(__('Superuser')),
+            'export' => Auth::user()->can('export organizations') || Auth::user()->hasRole(__('Superuser')),
         ];
     }
 

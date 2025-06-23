@@ -4,24 +4,23 @@ namespace App\Policies;
 
 use App\Models\Debugging\ActivityLog;
 use App\Models\User;
-// use Illuminate\Auth\Access\Response;
 
 class ActivityLogPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user): bool|null
     {
-        return $user->can('read any activity trace');
+        return $user->can('read any activity trace') ? true : null;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, ActivityLog $activityLog): bool
+    public function view(User $user, ActivityLog $activityLog): bool|null
     {
-        return $user->can('read activity trace');
+        return $user->can('read activity trace') ? true : null;
     }
 
     /**

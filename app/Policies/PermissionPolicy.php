@@ -11,45 +11,51 @@ class PermissionPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user): bool|null
     {
-        return $user->can('read any permission');
+        return $user->can('read any permission') ? true : null;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Permission $permission): bool
+    public function view(User $user, Permission $permission): bool|null
     {
-        return $user->can('read permission');
+        return $user->can('read permission') ? true : null;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user): bool|null
     {
-        return $user->can('create new permissions');
+        return $user->can('create new permissions') ? true : null;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Permission $permission): bool
+    public function update(User $user, Permission $permission): bool|null
     {
-        return $user->can('update permissions');
+        return $user->can('update permissions') ? true : null;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Permission $permission): Response
+    public function delete(User $user, Permission $permission): Response|bool|null
     {
-        return $user->can('delete permissions')
-            && $permission->roles->isEmpty()
-            && $permission->users->isEmpty()
-            ? Response::allow()
-            : Response::deny('There are roles or users having this permission.');
+        if ($permission->roles->isNotEmpty())
+        {
+            return Response::deny('There are roles having this permission.');
+        }
+
+        if ($permission->users->isNotEmpty())
+        {
+            return Response::deny('There are users having this permission.');
+        }
+
+        return $user->can('delete permissions') ? true : null;
     }
 
     /**
@@ -63,12 +69,8 @@ class PermissionPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Permission $permission): Response
+    public function forceDelete(User $user, Permission $permission): bool
     {
-        return $user->can('delete permissions')
-            && $permission->roles->isEmpty()
-            && $permission->users->isEmpty()
-            ? Response::allow()
-            : Response::deny('There are roles or users having this permission.');
+        return false;
     }
 }
