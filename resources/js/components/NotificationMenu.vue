@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { getInitials } from '@/composables/useInitials';
-import { SharedData } from '@/types';
 import { router, usePage } from '@inertiajs/vue3';
 import { useEchoModel } from '@laravel/echo-vue';
 import { BellRingIcon, HourglassIcon } from 'lucide-vue-next';
@@ -12,7 +11,7 @@ import { Button } from './ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { ScrollArea } from './ui/scroll-area';
 
-const page = ref(usePage<SharedData>());
+const page = ref(usePage());
 const unreadNotifications = computed(() => page.value.props.unreadNotifications);
 const unreadCount = computed(() => page.value.props.unreadNotifications.length);
 const { channel } = useEchoModel('App.Models.User', page.value.props.auth.user.id);
@@ -63,7 +62,7 @@ router.reload();
                   <p class="text-sm">{{ notification.data?.message }}</p>
                   <div class="flex items-center pt-2">
                     <HourglassIcon class="mr-2 h-4 w-4 opacity-70" />
-                    <span class="text-muted-foreground text-xs"> {{ DateTime.fromISO(notification.data?.timestamp).toRelative() }} </span>
+                    <span class="text-xs text-muted-foreground"> {{ DateTime.fromISO(notification.data?.timestamp).toRelative() }} </span>
                   </div>
                 </div>
               </div>

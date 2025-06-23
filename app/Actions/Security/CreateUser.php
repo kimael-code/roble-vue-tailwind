@@ -44,7 +44,7 @@ class CreateUser
             $role = Role::findByName($roleName);
             $authUser = auth()->user();
 
-            activity()
+            activity(__('Security/Users'))
                 ->causedBy($authUser)
                 ->performedOn($user)
                 ->event('created')
@@ -78,7 +78,7 @@ class CreateUser
             $permission = Permission::find($permissionID);
             $authUser = auth()->user();
 
-            activity()
+            activity(__('Security/Users'))
                 ->causedBy($authUser)
                 ->performedOn($user)
                 ->event('created')
@@ -133,7 +133,7 @@ class CreateUser
 
                 $authUser = auth()->user();
 
-                activity()
+                activity(__('Security/Users'))
                     ->causedBy($authUser)
                     ->performedOn($user)
                     ->event('created')

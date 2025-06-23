@@ -115,11 +115,14 @@ class Authenticatable extends User
                 'is_external',
                 'disabled_at',
             ])
+            ->useLogName(__('Security/Users'))
             ->dontLogIfAttributesChangedOnly(['remember_token'])
-            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model', [
+            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model [:modelName] [:modelEmail]', [
                 'username' => auth()->user()->name,
                 'event' => __($eventName),
                 'model' => __($this->traceObjectName),
+                'modelName' => $this->name,
+                'modelEmail' => $this->email,
             ]));
     }
 

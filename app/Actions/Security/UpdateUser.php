@@ -77,7 +77,7 @@ class UpdateUser
             {
                 $user->removeRole($role->id);
 
-                activity()
+                activity(__('Security/Users'))
                     ->causedBy($authUser)
                     ->performedOn($user)
                     ->event('deleted')
@@ -117,7 +117,7 @@ class UpdateUser
             {
                 $user->assignRole($role);
 
-                activity()
+                activity(__('Security/Users'))
                     ->causedBy($authUser)
                     ->performedOn($user)
                     ->event('created')
@@ -155,7 +155,7 @@ class UpdateUser
             {
                 $user->revokePermissionTo($permission);
 
-                activity()
+                activity(__('Security/Users'))
                     ->causedBy($authUser)
                     ->performedOn($user)
                     ->event('deleted')
@@ -196,7 +196,7 @@ class UpdateUser
             {
                 $user->givePermissionTo($permission);
 
-                activity()
+                activity(__('Security/Users'))
                     ->causedBy($authUser)
                     ->performedOn($user)
                     ->event('created')
@@ -236,7 +236,7 @@ class UpdateUser
             foreach ($user->organizationalUnits as $ou)
             {
                 $user->organizationalUnits()->detach($ou->id);
-                activity()
+                activity(__('Security/Users'))
                     ->causedBy($authUser)
                     ->performedOn($user)
                     ->event('deleted')
@@ -275,7 +275,7 @@ class UpdateUser
                         'disabled_at' => now()->toIso8601String(),
                     ]);
 
-                    activity()
+                    activity(__('Security/Users'))
                         ->causedBy($authUser)
                         ->performedOn($user)
                         ->event('updated')
@@ -310,7 +310,7 @@ class UpdateUser
                 if (!in_array($ouName, $user->organizationalUnits->pluck('name')->all(), true))
                 {
                     $user->organizationalUnits()->attach($ou->id);
-                    activity()
+                    activity(__('Security/Users'))
                         ->causedBy($authUser)
                         ->performedOn($user)
                         ->event('created')
@@ -338,7 +338,7 @@ class UpdateUser
                 else
                 {
                     $user->organizationalUnits()->updateExistingPivot($ou->id, ['disabled_at' => null]);
-                    activity()
+                    activity(__('Security/Users'))
                         ->causedBy($authUser)
                         ->performedOn($user)
                         ->event('updated')

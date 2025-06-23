@@ -77,10 +77,13 @@ class Role extends SpatieRole
     {
         return LogOptions::defaults()
             ->logAll()
-            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model', [
+            ->useLogName(__('Security/Roles'))
+            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model [:modelName] [:modelDescription]', [
                 'username' => auth()->user()->name,
                 'event' => __($eventName),
                 'model' => __($this->traceObjectName),
+                'modelName' => $this->name,
+                'modelDescription' => $this?->description,
             ]));
     }
 

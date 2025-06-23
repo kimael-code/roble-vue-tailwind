@@ -23,7 +23,7 @@ class LogPasswordSet
      */
     public function handle(PasswordSet $event): void
     {
-        activity()
+        activity(__('Authentication'))
             ->event('authenticated')
             ->performedOn($event->user)
             ->causedBy($event->user)

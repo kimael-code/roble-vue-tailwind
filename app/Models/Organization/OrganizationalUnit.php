@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Activitylog\LogOptions;
 
 #[ObservedBy([OrganizationalUnitObserver::class])]
 class OrganizationalUnit extends BaseModel
@@ -139,5 +140,18 @@ class OrganizationalUnit extends BaseModel
             {
                 $query->latest();
             });
+    }
+
+    public function getActivityLogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->useLogName(__('Organization/Administrative Units'))
+            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model [:modelName]', [
+                'username' => auth()->user()->name,
+                'event' => __($eventName),
+                'model' => __($this->traceObjectName),
+                'modelName' => $this?->name,
+            ]));
     }
 }

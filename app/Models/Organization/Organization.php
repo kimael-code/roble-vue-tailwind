@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Activitylog\LogOptions;
 
 #[ObservedBy([OrganizationObserver::class])]
 class Organization extends BaseModel
@@ -74,6 +75,19 @@ class Organization extends BaseModel
         return Attribute::make(
             get: fn(mixed $value, array $attributes) => isset($attributes['disabled_at']) ? 'INACTIVO' : 'ACTIVO'
         );
+    }
+
+    public function getActivityLogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->useLogName(__('Organization/Organizations'))
+            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model [:modelName]', [
+                'username' => auth()->user()->name,
+                'event' => __($eventName),
+                'model' => __($this->traceObjectName),
+                'modelName' => $this?->name,
+            ]));
     }
 
     public function organizationalUnits(): HasMany
