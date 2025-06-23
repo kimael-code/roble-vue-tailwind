@@ -12,7 +12,6 @@ use App\Http\Controllers\{
     Security\RoleController,
     Security\UserController,
 };
-use App\Http\Controllers\ExportDataController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
