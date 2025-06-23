@@ -19,11 +19,11 @@ class PermissionProps
     private static function getPermissions(): array
     {
         return [
-            'create' => Auth::user()->can('create new permissions'),
-            'read' => Auth::user()->can('read permission'),
-            'update' => Auth::user()->can('update permissions'),
-            'delete' => Auth::user()->can('delete permissions'),
-            'export' => Auth::user()->can('export permissions'),
+            'create' => Auth::user()->can('create new permissions') || Auth::user()->hasRole(__('Superuser')),
+            'read' => Auth::user()->can('read permission') || Auth::user()->hasRole(__('Superuser')),
+            'update' => Auth::user()->can('update permissions') || Auth::user()->hasRole(__('Superuser')),
+            'delete' => Auth::user()->can('delete permissions') || Auth::user()->hasRole(__('Superuser')),
+            'export' => Auth::user()->can('export permissions') || Auth::user()->hasRole(__('Superuser')),
         ];
     }
 

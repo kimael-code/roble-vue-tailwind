@@ -11,46 +11,46 @@ class OrganizationalUnitPolicy
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $user): bool|null
     {
-        return $user->can('read any organizational unit');
+        return $user->can('read any organizational unit') ? true : null;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, OrganizationalUnit $organizationalUnit): bool
+    public function view(User $user, OrganizationalUnit $organizationalUnit): bool|null
     {
-        return $user->can('read organizational unit');
+        return $user->can('read organizational unit') ? true : null;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user): bool|null
     {
-        return $user->can('create new organizational units');
+        return $user->can('create new organizational units') ? true : null;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, OrganizationalUnit $organizationalUnit): bool
+    public function update(User $user, OrganizationalUnit $organizationalUnit): bool|null
     {
-        return $user->can('update organizational units');
+        return $user->can('update organizational units') ? true : null;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, OrganizationalUnit $organizationalUnit): Response|bool
+    public function delete(User $user, OrganizationalUnit $organizationalUnit): Response|bool|null
     {
         if ($organizationalUnit->users->isNotEmpty())
         {
             return Response::deny(__('There are users who belong to this administrative unit'));
         }
 
-        return $user->can('delete organizational units');
+        return $user->can('delete organizational units') ? true : null;
     }
 
     /**

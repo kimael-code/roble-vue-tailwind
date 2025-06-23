@@ -25,13 +25,14 @@ const companyNavItems: NavItem[] = [
     title: 'Entes',
     href: '/organizations',
     icon: Building,
-    hasPermission: page.props.auth?.menu.includes('read any organization'),
+    hasPermission: page.props.auth?.menu.includes('read any organization') || page.props.auth?.user?.roles?.some((r) => r.name === 'Superusuario'),
   },
   {
     title: 'Unidades Administrativas',
     href: '/organizational-units',
     icon: Workflow,
-    hasPermission: page.props.auth?.menu.includes('read any organizational unit'),
+    hasPermission:
+      page.props.auth?.menu.includes('read any organizational unit') || page.props.auth?.user?.roles?.some((r) => r.name === 'Superusuario'),
   },
 ];
 const securityNavItems: NavItem[] = [
@@ -39,19 +40,19 @@ const securityNavItems: NavItem[] = [
     title: 'Permisos',
     href: '/permissions',
     icon: KeySquare,
-    hasPermission: page.props.auth?.menu.includes('read any permission'),
+    hasPermission: page.props.auth?.menu.includes('read any permission') || page.props.auth?.user?.roles?.some((r) => r.name === 'Superusuario'),
   },
   {
     title: 'Roles',
     href: '/roles',
     icon: Users,
-    hasPermission: page.props.auth?.menu.includes('read any role'),
+    hasPermission: page.props.auth?.menu.includes('read any role') || page.props.auth?.user?.roles?.some((r) => r.name === 'Superusuario'),
   },
   {
     title: 'Usuarios',
     href: '/users',
     icon: User,
-    hasPermission: page.props.auth?.menu.includes('read any user'),
+    hasPermission: page.props.auth?.menu.includes('read any user') || page.props.auth?.user?.roles?.some((r) => r.name === 'Superusuario'),
   },
 ];
 const debugNavItems: NavItem[] = [
@@ -59,13 +60,13 @@ const debugNavItems: NavItem[] = [
     title: 'Trazas',
     href: '/activity-logs',
     icon: LogsIcon,
-    hasPermission: page.props.auth?.menu.includes('read any activity trace'),
+    hasPermission: page.props.auth?.menu.includes('read any activity trace') || page.props.auth?.user?.roles?.some((r) => r.name === 'Superusuario'),
   },
   {
     title: 'Logs',
     href: '/log-files',
     icon: Bug,
-    hasPermission: page.props.auth?.menu.includes('read any system log'),
+    hasPermission: page.props.auth?.menu.includes('read any system log') || page.props.auth?.user?.roles?.some((r) => r.name === 'Superusuario'),
   },
 ];
 

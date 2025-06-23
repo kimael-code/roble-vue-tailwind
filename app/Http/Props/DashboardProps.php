@@ -51,7 +51,7 @@ class DashboardProps
     private static function getPermissions(User $user): array
     {
         return [
-            'dashboardSysadmin' => $user->can('read sysadmin dashboard') || $user->hasRole(['Súper Administrador']),
+            'dashboardSysadmin' => $user->can('read sysadmin dashboard') || $user->hasRole(__('Superuser')),
         ];
     }
 

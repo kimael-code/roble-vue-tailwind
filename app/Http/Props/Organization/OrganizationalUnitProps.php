@@ -17,11 +17,11 @@ class OrganizationalUnitProps
     private static function getPermissions(): array
     {
         return [
-            'create' => Auth::user()->can('create new organizational units'),
-            'read' => Auth::user()->can('read organizational unit'),
-            'update' => Auth::user()->can('update organizational units'),
-            'delete' => Auth::user()->can('delete organizational units'),
-            'export' => Auth::user()->can('export organizational units'),
+            'create' => Auth::user()->can('create new organizational units') || Auth::user()->hasRole(__('Superuser')),
+            'read' => Auth::user()->can('read organizational unit') || Auth::user()->hasRole(__('Superuser')),
+            'update' => Auth::user()->can('update organizational units') || Auth::user()->hasRole(__('Superuser')),
+            'delete' => Auth::user()->can('delete organizational units') || Auth::user()->hasRole(__('Superuser')),
+            'export' => Auth::user()->can('export organizational units') || Auth::user()->hasRole(__('Superuser')),
         ];
     }
 

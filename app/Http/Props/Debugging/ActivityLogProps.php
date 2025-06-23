@@ -16,10 +16,10 @@ class ActivityLogProps
     {
         return [
             'create' => false,
-            'read' => Auth::user()->can('read activity trace'),
+            'read' => Auth::user()->can('read activity trace') || Auth::user()->hasRole(__('Superuser')),
             'update' => false,
             'delete' => false,
-            'export' => Auth::user()->can('export activity traces'),
+            'export' => Auth::user()->can('export activity traces') || Auth::user()->hasRole(__('Superuser')),
         ];
     }
 
