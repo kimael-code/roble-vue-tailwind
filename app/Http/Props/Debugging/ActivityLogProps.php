@@ -34,6 +34,8 @@ class ActivityLogProps
             'sortBy',
         ]);
 
+        $perPage = Request::input('per_page', 10);
+
         return [
             'can' => self::getPermissions(),
             'filters' => $filtersAll,
@@ -50,7 +52,7 @@ class ActivityLogProps
                         'activity_log.updated_at',
                     ])
                     ->with('causer')
-                    ->paginate()
+                    ->paginate($perPage)
                     ->withQueryString()
             ),
         ];

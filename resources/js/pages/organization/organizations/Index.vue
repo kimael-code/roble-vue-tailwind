@@ -55,7 +55,7 @@ function handleSortingChange(item: any) {
     });
 
     router.visit(route('organizations.index'), {
-      data: { sortBy: data },
+      data: { sortBy: data, per_page: table.getState().pagination.pageSize },
       only: ['organizations'],
       preserveScroll: true,
       preserveState: true,

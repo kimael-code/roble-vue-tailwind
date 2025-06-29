@@ -29,12 +29,14 @@ class PermissionProps
 
     public static function index(): array
     {
+        $perPage = Request::input('per_page', 10);
+
         return [
             'can' => self::getPermissions(),
             'filters' => Request::all(['search', 'sortBy',]),
             'permissions' => fn() => new PermissionCollection(
                 Permission::filter(Request::only(['search', 'sortBy',]))
-                    ->paginate(10)
+                    ->paginate($perPage)
                     ->withQueryString()
             ),
         ];

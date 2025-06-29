@@ -26,6 +26,8 @@ import {
   Trash2,
   XIcon,
 } from 'lucide-vue-next';
+import { ref } from 'vue';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 defineProps<{
   row: {
@@ -45,15 +47,24 @@ defineEmits<{
   deactivate: [row: object];
   restore: [row: object];
 }>();
+
+const menuIsOpen = ref(false);
 </script>
 
 <template>
-  <DropdownMenu>
+  <DropdownMenu v-model:open="menuIsOpen">
     <DropdownMenuTrigger as-child>
-      <Button variant="ghost" class="h-8 w-8 p-0" :disabled="loading">
-        <LoaderCircleIcon v-if="loading" class="animate-spin" />
-        <EllipsisIcon v-else />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger as-child>
+          <Button variant="ghost" class="h-8 w-8 p-0" :disabled="loading" @click="menuIsOpen = true">
+            <LoaderCircleIcon v-if="loading" class="animate-spin" />
+            <EllipsisIcon v-else />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Menú de acciones</p>
+        </TooltipContent>
+      </Tooltip>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">
       <DropdownMenuLabel>Acciones</DropdownMenuLabel>
@@ -67,7 +78,14 @@ defineEmits<{
           <Pencil />
           <span>Editar</span>
         </DropdownMenuItem>
+        <DropdownMenuItem v-if="can.export" @click="$emit('export', row)">
+          <FileDown />
+          <span>Exportar</span>
+        </DropdownMenuItem>
+      </DropdownMenuGroup>
 
+      <DropdownMenuSeparator v-if="can.export" />
+      <DropdownMenuGroup>
         <DropdownMenuSub v-if="can.activate || can.deactivate">
           <DropdownMenuSubTrigger>
             <span>Activación</span>
@@ -85,7 +103,6 @@ defineEmits<{
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
-
         <DropdownMenuSub v-if="can.restore || can.delete || can.f_delete">
           <DropdownMenuSubTrigger> Eliminación </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
@@ -94,24 +111,28 @@ defineEmits<{
                 <RotateCcwIcon />
                 <span>Restaurar</span>
               </DropdownMenuItem>
-              <DropdownMenuItem v-if="can.delete" :disabled="row?.deleted_at ? true : false" @click="$emit('destroy', row)">
-                <Trash2 />
+              <DropdownMenuItem
+                v-if="can.delete"
+                class="text-red-600 transition-colors focus:bg-accent focus:text-accent-foreground"
+                :disabled="row?.deleted_at ? true : false"
+                @click="$emit('destroy', row)"
+              >
+                <Trash2 class="text-red-600" />
                 <span>Eliminar</span>
               </DropdownMenuItem>
-              <DropdownMenuItem v-if="can.f_delete" :disabled="!row?.deleted_at" @click="$emit('forceDestroy', row)">
-                <XIcon />
+              <DropdownMenuItem
+                v-if="can.f_delete"
+                class="text-red-600 transition-colors focus:bg-accent focus:text-accent-foreground"
+                :disabled="!row?.deleted_at"
+                @click="$emit('forceDestroy', row)"
+              >
+                <XIcon class="text-red-600" />
                 <span>Eliminar permanentemente</span>
               </DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuPortal>
         </DropdownMenuSub>
       </DropdownMenuGroup>
-
-      <DropdownMenuSeparator v-if="can.export" />
-      <DropdownMenuItem v-if="can.export" @click="$emit('export', row)">
-        <FileDown />
-        <span>Exportar</span>
-      </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>

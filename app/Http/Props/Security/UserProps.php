@@ -37,12 +37,14 @@ class UserProps
 
     public static function index(): array
     {
+        $perPage = Request::input('per_page', 10);
+
         return [
             'can' => self::getPermissions(),
             'filters' => Request::all(['search', 'sortBy',]),
             'users' => fn() => new UserCollection(
                 User::withTrashed()->filter(Request::only(['search', 'sortBy',]))
-                    ->paginate(10)
+                    ->paginate($perPage)
                     ->withQueryString()
             ),
         ];

@@ -55,7 +55,7 @@ function handleSortingChange(item: any) {
     });
 
     router.visit(route('permissions.index'), {
-      data: { sortBy: data },
+      data: { sortBy: data, per_page: table.getState().pagination.pageSize },
       only: ['permissions'],
       preserveScroll: true,
       preserveState: true,

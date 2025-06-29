@@ -27,6 +27,8 @@ class OrganizationalUnitProps
 
     public static function index(): array
     {
+        $perPage = Request::input('per_page', 10);
+
         return [
             'can' => self::getPermissions(),
             'filters' => Request::all(['search', 'sortBy',]),
@@ -39,7 +41,7 @@ class OrganizationalUnitProps
                         'organization_id',
                     ])
                     ->with(['organization'])
-                    ->paginate(10)
+                    ->paginate($perPage)
                     ->withQueryString()
             ),
         ];

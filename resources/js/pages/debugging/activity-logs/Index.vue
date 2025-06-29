@@ -47,7 +47,7 @@ function handleSortingChange(item: any) {
     });
 
     router.visit(route('activity-logs.index'), {
-      data: { sortBy: data },
+      data: { sortBy: data, per_page: table.getState().pagination.pageSize },
       only: ['logs'],
       preserveScroll: true,
       preserveState: true,

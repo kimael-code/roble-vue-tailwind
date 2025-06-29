@@ -27,12 +27,14 @@ class OrganizationProps
 
     public static function index(): array
     {
+        $perPage = Request::input('per_page', 10);
+
         return [
             'can' => self::getPermissions(),
             'filters' => Request::all(['search', 'sortBy',]),
             'organizations' => fn() => new OrganizationCollection(
                 Organization::filter(Request::only(['search', 'sortBy',]))
-                    ->paginate(10)
+                    ->paginate($perPage)
                     ->withQueryString()
             ),
         ];

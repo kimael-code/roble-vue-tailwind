@@ -31,12 +31,14 @@ class RoleProps
 
     public static function index(): array
     {
+        $perPage = Request::input('per_page', 10);
+
         return [
             'can'     => self::getPermissions(),
             'filters' => Request::all(['search', 'sortBy',]),
             'roles'   => fn() => new RoleCollection(
                 Role::filter(Request::only(['search', 'sortBy',]))
-                    ->paginate(10)
+                    ->paginate($perPage)
                     ->withQueryString()
             ),
         ];

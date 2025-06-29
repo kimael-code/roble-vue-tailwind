@@ -82,7 +82,7 @@ const badgeVariant = (size: number) => {
                       </p>
                       <div class="flex items-center pt-2">
                         <CalendarIcon class="mr-2 h-4 w-4 opacity-70" />
-                        <span class="text-muted-foreground text-xs"> {{ `Creado ${u.user.created_at_human}` }} </span>
+                        <span class="text-xs text-muted-foreground"> {{ `Creado ${u.user.created_at_human}` }} </span>
                       </div>
                     </div>
                   </div>
@@ -102,6 +102,7 @@ const badgeVariant = (size: number) => {
         <CardContent>
           <ScrollArea>
             <div v-for="(l, i) in data.logSizes" :key="i">
+              <!-- @vue-expect-error -->
               <Badge :variant="badgeVariant(l[i].sizeRaw)">{{ `${l[i].logName}: ${l[i].sizeHuman}` }}</Badge>
               <Separator class="my-2" />
             </div>
