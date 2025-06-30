@@ -29,6 +29,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const { requestRead, requestingRead } = useRequestActions('activity-logs');
 const showPdf = ref(false);
+const showAdvancedFilters = ref(false);
 
 permissions.value = props.can;
 const sorting = ref<SortingState>([]);
@@ -118,6 +119,7 @@ const urlQueryString = computed(() => {
         @search="(s) => (globalFilter = s)"
         @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
         @export="showPdf = true"
+        @advanced-search="showAdvancedFilters = true"
       />
 
       <Sheet v-model:open="showPdf">
@@ -126,7 +128,7 @@ const urlQueryString = computed(() => {
             <SheetTitle>Exportar a PDF</SheetTitle>
             <SheetDescription>Reporte: Trazas de Actividades de Usuarios</SheetDescription>
           </SheetHeader>
-          <div class="h-[50dvh]">
+          <div class="h-[70dvh]">
             <iframe :src="`${route('export-activity-logs-pdf.index')}${urlQueryString}`" frameborder="0" width="100%" height="100%"></iframe>
           </div>
         </SheetContent>

@@ -60,6 +60,7 @@ const emit = defineEmits([
   'restore',
   'activate',
   'deactivate',
+  'advancedSearch',
 ]);
 
 const menuIsOpen = ref(false);
@@ -149,10 +150,10 @@ function handlePerPage(perPageValue: number) {
           <DropdownMenuLabel>Otras acciones</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem @click="$emit('advancedSearch')">
               <span>Buscar avanzado</span>
             </DropdownMenuItem>
-            <DropdownMenuSub>
+            <DropdownMenuSub v-if="can.export">
               <DropdownMenuSubTrigger>
                 <span>Exportar a</span>
               </DropdownMenuSubTrigger>
@@ -161,17 +162,17 @@ function handlePerPage(perPageValue: number) {
                   <DropdownMenuItem @click="$emit('export', 'pdf')">
                     <span>PDF</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem disabled>
+                  <DropdownMenuItem @click="$emit('export', 'excel')" disabled>
                     <span>Excel</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem disabled>
+                  <DropdownMenuItem @click="$emit('export', 'json')" disabled>
                     <span>JSON</span>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator />
+          <DropdownMenuSeparator v-if="can.delete" />
           <DropdownMenuGroup>
             <DropdownMenuItem
               v-if="can.delete"
