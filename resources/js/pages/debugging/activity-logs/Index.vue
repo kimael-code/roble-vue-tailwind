@@ -11,6 +11,7 @@ import { getCoreRowModel, RowSelectionState, SortingState, TableOptions, useVueT
 import { LogsIcon } from 'lucide-vue-next';
 import { computed, reactive, ref, watchEffect } from 'vue';
 import { columns, permissions, processingRowId } from './partials/columns';
+import SheetAdvancedFilters from './partials/SheetAdvancedFilters.vue';
 
 const props = defineProps<{
   can: Can;
@@ -133,6 +134,8 @@ const urlQueryString = computed(() => {
           </div>
         </SheetContent>
       </Sheet>
+
+      <SheetAdvancedFilters :show="showAdvancedFilters" @close="showAdvancedFilters = false" />
     </ContentLayout>
   </AppLayout>
 </template>
