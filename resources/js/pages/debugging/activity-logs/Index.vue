@@ -18,8 +18,10 @@ const props = defineProps<{
   filters: SearchFilter;
   users?: Array<User>;
   events?: Array<string>;
+  logNames?: Array<string>;
   logs: PaginatedCollection<ActivityLog>;
 }>();
+console.log(props);
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -31,6 +33,12 @@ const breadcrumbs: BreadcrumbItem[] = [
 const { requestRead, requestingRead } = useRequestActions('activity-logs');
 const showPdf = ref(false);
 const showAdvancedFilters = ref(false);
+
+const urlQueryString = computed(() => {
+  const queryString = usePage().url.indexOf('?');
+
+  return queryString >= 0 ? usePage().url.substring(queryString) : '';
+});
 
 permissions.value = props.can;
 const sorting = ref<SortingState>([]);
@@ -94,11 +102,12 @@ const table = useVueTable(tableOptions);
 
 watchEffect(() => (requestingRead.value === false ? (processingRowId.value = null) : false));
 
-const urlQueryString = computed(() => {
-  const queryString = usePage().url.indexOf('?');
-
-  return queryString >= 0 ? usePage().url.substring(queryString) : '';
-});
+function handleAdvancedSearch() {
+  router.reload({
+    only: ['users', 'events', 'logNames'],
+    onSuccess: () => (showAdvancedFilters.value = true),
+  });
+}
 </script>
 
 <template>
@@ -120,7 +129,7 @@ const urlQueryString = computed(() => {
         @search="(s) => (globalFilter = s)"
         @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
         @export="showPdf = true"
-        @advanced-search="showAdvancedFilters = true"
+        @advanced-search="handleAdvancedSearch"
       />
 
       <Sheet v-model:open="showPdf">
@@ -135,7 +144,7 @@ const urlQueryString = computed(() => {
         </SheetContent>
       </Sheet>
 
-      <SheetAdvancedFilters :show="showAdvancedFilters" @close="showAdvancedFilters = false" />
+      <SheetAdvancedFilters :events :log-names :users :show="showAdvancedFilters" @close="showAdvancedFilters = false" />
     </ContentLayout>
   </AppLayout>
 </template>

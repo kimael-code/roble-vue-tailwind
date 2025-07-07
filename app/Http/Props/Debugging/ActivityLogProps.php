@@ -40,7 +40,21 @@ class ActivityLogProps
             'can' => self::getPermissions(),
             'filters' => $filtersAll,
             'users' => Inertia::lazy(fn() => User::select(['id', 'name'])->get()),
-            'events' => Inertia::lazy(fn() => ActivityLog::select('event')->distinct()->get()->pluck('event')),
+            'events' => Inertia::lazy(fn() => [
+                'created',
+                'updated',
+                'deleted',
+                'authenticated',
+                'authorized'
+            ]),
+            'logNames' => Inertia::lazy(fn() => [
+                __('Security/Users'),
+                __('Security/Permissions'),
+                __('Security/Roles'),
+                __('Organization/Organizations'),
+                __('Organization/Administrative Units'),
+                __('Authentication'),
+            ]),
             'logs' => new ActivityLogCollection(
                 ActivityLog::filter($filtersOnly)
                     ->select([
