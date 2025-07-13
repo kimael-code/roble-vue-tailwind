@@ -1,7 +1,5 @@
 import DataTableActions from '@/components/DataTableActions.vue';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ActivityLog, Can } from '@/types';
 import { createColumnHelper } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
@@ -22,37 +20,6 @@ export const permissions = ref<Can>({
 export const processingRowId = ref<number | string | null>(null);
 
 export const columns = [
-  columnHelper.display({
-    id: 'select',
-    header: ({ table }) =>
-      h(TooltipProvider, () =>
-        h(Tooltip, { delayDuration: 200 }, () => [
-          h(TooltipTrigger, { asChild: true }, () =>
-            h(Checkbox, {
-              modelValue: table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate'),
-              'onUpdate:modelValue': (value) => table.toggleAllPageRowsSelected(!!value),
-              ariaLabel: 'Marcar/Desmarcar todo',
-            }),
-          ),
-          h(TooltipContent, () => h('p', 'Marcar/Desmarcar todos los registros de la página')),
-        ]),
-      ),
-    cell: ({ row }) =>
-      h(TooltipProvider, () =>
-        h(Tooltip, { delayDuration: 200 }, () => [
-          h(TooltipTrigger, { asChild: true }, () =>
-            h(Checkbox, {
-              modelValue: row.getIsSelected(),
-              'onUpdate:modelValue': (value) => row.toggleSelected(!!value),
-              ariaLabel: 'Marcar/Desmarcar registro',
-            }),
-          ),
-          h(TooltipContent, () => h('p', 'Marcar/Desmarcar este registro')),
-        ]),
-      ),
-    enableSorting: false,
-    enableHiding: false,
-  }),
   columnHelper.display({
     id: 'serial',
     header: '#',

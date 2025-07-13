@@ -29,7 +29,10 @@ class BasePdf extends TCPDF
         $this->Image(
             file: storage_path("app/public/{$imgFile}"),
             w: $headerData['logo_width'] ?? 45,
-            type: 'PNG'
+            h: 15,
+            type: 'PNG',
+            resize: true,
+            fitbox: 'LT',
         );
 
         if (!App::environment('production'))
@@ -67,10 +70,10 @@ class BasePdf extends TCPDF
         $this->setFont(family: 'iosevkafixedss12', size: 10);
         $this->Cell(w: 0, txt: "Generado en fecha: {$headerData['string']}", align: 'R');
         $this->setLineStyle([
-            'width' => 0.85 / $this->k,
+            'width' => 0.75 / $this->k,
             'cap' => 'round',
             'join' => 'round',
-            'dash' => '2',
+            'dash' => '1,8',
             'color' => $headerData['line_color']
         ]);
         $this->Ln(10);
