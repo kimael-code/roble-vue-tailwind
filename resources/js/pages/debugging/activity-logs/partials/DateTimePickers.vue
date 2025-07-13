@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CalendarMonthYear from '@/components/CalendarMonthYear.vue';
+import DateRangePickerIndependentMonths from '@/components/DateRangePickerIndependentMonths.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,8 +9,9 @@ import { cn } from '@/lib/utils';
 import { DateFormatter, getLocalTimeZone } from '@internationalized/date';
 import { CalendarIcon, DeleteIcon } from 'lucide-vue-next';
 import { DateRange, DateValue } from 'reka-ui';
-import { Ref, ref } from 'vue';
-import DateRangePickerIndependentMonths from './DateRangePickerIndependentMonths.vue';
+import { Ref, ref, watch } from 'vue';
+
+const emit = defineEmits(['dateSet', 'dateRangeSet', 'timeSet', 'timeFromSet', 'timeUntilSet']);
 
 const df = new DateFormatter('es-VE', {
   dateStyle: 'long',
@@ -20,6 +22,10 @@ const dateRangeValue = ref({
   start: undefined,
   end: undefined,
 }) as Ref<DateRange>;
+
+const timeSpecific = ref('');
+const timeFrom = ref('');
+const timeUntil = ref('');
 
 const btnDeleteA = ref(false);
 
@@ -35,11 +41,16 @@ function deleteDate() {
 function deleteDateRange() {
   dateRangeValue.value = { start: undefined, end: undefined };
 }
+watch(value, (newValue) => emit('dateSet', newValue), { deep: true });
+watch(dateRangeValue, (newDateRangeValue) => emit('dateRangeSet', newDateRangeValue), { deep: true });
+watch(timeSpecific, (newTimeValue) => emit('timeSet', newTimeValue));
+watch(timeFrom, (newTimeFromValue) => emit('timeFromSet', newTimeFromValue));
+watch(timeUntil, (newTimeUntilValue) => emit('timeUntilSet', newTimeUntilValue));
 </script>
 
 <template>
   <form class="flex flex-col gap-6">
-    <div class="grid gap-6">
+    <div class="grid grid-cols-3 gap-6">
       <div class="grid gap-2">
         <Label for="date_single">Fecha Específica</Label>
         <div class="flex items-center gap-2">
@@ -79,8 +90,9 @@ function deleteDateRange() {
         <Input
           type="time"
           id="time_specific"
+          v-model="timeSpecific"
           placeholder="p. ej.: 08:25"
-          class="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+          class="w-[280px] appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
         />
       </div>
       <div class="grid gap-2">
@@ -88,8 +100,9 @@ function deleteDateRange() {
         <Input
           type="time"
           id="time_from"
+          v-model="timeFrom"
           placeholder="p. ej.: 14:00"
-          class="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+          class="w-[280px] appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
         />
       </div>
       <div class="grid gap-2">
@@ -97,8 +110,9 @@ function deleteDateRange() {
         <Input
           type="time"
           id="time_until"
+          v-model="timeUntil"
           placeholder="p. ej.: 16:25"
-          class="appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+          class="w-[280px] appearance-none bg-background [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
         />
       </div>
     </div>

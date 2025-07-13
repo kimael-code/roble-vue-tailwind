@@ -3,11 +3,12 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { User } from '@/types';
-import { useForm } from '@inertiajs/vue3';
+import { router, useForm } from '@inertiajs/vue3';
 import ComboboxEvents from './ComboboxEvents.vue';
 import ComboboxLogNames from './ComboboxLogNames.vue';
 import ComboboxUsers from './ComboboxUsers.vue';
-import DatePicker from './DatePicker.vue';
+import DateTimePickers from './DateTimePickers.vue';
+import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input';
 
 defineProps<{
   show: boolean;
@@ -16,33 +17,44 @@ defineProps<{
   logNames?: Array<string>;
 }>();
 
-defineEmits(['close']);
+const emit = defineEmits(['close', 'advancedSearch']);
 
 const form = useForm({
+  date: '',
+  date_range: {},
+  ip_dirs: [],
   selected_users: [],
   selected_events: [],
   selected_modules: [],
+  time: '',
+  time_from: '',
+  time_until: '',
 });
 
 function submitSearch() {
-  console.log(form.data());
+  router.reload({
+    data: form.data(),
+    only: ['logs'],
+    onSuccess: () => emit('advancedSearch', form.data),
+  });
 }
 </script>
 
 <template>
   <div class="grid grid-cols-2 gap-2">
     <Sheet :open="show" @update:open="$emit('close')">
-      <SheetContent side="right">
+      <SheetContent side="top">
         <SheetHeader>
           <SheetTitle>Filtros de Búsqueda Avanzados</SheetTitle>
           <SheetDescription>Parametrice la consulta de registros haciendo uso de los siguientes controles.</SheetDescription>
         </SheetHeader>
         <Tabs default-value="users" class="pr-4 pl-4" :unmount-on-hide="false">
-          <TabsList class="grid w-full grid-cols-4">
+          <TabsList class="grid w-full grid-cols-5">
             <TabsTrigger value="users">Usuarios</TabsTrigger>
             <TabsTrigger value="events">Eventos</TabsTrigger>
             <TabsTrigger value="logNames">Módulos</TabsTrigger>
             <TabsTrigger value="dateTime">Tiempo</TabsTrigger>
+            <TabsTrigger value="ipAddrs">Direcciones IP</TabsTrigger>
           </TabsList>
           <TabsContent value="users">
             <ComboboxUsers :users @selected="(u) => (form.selected_users = u)" />
@@ -51,9 +63,27 @@ function submitSearch() {
             <ComboboxEvents :events @selected="(e) => (form.selected_events = e)" />
           </TabsContent>
           <TabsContent value="logNames">
-            <ComboboxLogNames :log-names="logNames" @selected="(users) => (form.selected_modules = users)" />
+            <ComboboxLogNames :log-names="logNames" @selected="(l) => (form.selected_modules = l)" />
           </TabsContent>
-          <TabsContent value="dateTime"><DatePicker /></TabsContent>
+          <TabsContent value="dateTime">
+            <DateTimePickers
+              @date-range-set="(dr) => (form.date_range = dr)"
+              @date-set="(d) => (form.date = d)"
+              @time-from-set="(tf) => (form.time_from = tf)"
+              @time-set="(t) => (form.time = t)"
+              @time-until-set="(tu) => (form.time_until = tu)"
+            />
+          </TabsContent>
+          <TabsContent value="ipAddrs">
+            <TagsInput v-model="form.ip_dirs">
+              <TagsInputItem v-for="item in form.ip_dirs" :key="item" :value="item">
+                <TagsInputItemText />
+                <TagsInputItemDelete />
+              </TagsInputItem>
+
+              <TagsInputInput id="ip-addrs" :auto-focus="true" placeholder="Direcciones IP..." />
+            </TagsInput>
+          </TabsContent>
         </Tabs>
         <SheetFooter>
           <SheetClose as-child>

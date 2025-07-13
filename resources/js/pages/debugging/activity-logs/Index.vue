@@ -21,7 +21,6 @@ const props = defineProps<{
   logNames?: Array<string>;
   logs: PaginatedCollection<ActivityLog>;
 }>();
-console.log(props);
 
 const breadcrumbs: BreadcrumbItem[] = [
   {
@@ -33,6 +32,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 const { requestRead, requestingRead } = useRequestActions('activity-logs');
 const showPdf = ref(false);
 const showAdvancedFilters = ref(false);
+const advancedSearchApplied = ref(false);
+const advancedFilters = ref({});
 
 const urlQueryString = computed(() => {
   const queryString = usePage().url.indexOf('?');
@@ -56,13 +57,23 @@ function handleSortingChange(item: any) {
       data[sortBy] = sortDirection;
     });
 
-    router.visit(route('activity-logs.index'), {
-      data: { sortBy: data, per_page: table.getState().pagination.pageSize },
-      only: ['logs'],
-      preserveScroll: true,
-      preserveState: true,
-      onSuccess: () => (sorting.value = sortValue),
-    });
+    if (Object.keys(data).length) {
+      router.reload({
+        data: { ...advancedFilters.value, sortBy: data, per_page: table.getState().pagination.pageSize },
+        only: ['logs'],
+        onSuccess: () => (sorting.value = sortValue),
+      });
+    } else {
+      const url = usePage().url.replace(/&sortBy%5B[^%]+%5D=(?:asc|desc)(?=(?:&|$))/g, '');
+
+      router.visit(url, {
+        data: { ...advancedFilters.value },
+        only: ['logs'],
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => (sorting.value = sortValue),
+      });
+    }
   }
 }
 
@@ -126,6 +137,7 @@ function handleAdvancedSearch() {
         :search-only="['logs']"
         :search-route="route('activity-logs.index')"
         :table="table"
+        :is-advanced-search="advancedSearchApplied"
         @search="(s) => (globalFilter = s)"
         @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
         @export="showPdf = true"
@@ -144,7 +156,14 @@ function handleAdvancedSearch() {
         </SheetContent>
       </Sheet>
 
-      <SheetAdvancedFilters :events :log-names :users :show="showAdvancedFilters" @close="showAdvancedFilters = false" />
+      <SheetAdvancedFilters
+        :events
+        :log-names
+        :users
+        :show="showAdvancedFilters"
+        @close="showAdvancedFilters = false"
+        @advanced-search="(advFilters) => ((advancedSearchApplied = true), (advancedFilters = advFilters))"
+      />
     </ContentLayout>
   </AppLayout>
 </template>

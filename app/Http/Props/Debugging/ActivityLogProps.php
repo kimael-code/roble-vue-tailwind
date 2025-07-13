@@ -28,10 +28,28 @@ class ActivityLogProps
         $filtersOnly = Request::only([
             'search',
             'sortBy',
+            'date',
+            'date_range',
+            'ip_dirs',
+            'selected_users',
+            'selected_events',
+            'selected_modules',
+            'time',
+            'time_from',
+            'time_until',
         ]);
         $filtersAll = Request::all([
             'search',
             'sortBy',
+            'date',
+            'date_range',
+            'ip_dirs',
+            'selected_users',
+            'selected_events',
+            'selected_modules',
+            'time',
+            'time_from',
+            'time_until',
         ]);
 
         $perPage = Request::input('per_page', 10);

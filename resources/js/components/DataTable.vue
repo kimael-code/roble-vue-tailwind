@@ -3,9 +3,10 @@ import { Can, PaginatedCollection } from '@/types';
 import { router, useForm } from '@inertiajs/vue3';
 import { ColumnDef, FlexRender, Table as TanstackTable } from '@tanstack/vue-table';
 import { watchDebounced } from '@vueuse/core';
-import { EllipsisIcon, LoaderCircleIcon, PlusIcon, XIcon } from 'lucide-vue-next';
+import { DeleteIcon, EllipsisIcon, EraserIcon, LoaderCircleIcon, PlusIcon } from 'lucide-vue-next';
 import { TooltipPortal } from 'reka-ui';
 import { ref } from 'vue';
+import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -39,12 +40,14 @@ interface Props {
   hasBatchActionsButton?: boolean;
   isLoadingNew?: boolean;
   isLoadingDropdown?: boolean;
+  isAdvancedSearch?: boolean;
 }
 const props = withDefaults(defineProps<Props>(), {
   hasNewButton: true,
   hasBatchActionsButton: true,
   isLoadingNew: false,
   isLoadingDropdown: false,
+  isAdvancedSearch: false,
 });
 
 const emit = defineEmits([
@@ -67,12 +70,10 @@ const menuIsOpen = ref(false);
 
 const form = useForm({
   search: props.filters?.search || undefined,
-  per_page: 10,
   ...props.searchRouteData,
 });
 form.defaults({
   search: undefined,
-  per_page: 10,
 });
 
 watchDebounced(
@@ -80,11 +81,9 @@ watchDebounced(
   (s) => {
     if (s === '') form.reset('search');
 
-    router.visit(props.searchRoute, {
+    router.reload({
       data: form.data(),
       only: props.searchOnly,
-      preserveScroll: true,
-      preserveState: true,
       onSuccess: () => emit('search', s),
     });
   },
@@ -99,13 +98,10 @@ function handlePerPage(perPageValue: number) {
   const perPage = perPageValue ?? 10;
 
   props.table.setPageSize(perPage);
-  form.per_page = perPage;
 
-  router.visit(props.searchRoute, {
+  router.reload({
     data: { per_page: perPage },
     only: props.searchOnly,
-    preserveScroll: true,
-    preserveState: true,
   });
 }
 </script>
@@ -113,9 +109,18 @@ function handlePerPage(perPageValue: number) {
 <template>
   <div class="w-full">
     <div class="flex items-center justify-start px-2 py-4">
-      <div class="flex max-w-xs flex-1 items-center space-x-2">
-        <Input id="search" type="text" class="flex max-w-xs pr-10" placeholder="Buscar rápido..." v-model:model-value="form.search" />
-        <Tooltip>
+      <div class="flex max-w-max flex-1 items-center space-x-2">
+        <div class="relative w-full max-w-sm items-center">
+          <Input id="search" type="text" class="flex w-full pr-10" placeholder="Buscar rápido..." v-model:model-value="form.search" />
+          <span
+            v-if="form.search"
+            class="absolute inset-y-0 right-0 flex items-center justify-center px-2 opacity-100 transition-opacity duration-750 starting:opacity-0"
+            @click="form.reset()"
+          >
+            <DeleteIcon class="size-6 text-muted-foreground" />
+          </span>
+        </div>
+        <Tooltip v-if="isAdvancedSearch || table.getState().sorting.length">
           <TooltipTrigger as-child>
             <Button
               variant="ghost"
@@ -123,13 +128,14 @@ function handlePerPage(perPageValue: number) {
               @click="router.visit(searchRoute, { only: searchOnly, preserveScroll: false, preserveState: false })"
             >
               Reiniciar
-              <XIcon class="h-4 w-4" />
+              <EraserIcon class="h-4 w-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Quitar búsqueda, filtros y ordenamientos aplicados</p>
+            <p>Remover todos los filtros/ordenamientos</p>
           </TooltipContent>
         </Tooltip>
+        <Badge v-if="isAdvancedSearch"> Filtros de búsqueda avanzada aplicados </Badge>
       </div>
       <DropdownMenu v-if="can && (can.delete || can.export)" v-model:open="menuIsOpen">
         <DropdownMenuTrigger as-child>
@@ -141,7 +147,7 @@ function handlePerPage(perPageValue: number) {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>Búsqueda avanzada y otras acciones por lote</p>
+              <p>Búsqueda avanzada, exportación de datos y otras acciones por lote</p>
             </TooltipContent>
           </Tooltip>
         </DropdownMenuTrigger>
@@ -217,14 +223,14 @@ function handlePerPage(perPageValue: number) {
                   <FlexRender
                     :render="cell.column.columnDef.cell"
                     :props="cell.getContext()"
-                    @read="(row) => $emit('read', row)"
-                    @update="(row) => $emit('update', row)"
-                    @destroy="(row) => $emit('destroy', row)"
-                    @force-destroy="(row) => $emit('forceDestroy', row)"
-                    @restore="(row) => $emit('restore', row)"
-                    @export="(row) => $emit('exportRow', row)"
-                    @activate="(row) => $emit('activate', row)"
-                    @deactivate="(row) => $emit('deactivate', row)"
+                    @read="(row: any) => $emit('read', row)"
+                    @update="(row: any) => $emit('update', row)"
+                    @destroy="(row: any) => $emit('destroy', row)"
+                    @force-destroy="(row: any) => $emit('forceDestroy', row)"
+                    @restore="(row: any) => $emit('restore', row)"
+                    @export="(row: any) => $emit('exportRow', row)"
+                    @activate="(row: any) => $emit('activate', row)"
+                    @deactivate="(row: any) => $emit('deactivate', row)"
                   />
                 </TableCell>
               </TableRow>

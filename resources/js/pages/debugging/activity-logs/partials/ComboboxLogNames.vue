@@ -37,11 +37,16 @@ watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: tr
           </div>
 
           <ComboboxInput v-model="searchTerm" as-child>
-            <TagsInputInput placeholder="Módulos..." class="h-auto w-full min-w-[200px] border-none p-0 focus-visible:ring-0" @keydown.enter.prevent />
+            <TagsInputInput
+              :auto-focus="true"
+              placeholder="Módulos..."
+              class="h-auto w-full min-w-[200px] border-none p-0 focus-visible:ring-0"
+              @keydown.enter.prevent
+            />
           </ComboboxInput>
         </TagsInput>
 
-        <ComboboxList>
+        <ComboboxList class="w-[--reka-popper-anchor-width]">
           <ComboboxEmpty>No hay más registros</ComboboxEmpty>
           <ComboboxGroup>
             <ComboboxItem

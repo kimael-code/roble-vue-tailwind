@@ -39,6 +39,7 @@ watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: tr
 
           <ComboboxInput v-model="searchTerm" as-child>
             <TagsInputInput
+              :auto-focus="true"
               placeholder="Usuarios..."
               class="h-auto w-full min-w-[200px] border-none p-0 focus-visible:ring-0"
               @keydown.enter.prevent
@@ -46,7 +47,7 @@ watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: tr
           </ComboboxInput>
         </TagsInput>
 
-        <ComboboxList>
+        <ComboboxList class="w-[--reka-popper-anchor-width]">
           <ComboboxEmpty>No hay más registros</ComboboxEmpty>
           <ComboboxGroup>
             <ComboboxItem

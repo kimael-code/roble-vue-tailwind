@@ -2,6 +2,7 @@
 
 namespace App\Models\Debugging;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -38,13 +39,18 @@ class ActivityLog extends Activity
 
     public function scopeFilter(Builder $query, array $filters): void
     {
-        $query->when($filters['search'] ?? null, function (Builder $query, $term)
-        {
-            $query->where(function (Builder $query) use ($term)
+        $query
+            ->when(empty($filters) ?? null, function (Builder $query)
             {
-                $query->whereRaw('unaccent(description) ilike unaccent(?)', ["%$term%"]);
-            });
-        })
+                $query->latest();
+            })
+            ->when($filters['search'] ?? null, function (Builder $query, $term)
+            {
+                $query->where(function (Builder $query) use ($term)
+                {
+                    $query->whereRaw('unaccent(description) ilike unaccent(?)', ["%$term%"]);
+                });
+            })
             ->when($filters['sortBy'] ?? null, function (Builder $query, array $sorts)
             {
                 foreach ($sorts as $field => $direction)
@@ -60,13 +66,69 @@ class ActivityLog extends Activity
                             break;
 
                         default:
+                            $query->orderBy($field, $direction);
                             break;
                     }
                 }
             })
-            ->when(empty($filters) ?? null, function (Builder $query)
+            ->when($filters['date'] ?? null, function (Builder $query, array $date)
             {
-                $query->latest();
+                $query->whereDate('created_at', "{$date['year']}-{$date['month']}-{$date['day']}");
+            })
+            ->when($filters['date_range'] ?? null, function (Builder $query, array $dateRange)
+            {
+                $start = "{$dateRange['start']['year']}-{$dateRange['start']['month']}-{$dateRange['start']['day']}";
+                $end = "{$dateRange['end']['year']}-{$dateRange['end']['month']}-{$dateRange['end']['day']}";
+                $query->whereDate('created_at', '>=', $start)
+                    ->whereDate('created_at', '<=', $end);
+            })
+            ->when($filters['selected_users'] ?? null, function (Builder $query, array $users)
+            {
+                foreach ($users as $user)
+                {
+                    $query->whereHasMorph(
+                        'causer',
+                        User::class,
+                        function (Builder $query) use ($user)
+                        {
+                            $query->where('name', $user);
+                        }
+                    );
+                }
+            })
+            ->when($filters['selected_events'] ?? null, function (Builder $query, array $events)
+            {
+                foreach ($events as $event)
+                {
+                    $query->where('event', $event);
+                }
+            })
+            ->when($filters['selected_modules'] ?? null, function (Builder $query, array $modules)
+            {
+                foreach ($modules as $module)
+                {
+                    $query->where('log_name', $module);
+                }
+            })
+            ->when($filters['time'] ?? null, function (Builder $query, string $time)
+            {
+                $query->whereTime('created_at', $time);
+            })
+            ->when($filters['time_from'] ?? null, function (Builder $query, string $timeFrom)
+            {
+                $query->whereTime('created_at', '>=', $timeFrom);
+            })
+            ->when($filters['time_until'] ?? null, function (Builder $query, string $timeUntil)
+            {
+                $query->whereTime('created_at', '<=', $timeUntil);
+            })
+            ->when($filters['ip_dirs'] ?? null, function (Builder $query, array $ipAddresses)
+            {
+                foreach ($ipAddresses as $ipAddress)
+                {
+                    $query->where('properties->request->ip_address', $ipAddress)
+                        ->orWhere('properties->request->ip_address', $ipAddress);
+                }
             });
     }
 }
