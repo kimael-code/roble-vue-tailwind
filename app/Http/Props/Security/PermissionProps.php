@@ -8,11 +8,13 @@ use App\Http\Resources\Security\RoleCollection;
 use App\Http\Resources\Security\UserCollection;
 use App\Models\Debugging\ActivityLog;
 use App\Models\Security\Permission;
+use App\Models\Security\Role;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
+use Inertia\Inertia;
 
 class PermissionProps
 {
@@ -29,13 +31,42 @@ class PermissionProps
 
     public static function index(): array
     {
+        $filtersOnly = Request::only([
+            'search',
+            'sort_by',
+            'roles',
+            'users',
+            'operations',
+            'set_menu',
+        ]);
+        $filtersAll = Request::all([
+            'search',
+            'sort_by',
+            'roles',
+            'users',
+            'operations',
+            'set_menu',
+        ]);
         $perPage = Request::input('per_page', 10);
 
         return [
             'can' => self::getPermissions(),
-            'filters' => Request::all(['search', 'sortBy',]),
+            'filters' => $filtersAll,
+            'roles' => Inertia::lazy(fn() => Role::select(['id', 'name'])->get()),
+            'users' => Inertia::lazy(fn() => User::select(['id', 'name'])->withTrashed()->get()),
+            'operations' => Inertia::lazy(fn() => [
+                'Creación',
+                'Lectura',
+                'Actualización',
+                'Eliminación',
+                'Exportación',
+                'Activación',
+                'Desactivación',
+                'Restauración',
+            ]),
             'permissions' => fn() => new PermissionCollection(
-                Permission::filter(Request::only(['search', 'sortBy',]))
+                Permission::filter($filtersOnly)
+                    // ->ddRawSql()
                     ->paginate($perPage)
                     ->withQueryString()
             ),

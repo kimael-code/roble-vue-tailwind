@@ -2,6 +2,7 @@
 
 namespace App\Models\Security;
 
+use App\Models\User;
 use App\Observers\Security\PermissionObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -90,12 +91,12 @@ class Permission extends SpatiePermission
     public function tapActivity(Activity $activity): void
     {
         $activity->properties = $activity->properties->put('request', [
-            'ip_address'      => request()->ip(),
-            'user_agent'      => request()->header('user-agent'),
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->header('user-agent'),
             'user_agent_lang' => request()->header('accept-language'),
-            'referer'         => request()->header('referer'),
-            'http_method'     => request()->method(),
-            'request_url'     => request()->fullUrl(),
+            'referer' => request()->header('referer'),
+            'http_method' => request()->method(),
+            'request_url' => request()->fullUrl(),
         ]);
         $activity->properties = $activity->properties->put('causer', \App\Models\User::with('person')->find(auth()->user()->id)->toArray());
     }
@@ -103,6 +104,10 @@ class Permission extends SpatiePermission
     public function scopeFilter(Builder $query, array $filters): void
     {
         $query
+            ->when(empty($filters) ?? null, function (Builder $query)
+            {
+                $query->latest();
+            })
             ->when($filters['search'] ?? null, function (Builder $query, string $term)
             {
                 $query->where(function (Builder $query) use ($term)
@@ -111,7 +116,7 @@ class Permission extends SpatiePermission
                         ->orWhere('description', 'ilike', "%$term%");
                 });
             })
-            ->when($filters['sortBy'] ?? null, function (Builder $query, array $sorts)
+            ->when($filters['sort_by'] ?? null, function (Builder $query, array $sorts)
             {
                 foreach ($sorts as $field => $direction)
                 {
@@ -125,16 +130,60 @@ class Permission extends SpatiePermission
                     }
                 }
             })
-            ->when(empty($filters) ?? null, function (Builder $query)
+            ->when($filters['roles'] ?? null, function (Builder $query, array $roles)
             {
-                $query->latest();
+                $roles = Role::whereIn('name', $roles)->get();
+
+                $query->whereAttachedTo($roles);
             })
-            ->when($filters['permission_n'] ?? null, function (Builder $query, string $term)
+            ->when($filters['users'] ?? null, function (Builder $query, array $usernames)
             {
-                $query->where(function (Builder $query) use ($term)
+                foreach ($usernames as $username)
                 {
-                    $query->where('name', 'ilike', "%$term%");
-                });
+                    // $user = User::where('name', $username)->first();
+
+                    $query->whereHas('users', function (Builder $query) use ($username)
+                    {
+                        $query->where('name', $username);
+                    });
+                }
+            })
+            ->when($filters['operations'] ?? null, function (Builder $query, array $operations)
+            {
+                // dd($operations);
+                foreach ($operations as $operation)
+                {
+                    switch ($operation)
+                    {
+                        case 'Creación':
+                            $query->orWhere('name', 'ilike', '%create%');
+                            break;
+                        case 'Lectura':
+                            $query->orWhere('name', 'ilike', '%read%');
+                            break;
+                        case 'Actualización':
+                            $query->orWhere('name', 'ilike', '%update%');
+                            break;
+                        case 'Eliminación':
+                            $query->orWhere('name', 'ilike', '%delete%');
+                            break;
+                        case 'Exportación':
+                            $query->orWhere('name', 'ilike', '%export%');
+                            break;
+                        case 'Activación':
+                            $query->orWhere('name', 'ilike', '%activate%');
+                            break;
+                        case 'Desactivación':
+                            $query->orWhere('name', 'ilike', '%deactivate%');
+                            break;
+                        case 'Restauración':
+                            $query->orWhere('name', 'ilike', '%restore%');
+                            break;
+                        default:
+                            # code...
+                            break;
+                    }
+                }
             });
     }
 }

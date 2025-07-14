@@ -14,16 +14,20 @@ import { valueUpdater } from '@/components/ui/table/utils';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, OperationType, PaginatedCollection, Permission } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { BreadcrumbItem, Can, OperationType, PaginatedCollection, Permission, Role, SearchFilter, User } from '@/types';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { getCoreRowModel, RowSelectionState, SortingState, TableOptions, useVueTable } from '@tanstack/vue-table';
 import { KeySquare } from 'lucide-vue-next';
 import { reactive, ref, watch, watchEffect } from 'vue';
 import { columns, permissions as DTpermissions, processingRowId } from './partials/columns';
+import SheetAdvancedFilters from './partials/SheetAdvancedFilters.vue';
 
 const props = defineProps<{
   can: Can;
-  filters: object;
+  filters: SearchFilter;
+  users?: Array<User>;
+  roles?: Array<Role>;
+  operations?: Array<string>;
   permissions: PaginatedCollection<Permission>;
 }>();
 
@@ -36,6 +40,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const { action, resourceID, requestingCreate, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('permissions');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
+const showPdf = ref(false);
+const showAdvancedFilters = ref(false);
+const advancedSearchApplied = ref(false);
+const advancedFilters = ref({});
 
 DTpermissions.value = props.can;
 const dropdownBtn = ref(false);
@@ -54,13 +62,23 @@ function handleSortingChange(item: any) {
       data[sortBy] = sortDirection;
     });
 
-    router.visit(route('permissions.index'), {
-      data: { sortBy: data, per_page: table.getState().pagination.pageSize },
-      only: ['permissions'],
-      preserveScroll: true,
-      preserveState: true,
-      onSuccess: () => (sorting.value = sortValue),
-    });
+    if (Object.keys(data).length) {
+      router.reload({
+        data: { ...advancedFilters.value, sort_by: data, per_page: table.getState().pagination.pageSize },
+        only: ['permissions'],
+        onSuccess: () => (sorting.value = sortValue),
+      });
+    } else {
+      const url = usePage().url.replace(/&sort_by%5B[^%]+%5D=(?:asc|desc)(?=(?:&|$))/g, '');
+
+      router.visit(url, {
+        data: { ...advancedFilters.value },
+        only: ['permissions'],
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => (sorting.value = sortValue),
+      });
+    }
   }
 }
 
@@ -132,6 +150,13 @@ watch(action, () => {
 });
 
 watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : false));
+
+function handleAdvancedSearch() {
+  router.reload({
+    only: ['users', 'roles', 'operations'],
+    onSuccess: () => (showAdvancedFilters.value = true),
+  });
+}
 </script>
 
 <template>
@@ -150,6 +175,7 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
         :search-only="['permissions']"
         :search-route="route('permissions.index')"
         :table="table"
+        :is-advanced-search="advancedSearchApplied"
         :is-loading-new="requestingCreate"
         :is-loading-dropdown="dropdownBtn"
         @batch-destroy="handleBatchDeletion"
@@ -158,6 +184,8 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
         @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
         @update="(row) => (requestEdit(row.id), (processingRowId = row.id))"
         @destroy="(row) => handleAction('destroy', row)"
+        @export="showPdf = true"
+        @advanced-search="handleAdvancedSearch"
       />
 
       <AlertDialog v-model:open="alertOpen">
@@ -174,6 +202,15 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <SheetAdvancedFilters
+        :operations
+        :roles
+        :users
+        :show="showAdvancedFilters"
+        @close="showAdvancedFilters = false"
+        @advanced-search="(advFilters) => ((advancedSearchApplied = true), (advancedFilters = advFilters))"
+      />
     </ContentLayout>
   </AppLayout>
 </template>
