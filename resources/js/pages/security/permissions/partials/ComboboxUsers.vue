@@ -18,8 +18,8 @@ const searchTerm = ref('');
 const { contains } = useFilter({ sensitivity: 'base' });
 
 const filteredUsers = computed(() => {
-  const options = props.users?.filter((i) => !modelValue.value.includes(i.name));
-  return searchTerm.value ? options?.filter((option) => contains(option.name, searchTerm.value)) : options;
+  const options = props.users?.filter((i) => !modelValue.value.includes(i.email));
+  return searchTerm.value ? options?.filter((option) => contains(option.email, searchTerm.value)) : options;
 });
 
 watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: true });
@@ -53,7 +53,7 @@ watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: tr
             <ComboboxItem
               v-for="user in filteredUsers"
               :key="user.id"
-              :value="user.name"
+              :value="user.email"
               @select.prevent="
                 (ev) => {
                   if (typeof ev.detail.value === 'string') {
@@ -67,7 +67,7 @@ watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: tr
                 }
               "
             >
-              {{ user.name }}
+              {{ user.email }}
             </ComboboxItem>
           </ComboboxGroup>
         </ComboboxList>

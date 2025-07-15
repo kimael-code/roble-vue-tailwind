@@ -24,8 +24,6 @@ const form = useForm({
 });
 
 function submitSearch() {
-  console.log(form.data());
-  
   router.reload({
     data: form.data(),
     only: ['permissions'],
@@ -39,7 +37,7 @@ function submitSearch() {
     <Sheet :open="show" @update:open="$emit('close')">
       <SheetContent side="top">
         <SheetHeader>
-          <SheetTitle>Filtros de Búsqueda Avanzados</SheetTitle>
+          <SheetTitle>Permisos: Filtros de Búsqueda Avanzados</SheetTitle>
           <SheetDescription>Parametrice la consulta de registros haciendo uso de los siguientes controles.</SheetDescription>
         </SheetHeader>
         <Tabs default-value="users" class="pr-4 pl-4" :unmount-on-hide="false">

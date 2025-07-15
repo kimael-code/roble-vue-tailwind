@@ -90,15 +90,16 @@ class Permission extends SpatiePermission
 
     public function tapActivity(Activity $activity): void
     {
-        $activity->properties = $activity->properties->put('request', [
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->header('user-agent'),
-            'user_agent_lang' => request()->header('accept-language'),
-            'referer' => request()->header('referer'),
-            'http_method' => request()->method(),
-            'request_url' => request()->fullUrl(),
-        ]);
-        $activity->properties = $activity->properties->put('causer', \App\Models\User::with('person')->find(auth()->user()->id)->toArray());
+        $activity->properties = $activity->properties
+            ->put('request', [
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->header('user-agent'),
+                'user_agent_lang' => request()->header('accept-language'),
+                'referer' => request()->header('referer'),
+                'http_method' => request()->method(),
+                'request_url' => request()->fullUrl(),
+            ])
+            ->put('causer', User::with('person')->find(auth()->user()->id)->toArray());
     }
 
     public function scopeFilter(Builder $query, array $filters): void
@@ -136,21 +137,28 @@ class Permission extends SpatiePermission
 
                 $query->whereAttachedTo($roles);
             })
-            ->when($filters['users'] ?? null, function (Builder $query, array $usernames)
+            ->when($filters['users'] ?? null, function (Builder $query, array $userEmails)
             {
-                foreach ($usernames as $username)
+                foreach ($userEmails as $userEmail)
                 {
-                    // $user = User::where('name', $username)->first();
+                    $query
+                        ->whereHas('users', function (Builder $query) use ($userEmail)
+                        {
+                            $query->where('email', $userEmail);
+                        })
+                        ->orWhereHas('roles', function (Builder $query) use ($userEmail)
+                        {
+                            $user = User::where('email', $userEmail)->first();
 
-                    $query->whereHas('users', function (Builder $query) use ($username)
-                    {
-                        $query->where('name', $username);
-                    });
+                            foreach ($user->roles as $role)
+                            {
+                                $query->where('id', $role->id);
+                            }
+                        });
                 }
             })
             ->when($filters['operations'] ?? null, function (Builder $query, array $operations)
             {
-                // dd($operations);
                 foreach ($operations as $operation)
                 {
                     switch ($operation)

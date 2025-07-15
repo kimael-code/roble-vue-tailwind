@@ -53,7 +53,7 @@ class PermissionProps
             'can' => self::getPermissions(),
             'filters' => $filtersAll,
             'roles' => Inertia::lazy(fn() => Role::select(['id', 'name'])->get()),
-            'users' => Inertia::lazy(fn() => User::select(['id', 'name'])->withTrashed()->get()),
+            'users' => Inertia::lazy(fn() => User::select(['id', 'email'])->withTrashed()->get()),
             'operations' => Inertia::lazy(fn() => [
                 'Creación',
                 'Lectura',

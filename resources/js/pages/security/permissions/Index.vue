@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { valueUpdater } from '@/components/ui/table/utils';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
@@ -18,7 +19,7 @@ import { BreadcrumbItem, Can, OperationType, PaginatedCollection, Permission, Ro
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { getCoreRowModel, RowSelectionState, SortingState, TableOptions, useVueTable } from '@tanstack/vue-table';
 import { KeySquare } from 'lucide-vue-next';
-import { reactive, ref, watch, watchEffect } from 'vue';
+import { computed, reactive, ref, watch, watchEffect } from 'vue';
 import { columns, permissions as DTpermissions, processingRowId } from './partials/columns';
 import SheetAdvancedFilters from './partials/SheetAdvancedFilters.vue';
 
@@ -44,6 +45,13 @@ const showPdf = ref(false);
 const showAdvancedFilters = ref(false);
 const advancedSearchApplied = ref(false);
 const advancedFilters = ref({});
+const page = usePage();
+
+const urlQueryString = computed(() => {
+  const queryString = page.url.indexOf('?');
+
+  return queryString >= 0 ? page.url.substring(queryString) : '';
+});
 
 DTpermissions.value = props.can;
 const dropdownBtn = ref(false);
@@ -69,7 +77,7 @@ function handleSortingChange(item: any) {
         onSuccess: () => (sorting.value = sortValue),
       });
     } else {
-      const url = usePage().url.replace(/&sort_by%5B[^%]+%5D=(?:asc|desc)(?=(?:&|$))/g, '');
+      const url = page.url.replace(/&sort_by%5B[^%]+%5D=(?:asc|desc)(?=(?:&|$))/g, '');
 
       router.visit(url, {
         data: { ...advancedFilters.value },
@@ -202,6 +210,18 @@ function handleAdvancedSearch() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Sheet v-model:open="showPdf">
+        <SheetContent side="bottom">
+          <SheetHeader>
+            <SheetTitle>Exportar a PDF</SheetTitle>
+            <SheetDescription>Reporte: Permisos</SheetDescription>
+          </SheetHeader>
+          <div class="h-[70dvh]">
+            <iframe :src="`${route('export-permissions-pdf.index')}${urlQueryString}`" frameborder="0" width="100%" height="100%"></iframe>
+          </div>
+        </SheetContent>
+      </Sheet>
 
       <SheetAdvancedFilters
         :operations
