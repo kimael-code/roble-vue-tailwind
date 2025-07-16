@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
-use Spatie\Activitylog\Contracts\Activity;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class BaseModel extends Model
@@ -94,14 +94,15 @@ class BaseModel extends Model
 
     public function tapActivity(Activity $activity): void
     {
-        $activity->properties = $activity->properties->put('request', [
-            'ip_address'      => request()->ip(),
-            'user_agent'      => request()->header('user-agent'),
-            'user_agent_lang' => request()->header('accept-language'),
-            'referer'         => request()->header('referer'),
-            'http_method'     => request()->method(),
-            'request_url'     => request()->fullUrl(),
-        ]);
-        $activity->properties = $activity->properties->put('causer', User::with('person')->find(auth()->user()->id)->toArray());
+        $activity->properties = $activity->properties
+            ->put('request', [
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->header('user-agent'),
+                'user_agent_lang' => request()->header('accept-language'),
+                'referer' => request()->header('referer'),
+                'http_method' => request()->method(),
+                'request_url' => request()->fullUrl(),
+            ])
+            ->put('causer', User::with('person')->find(auth()->user()->id)->toArray());
     }
 }
