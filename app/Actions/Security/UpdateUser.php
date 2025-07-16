@@ -186,7 +186,6 @@ class UpdateUser
     private static function givePermissions(User $user, array $permissionDescriptions): void
     {
         $authUser = auth()->user();
-        $user->givePermissionTo($permissionDescriptions);
 
         foreach ($permissionDescriptions as $permissionDescription)
         {
