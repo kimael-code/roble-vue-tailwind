@@ -36,11 +36,11 @@ class Layout extends Component
     private function getLogo(): string
     {
         $logo = resource_path('images/appLogo.jpg');
-        $logoOrganization = Organization::active()->latest()->first()?->logo;
+        $logoOrganization = Organization::active()->latest()->first()?->logo_path;
 
         if ($logoOrganization)
         {
-            $logo = storage_path($logoOrganization);
+            $logo = storage_path("app/public/{$logoOrganization}");
         }
 
         return $logo;

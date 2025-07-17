@@ -28,18 +28,78 @@
             height: 70px;
             margin-bottom: -70px;
         }
+
+        h4 {
+            margin: 0;
+        }
+
+        .w-full {
+            width: 100%;
+        }
+
+        .w-half {
+            width: 50%;
+        }
+
+        .margin-top {
+            margin-top: 1.25rem;
+        }
+
+        .footer {
+            font-size: 0.875rem;
+            padding: 1rem;
+            background-color: rgb(241 245 249);
+        }
+
+        table {
+            width: 100%;
+            border-spacing: 0;
+        }
+
+        table.products {
+            font-size: 0.875rem;
+        }
+
+        table.products tr {
+            background-color: rgb(96 165 250);
+        }
+
+        table.products th {
+            color: #ffffff;
+            padding: 0.5rem;
+        }
+
+        table tr.items {
+            background-color: rgb(241 245 249);
+        }
+
+        table tr.items td {
+            padding: 0.5rem;
+        }
+
+        .total {
+            text-align: right;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 
 <body>
     <header>
-        <table border="0">
-            <tr rowspan="3">
-                <img src="{{ $logo }}" alt="Logo">
+        <table class="w-full" border="0">
+            <tr>
+                <td class="w-half">
+                    <img src="{{ $logo }}" alt="Logo" width="200" />
+                </td>
+                <td class="w-half">
+                    <h2>{{ $title }}</h2>
+                    <h3>{{ $appName }}</h3>
+                </td>
             </tr>
             <tr>
-                <th>{{ $title }}</th>
-                <th>{{ $appName }}</th>
+                <th></th>
+                <th></th>
                 <td align="right">Generado a la fecha: {{ $timestamp }}</td>
             </tr>
         </table>
