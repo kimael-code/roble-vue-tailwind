@@ -40,6 +40,9 @@
         .w-half {
             width: 50%;
         }
+        .w-20 {
+            width: 20%;
+        }
 
         .margin-top {
             margin-top: 1.25rem;
@@ -87,20 +90,16 @@
 
 <body>
     <header>
-        <table class="w-full" border="0">
+        <table class="w-full" border="1">
             <tr>
-                <td class="w-half">
+                <td class="w-20">
                     <img src="{{ $logo }}" alt="Logo" width="200" />
                 </td>
-                <td class="w-half">
+                <td>
                     <h2>{{ $title }}</h2>
                     <h3>{{ $appName }}</h3>
+                    <pre>Generado a la fecha: {{ $timestamp }}</pre>
                 </td>
-            </tr>
-            <tr>
-                <th></th>
-                <th></th>
-                <td align="right">Generado a la fecha: {{ $timestamp }}</td>
             </tr>
         </table>
     </header>

@@ -11,14 +11,9 @@ use Illuminate\Support\Carbon;
 
 class ExportIndexToDomPdf
 {
-    public function __construct(
-        private array $filters = [],
-        protected string $orientation = 'L',
-        protected string $format = 'LETTER',
-    ) {}
-
-    public static function make(): \Barryvdh\DomPDF\PDF
+    public static function make(array $filters, string $orientation = 'L', string $format = 'LETTER'): \Barryvdh\DomPDF\PDF
     {
+        // dd($filters);
         return Pdf::loadView('pdf.activity-logs.index')
             ->setPaper('letter', 'landscape');
     }

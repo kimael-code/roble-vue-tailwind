@@ -13,8 +13,9 @@ class ActivityLogReportController extends Controller
     public function indexToPdf(Request $request): Response
     {
         // $pdf = new ExportIndexToPdf(filters: $request->all());
-        $pdf = new ExportIndexToDomPdf($request->all());
+        // $pdf = new ExportIndexToDomPdf($request->all());
 
-        return $pdf->make()->stream('document.pdf');
+        return ExportIndexToDomPdf::make($request->all())
+            ->stream('document.pdf');
     }
 }
