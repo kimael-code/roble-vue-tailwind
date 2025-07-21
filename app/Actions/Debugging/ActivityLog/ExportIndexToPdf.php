@@ -56,11 +56,21 @@ class ExportIndexToPdf extends BasePdf
         $this->setFont(family: 'iosevkafixedss12', size: 10);
         $this->MultiCell(w: 0, h: 0, txt: $filters['ip_dirs'] ?: 'Todas', border: 'T', ln: 1);
 
+        $this->setLineStyle([
+            'width' => 0.75 / $this->k,
+            'cap' => 'butt',
+            'join' => 'mitter',
+            'dash' => 0,
+            'color' => [0, 0, 0],
+        ]);
+
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
         $this->setFillColor(0, 53, 41);
         $this->setTextColor(255, 255, 255);
         $this->Cell(w: 0, txt: '2. DETALLE DE LAS TRAZAS DE ACTIVIDADES', border: 0, ln: 1, fill: true);
         $this->setTextColor(0, 0, 0);
+        
+        $this->setFont(family: 'dejavusans', style: 'B', size: 9);
         $this->MultiCell(w: 30, h: 5, maxh: 5, txt: 'Fecha/Hora', border: 0, align: 'L', valign: 'M', ln: 0);
         $this->MultiCell(w: 35, h: 5, maxh: 5, txt: 'Usuario', border: 0, align: 'L', valign: 'M', ln: 0);
         $this->MultiCell(w: 25, h: 5, maxh: 5, txt: "Actividad", border: 0, align: 'L', valign: 'M', ln: 0);

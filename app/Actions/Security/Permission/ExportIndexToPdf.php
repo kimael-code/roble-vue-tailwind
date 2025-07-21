@@ -7,6 +7,7 @@ use App\Models\Security\Permission;
 use App\Models\Security\Role;
 use App\Support\DataExport\BasePdf;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
 class ExportIndexToPdf extends BasePdf
@@ -61,12 +62,14 @@ class ExportIndexToPdf extends BasePdf
         $this->setTextColor(255, 255, 255);
         $this->Cell(w: 0, txt: '2. DETALLE DE LAS TRAZAS DE ACTIVIDADES', border: 0, ln: 1, fill: true);
         $this->setTextColor(0, 0, 0);
-        $this->MultiCell(w: 30, h: 5, align: 'L', ln: 0, border: 'B', txt: 'Fecha Creado', );
-        $this->MultiCell(w: 10, h: 5, align: 'L', ln: 0, border: 'B', txt: 'ID', );
-        $this->MultiCell(w: 64, h: 5, align: 'L', ln: 0, border: 'B', txt: 'Permiso', );
-        $this->MultiCell(w: 40, h: 5, align: 'L', ln: 0, border: 'B', txt: 'Rol/es', );
-        $this->MultiCell(w: 40, h: 5, align: 'L', ln: 0, border: 'B', txt: 'Usuario/s', );
-        $this->MultiCell(w: 65, h: 5, align: 'L', ln: 1, border: 'B', txt: 'Operación', );
+
+        $this->setFont(family: 'dejavusans', style: 'B', size: 9);
+        $this->MultiCell(w: 10, h: 5, align: 'L', ln: 0, txt: $this->getString('ID', 'id'));
+        $this->MultiCell(w: 92.5, h: 5, align: 'L', ln: 0, txt: $this->getString('Permiso', 'permission'));
+        $this->MultiCell(w: 30, h: 5, align: 'L', ln: 0, txt: $this->getString('Fecha Creado', 'created_at'));
+        $this->MultiCell(w: 25.7, h: 5, align: 'L', ln: 0, txt: 'Operación');
+        $this->MultiCell(w: 45.5, h: 5, align: 'L', ln: 0, txt: 'Rol/es');
+        $this->MultiCell(w: 45.5, h: 5, align: 'L', ln: 1, txt: 'Usuario/s');
 
         // establece el margen superior a la altura ocupada por el header
         $this->tMargin = $this->GetY();
@@ -101,9 +104,9 @@ class ExportIndexToPdf extends BasePdf
 
         $this->setMargins(PDF_MARGIN_LEFT, 77.5, PDF_MARGIN_RIGHT);
         $this->setHeaderMargin();
-        $this->setFooterMargin();
+        $this->setFooterMargin(15);
 
-        $this->setAutoPageBreak(true, 10);
+        $this->setAutoPageBreak(true, 20);
 
         $this->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
@@ -113,48 +116,11 @@ class ExportIndexToPdf extends BasePdf
 
         $this->AddPage();
 
-        $permissions = Permission::filter($this->filters)->get();
+        $html = View::make('pdf.permissions.index', [
+            'permissions' => Permission::filter($this->filters)->get(),
+        ]);
 
-        foreach ($permissions as $permission)
-        {
-            $ts = $permission->created_at->isoFormat('L LTS');
-            $heightTs = ceil($this->getStringHeight(30, $ts, border: 'B'));
-            $heightId = ceil($this->getStringHeight(10, $permission->id ?? '', border: 'B'));
-            $heightPermission = ceil($this->getStringHeight(64, "[{$permission->name}] {$permission->description}", border: 'B'));
-            $heightRoles = ceil($this->getStringHeight(40, $permission->roles()->pluck('name')->implode(', '), border: 'B'));
-            $heightUsers = ceil($this->getStringHeight(40, $permission->users()->pluck('email')->implode(', '), border: 'B'));
-            $heightOperations = ceil($this->getStringHeight(65, $this->getOperation($permission), border: 'B'));
-
-            $maxHeight = max($heightId, $heightOperations, $heightPermission, $heightRoles, $heightTs, $heightUsers, 0);
-
-            $txtRoles = $permission->roles()->pluck('name')->implode(', ');
-            $txtUsers = $this->getUsers($permission);
-
-            $this->startTransaction();
-            $startPage = $this->getPage();
-            $this->MultiCell(w: 30, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 0, txt: $ts);
-            $this->MultiCell(w: 10, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 0, txt: $permission->id ?? '');
-            $this->MultiCell(w: 64, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 0, txt: "[{$permission->name}] {$permission->description}");
-            $this->MultiCell(w: 40, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 0, txt: $txtRoles);
-            $this->MultiCell(w: 40, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 0, txt: $txtUsers);
-            $this->MultiCell(w: 65, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 1, txt: $this->getOperation($permission));
-
-            if ($this->getPage() > $startPage)
-            {
-                $this->rollbackTransaction(true);
-                $this->AddPage();
-                $this->MultiCell(w: 30, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 0, txt: $ts);
-                $this->MultiCell(w: 10, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 0, txt: $permission->id ?? '');
-                $this->MultiCell(w: 64, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 0, txt: "[{$permission->name}] {$permission->description}");
-                $this->MultiCell(w: 40, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 0, txt: $txtRoles);
-                $this->MultiCell(w: 40, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 0, txt: $txtUsers);
-                $this->MultiCell(w: 65, h: $maxHeight, maxh: $maxHeight, border: 'B', align: 'L', valign: 'T', ln: 1, txt: $this->getOperation($permission));
-            }
-            else
-            {
-                $this->commitTransaction();
-            }
-        }
+        $this->writeHTML($html);
 
         return $this->Output('REPORTE: PERMISOS');
     }
@@ -184,11 +150,6 @@ class ExportIndexToPdf extends BasePdf
             $filters['operations'] .= Arr::join($this->filters['operations'], ', ');
         }
 
-        // if (isset($this->filters['set_menu']))
-        // {
-        //     $filters['set_menu'] .= Arr::join($this->filters['set_menu'], ', ');
-        // }
-
         if (isset($this->filters['search']))
         {
             $filters['search'] .= $this->filters['search'];
@@ -197,7 +158,7 @@ class ExportIndexToPdf extends BasePdf
         return $filters;
     }
 
-    private function getOperation(Permission $permission): string
+    public function getOperation(Permission $permission): string
     {
         return match (true)
         {
@@ -213,7 +174,7 @@ class ExportIndexToPdf extends BasePdf
         };
     }
 
-    private function getUsers(Permission $permission): string
+    public function getUsers(Permission $permission): string
     {
         $usersByDirectPermission = $permission->users()->pluck('email')->implode(', ');
         $usersByRoles = $permission->roles->map(
@@ -221,10 +182,47 @@ class ExportIndexToPdf extends BasePdf
         )->implode(', ');
 
         $users = trim("{$usersByDirectPermission}, {$usersByRoles}", ', ');
-        // $users = explode(', ', $users);
-        // $users = array_unique($users);
-        // $users = implode(', ', $users);
 
         return $users;
+    }
+
+    private function getString(string $txt, string $col): string
+    {
+        if ($col === 'created_at')
+        {
+            if (!isset($this->filters['sort_by']))
+            {
+                return "↓ {$txt}";
+            }
+            elseif (isset($this->filters['sort_by']['created_at']))
+            {
+                return $this->filters['sort_by']['created_at'] === 'asc' ? "↑ {$txt}" : "↓ {$txt}";
+            }
+            else
+            {
+                return $txt;
+            }
+        }
+        elseif ($col === 'permission')
+        {
+            if (isset($this->filters['sort_by']['name']))
+            {
+                return $this->filters['sort_by']['name'] === 'asc' ? "↑ {$txt}" : "↓ {$txt}";
+            }
+            elseif (isset($this->filters['sort_by']['description']))
+            {
+                return $this->filters['sort_by']['description'] === 'asc' ? "↑ {$txt}" : "↓ {$txt}";
+            }
+
+            return $txt;
+        }
+        elseif (isset($this->filters['sort_by'][$col]))
+        {
+            return $this->filters['sort_by'][$col] === 'asc' ? "↑ {$txt}" : "↓ {$txt}";
+        }
+        else
+        {
+            return $txt;
+        }
     }
 }
