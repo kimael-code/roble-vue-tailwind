@@ -65,7 +65,9 @@ class ActivityLog extends Activity
                             $query->orderBy('activity_log.created_at', $direction);
                             break;
                         case 'ip_address':
-                            $query->orderBy('properties->request->ip_address', $direction);
+                            if ($direction === 'asc' || $direction === 'desc') {
+                                $query->orderByRaw("(properties->'request'->>'ip_address')::inet {$direction}");
+                            }
                             break;
 
                         default:

@@ -1,7 +1,8 @@
 import DataTableActions from '@/components/DataTableActions.vue';
 import { Button } from '@/components/ui/button';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ActivityLog, Can } from '@/types';
-import { createColumnHelper } from '@tanstack/vue-table';
+import { createColumnHelper, SortingState } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { h, ref } from 'vue';
 
@@ -35,9 +36,37 @@ export const columns = [
     enableHiding: false,
   }),
   columnHelper.accessor('description', {
-    header: ({ column }) => {
+    header: ({ column, table }) => {
       const isSorted = column.getIsSorted();
       const isSortedDesc = column.getIsSorted() === 'desc';
+
+      return h(DropdownMenu, () => [
+        h(DropdownMenuTrigger, { asChild: true }, () => [
+          h(Button, { variant: 'outline', class: 'ml-auto' }, () => [
+            'Nombre',
+            isSorted
+              ? isSortedDesc
+                ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
+                : h(ChevronUp, { class: 'ml-2 h-4 w-4' })
+              : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
+          ]),
+        ]),
+        h(DropdownMenuContent, { align: 'start' }, () => [
+          h(
+            DropdownMenuCheckboxItem,
+            { key: `${column.id}Up`, checked: isSorted && !isSortedDesc, onSelect: () => column.toggleSorting(false) },
+            () => ['Ordenar ASC'],
+          ),
+          h(
+            DropdownMenuCheckboxItem,
+            { key: `${column.id}Down`, checked: isSorted && isSortedDesc, onSelect: () => column.toggleSorting(true) },
+            () => ['Ordenar DESC'],
+          ),
+          h(DropdownMenuCheckboxItem, { key: `${column.id}Clr`, checked: false, onSelect: () => table.setSorting(() => <SortingState>[]) }, () => [
+            'Restablecer',
+          ]),
+        ]),
+      ]);
 
       return h(
         Button,
