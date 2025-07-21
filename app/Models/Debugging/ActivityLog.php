@@ -51,7 +51,7 @@ class ActivityLog extends Activity
                     $query->whereRaw('unaccent(description) ilike unaccent(?)', ["%$term%"]);
                 });
             })
-            ->when($filters['sortBy'] ?? null, function (Builder $query, array $sorts)
+            ->when($filters['sort_by'] ?? null, function (Builder $query, array $sorts)
             {
                 foreach ($sorts as $field => $direction)
                 {
@@ -63,6 +63,9 @@ class ActivityLog extends Activity
                             break;
                         case 'created_at_human':
                             $query->orderBy('activity_log.created_at', $direction);
+                            break;
+                        case 'ip_address':
+                            $query->orderBy('properties->request->ip_address', $direction);
                             break;
 
                         default:

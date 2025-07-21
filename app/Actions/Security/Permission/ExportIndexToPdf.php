@@ -36,19 +36,19 @@ class ExportIndexToPdf extends BasePdf
         $this->setTextColor(0, 0, 0);
         $this->MultiCell(w: 40, h: 0, align: 'L', ln: 0, txt: 'Buscar');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, align: 'L', ln: 1, txt: $filters['search'] ?: 'Todo');
+        $this->MultiCell(w:  0, h: 0, align: 'L', ln: 1, txt: $filters['search'] ?: 'Todo');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, border: 'T', align: 'L', ln: 0, txt: 'Usuario(s)');
+        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Usuario(s)');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['users'] ?: 'Todos');
+        $this->MultiCell(w:  0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['users'] ?: 'Todos');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, border: 'T', align: 'L', ln: 0, txt: 'Rol(es)');
+        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Rol(es)');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['roles'] ?: 'Todos');
+        $this->MultiCell(w:  0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['roles'] ?: 'Todos');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, border: 'T', align: 'L', ln: 0, txt: 'Operación');
+        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Operación');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['operations'] ?: 'Todas');
+        $this->MultiCell(w:  0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['operations'] ?: 'Todas');
 
         $this->setLineStyle([
             'width' => 0.75 / $this->k,
@@ -64,9 +64,9 @@ class ExportIndexToPdf extends BasePdf
         $this->setTextColor(0, 0, 0);
 
         $this->setFont(family: 'dejavusans', style: 'B', size: 9);
-        $this->MultiCell(w: 10, h: 5, align: 'L', ln: 0, txt: $this->getString('ID', 'id'));
+        $this->MultiCell(w:   10, h: 5, align: 'L', ln: 0, txt: $this->getString('ID', 'id'));
         $this->MultiCell(w: 92.5, h: 5, align: 'L', ln: 0, txt: $this->getString('Permiso', 'permission'));
-        $this->MultiCell(w: 30, h: 5, align: 'L', ln: 0, txt: $this->getString('Fecha Creado', 'created_at'));
+        $this->MultiCell(w:   30, h: 5, align: 'L', ln: 0, txt: $this->getString('Fecha Creado', 'created_at'));
         $this->MultiCell(w: 25.7, h: 5, align: 'L', ln: 0, txt: 'Operación');
         $this->MultiCell(w: 45.5, h: 5, align: 'L', ln: 0, txt: 'Rol/es');
         $this->MultiCell(w: 45.5, h: 5, align: 'L', ln: 1, txt: 'Usuario/s');
