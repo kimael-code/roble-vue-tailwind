@@ -34,11 +34,12 @@ const showPdf = ref(false);
 const showAdvancedFilters = ref(false);
 const advancedSearchApplied = ref(false);
 const advancedFilters = ref({});
+const page = usePage();
 
 const urlQueryString = computed(() => {
-  const queryString = usePage().url.indexOf('?');
+  const queryString = page.url.indexOf('?');
 
-  return queryString >= 0 ? usePage().url.substring(queryString) : '';
+  return queryString >= 0 ? page.url.substring(queryString) : '';
 });
 
 permissions.value = props.can;
@@ -59,12 +60,12 @@ function handleSortingChange(item: any) {
 
     if (Object.keys(data).length) {
       router.reload({
-        data: { ...advancedFilters.value, sortBy: data, per_page: table.getState().pagination.pageSize },
+        data: { ...advancedFilters.value, sort_by: data, per_page: table.getState().pagination.pageSize },
         only: ['logs'],
         onSuccess: () => (sorting.value = sortValue),
       });
     } else {
-      const url = usePage().url.replace(/&sortBy%5B[^%]+%5D=(?:asc|desc)(?=(?:&|$))/g, '');
+      const url = page.url.replace(/&sort_by%5B[^%]+%5D=(?:asc|desc)(?=(?:&|$))/g, '');
 
       router.visit(url, {
         data: { ...advancedFilters.value },

@@ -121,14 +121,7 @@ class Permission extends SpatiePermission
             {
                 foreach ($sorts as $field => $direction)
                 {
-                    if ($field === 'record_status')
-                    {
-                        $query->orderBy('deleted_at', $direction);
-                    }
-                    else
-                    {
-                        $query->orderBy($field, $direction);
-                    }
+                    $query->orderBy($field, $direction);
                 }
             })
             ->when($filters['roles'] ?? null, function (Builder $query, array $roles)

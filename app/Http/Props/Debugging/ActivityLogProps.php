@@ -27,7 +27,7 @@ class ActivityLogProps
     {
         $filtersOnly = Request::only([
             'search',
-            'sortBy',
+            'sort_by',
             'date',
             'date_range',
             'ip_dirs',
@@ -40,7 +40,7 @@ class ActivityLogProps
         ]);
         $filtersAll = Request::all([
             'search',
-            'sortBy',
+            'sort_by',
             'date',
             'date_range',
             'ip_dirs',

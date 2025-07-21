@@ -7,6 +7,7 @@ use App\Models\Organization\Organization;
 use App\Support\DataExport\BasePdf;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\View;
 
 class ExportIndexToPdf extends BasePdf
 {
@@ -32,42 +33,52 @@ class ExportIndexToPdf extends BasePdf
         $this->setTextColor(255, 255, 255);
         $this->Cell(w: 0, txt: '1. FILTROS APLICADOS', border: 0, ln: 1, fill: true);
         $this->setTextColor(0, 0, 0);
-        $this->MultiCell(w: 40, h: 0, txt: 'Buscar', align: 'L', ln: 0);
+        $this->MultiCell(w: 40, h: 0, align: 'L', ln: 0, txt: 'Buscar');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, txt: $filters['search'] ?: 'Todo', ln: 1);
+        $this->MultiCell(w:  0, h: 0, align: 'L', ln: 1, txt: $filters['search'] ?: 'Todo');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, txt: 'Usuario(s)', border: 'T', align: 'L', ln: 0);
+        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Usuario(s)');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, txt: $filters['users'] ?: 'Todos', border: 'T', ln: 1);
+        $this->MultiCell(w:  0, h: 0, border: 'T', ln: 1, txt: $filters['users'] ?: 'Todos');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, txt: 'Fecha/Hora', border: 'T', align: 'L', ln: 0);
+        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Fecha/Hora');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, txt: $filters['date_time'] ?: 'Todo', border: 'T', ln: 1);
+        $this->MultiCell(w:  0, h: 0, border: 'T', ln: 1, txt: $filters['date_time'] ?: 'Todo');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, txt: 'Tipo de Actividad', border: 'T', align: 'L', ln: 0);
+        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Tipo de Actividad');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, txt: $filters['events'] ?: 'Todas', border: 'T', ln: 1);
+        $this->MultiCell(w:  0, h: 0, border: 'T', ln: 1, txt: $filters['events'] ?: 'Todas');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, txt: 'Módulo/Funcionalidad', border: 'T', align: 'L', ln: 0);
+        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Módulo/Funcionalidad');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, txt: $filters['modules'] ?: 'Todo', border: 'T', ln: 1);
+        $this->MultiCell(w:  0, h: 0, border: 'T', ln: 1, txt: $filters['modules'] ?: 'Todo');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, txt: 'IP Origen', border: 'T', align: 'L', ln: 0);
+        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'IP Origen');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, txt: $filters['ip_dirs'] ?: 'Todas', border: 'T', ln: 1);
+        $this->MultiCell(w:  0, h: 0, border: 'T', ln: 1, txt: $filters['ip_dirs'] ?: 'Todas');
+
+        $this->setLineStyle([
+            'width' => 0.75 / $this->k,
+            'cap' => 'butt',
+            'join' => 'mitter',
+            'dash' => 0,
+            'color' => [0, 0, 0],
+        ]);
 
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
         $this->setFillColor(0, 53, 41);
         $this->setTextColor(255, 255, 255);
         $this->Cell(w: 0, txt: '2. DETALLE DE LAS TRAZAS DE ACTIVIDADES', border: 0, ln: 1, fill: true);
         $this->setTextColor(0, 0, 0);
-        $this->MultiCell(w: 30, h: 5, maxh: 5, txt: 'Fecha/Hora', border: 0, align: 'L', valign: 'M', ln: 0);
-        $this->MultiCell(w: 35, h: 5, maxh: 5, txt: 'Usuario', border: 0, align: 'L', valign: 'M', ln: 0);
-        $this->MultiCell(w: 25, h: 5, maxh: 5, txt: "Actividad", border: 0, align: 'L', valign: 'M', ln: 0);
-        $this->MultiCell(w: 30, h: 5, maxh: 5, txt: "Módulo/Func.", border: 0, align: 'L', valign: 'M', ln: 0);
-        $this->MultiCell(w: 85, h: 5, maxh: 5, txt: "Descripción", border: 0, align: 'L', valign: 'M', ln: 0);
-        $this->MultiCell(w: 18, h: 5, maxh: 5, txt: "ID", border: 0, align: 'L', valign: 'M', ln: 0);
-        $this->MultiCell(w: 0, h: 5, maxh: 5, txt: 'IP Origen', border: 0, align: 'L', valign: 'M', ln: 1);
+
+        $this->setFont(family: 'dejavusans', style: 'B', size: 9);
+        $this->MultiCell(w: 30, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('Fecha/Hora', 'created_at'));
+        $this->MultiCell(w: 35, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('Usuario', 'causer'));
+        $this->MultiCell(w: 25, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('Actividad', 'event'));
+        $this->MultiCell(w: 30, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('Módulo/Func.', 'log_name'));
+        $this->MultiCell(w: 85, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('Descripción', 'description'));
+        $this->MultiCell(w: 18, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('ID', 'subject_id'));
+        $this->MultiCell(w:  0, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 1, txt: $this->getString('IP Origen', 'ip_address'));
 
         // establece el margen superior a la altura ocupada por el header
         $this->tMargin = $this->GetY();
@@ -102,9 +113,9 @@ class ExportIndexToPdf extends BasePdf
 
         $this->setMargins(PDF_MARGIN_LEFT, 77.5, PDF_MARGIN_RIGHT);
         $this->setHeaderMargin();
-        $this->setFooterMargin();
+        $this->setFooterMargin(15);
 
-        $this->setAutoPageBreak(TRUE);
+        $this->setAutoPageBreak(TRUE, 20);
 
         $this->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
@@ -114,28 +125,11 @@ class ExportIndexToPdf extends BasePdf
 
         $this->AddPage();
 
-        $activities = ActivityLog::filter($this->filters)->get();
+        $html = View::make('pdf.activity-logs.index', [
+            'activityLogs' => ActivityLog::filter($this->filters)->get(),
+        ]);
 
-        foreach ($activities->chunk(15) as $index => $chunk)
-        {
-            if ($index > 0)
-            {
-                $this->AddPage();
-            }
-
-            $chunk->each(function (ActivityLog $activity)
-            {
-                $ts = $activity->created_at->isoFormat('L LTS');
-
-                $this->MultiCell(w: 30, h: 7, maxh: 7, txt: $ts, border: 'B', align: 'L', valign: 'M', ln: 0);
-                $this->MultiCell(w: 35, h: 7, maxh: 7, txt: $activity->causer->name, fitcell: true, border: 'B', align: 'L', valign: 'M', ln: 0);
-                $this->MultiCell(w: 25, h: 7, maxh: 7, txt: $activity->event, fitcell: true, border: 'B', align: 'L', valign: 'M', ln: 0);
-                $this->MultiCell(w: 30, h: 7, maxh: 7, txt: $activity->log_name, border: 'B', align: 'L', valign: 'M', ln: 0);
-                $this->MultiCell(w: 85, h: 7, maxh: 7, txt: $activity->description, fitcell: true, border: 'B', align: 'L', valign: 'M', ln: 0);
-                $this->MultiCell(w: 18, h: 7, maxh: 7, txt: $activity->subject_id ?? '', border: 'B', align: 'L', valign: 'M', ln: 0);
-                $this->MultiCell(w: 0, h: 7, maxh: 7, txt: $activity->properties['request']['ip_address'], border: 'B', align: 'L', valign: 'M', ln: 1);
-            });
-        }
+        $this->writeHTML($html);
 
         return $this->Output('REPORTE: TRAZAS DE ACTIVIDADES DE USUARIOS');
     }
@@ -259,5 +253,49 @@ class ExportIndexToPdf extends BasePdf
         }
 
         return $filters;
+    }
+
+    private function getString(string $txt, string $col): string
+    {
+        if ($col === 'created_at')
+        {
+            if (!isset($this->filters['sort_by']))
+            {
+                return "↓ {$txt}";
+            }
+            elseif (isset($this->filters['sort_by']['created_at']))
+            {
+                return $this->filters['sort_by']['created_at'] === 'asc' ? "↑ {$txt}" : "↓ {$txt}";
+            }
+            elseif (isset($this->filters['sort_by']['created_at_human']))
+            {
+                return $this->filters['sort_by']['created_at_human'] === 'asc' ? "↑ {$txt}" : "↓ {$txt}";
+            }
+            else
+            {
+                return $txt;
+            }
+        }
+        elseif ($col === 'permission')
+        {
+            if (isset($this->filters['sort_by']['name']))
+            {
+                return $this->filters['sort_by']['name'] === 'asc' ? "↑ {$txt}" : "↓ {$txt}";
+            }
+            elseif (isset($this->filters['sort_by']['description']))
+            {
+                return $this->filters['sort_by']['description'] === 'asc' ? "↑ {$txt}" : "↓ {$txt}";
+            }
+
+            return $txt;
+        }
+        elseif (isset($this->filters['sort_by'][$col]))
+        {
+            return $this->filters['sort_by'][$col] === 'asc' ? "↑ {$txt}" : "↓ {$txt}";
+        }
+        else
+        {
+            return $txt;
+        }
     }
 }
