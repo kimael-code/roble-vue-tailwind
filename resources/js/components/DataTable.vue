@@ -210,7 +210,7 @@ function handlePerPage(perPageValue: number) {
       <Table>
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id" @click="header.column.getToggleSortingHandler()?.($event)">
+            <TableHead v-for="header in headerGroup.headers" :key="header.id">
               <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
             </TableHead>
           </TableRow>
