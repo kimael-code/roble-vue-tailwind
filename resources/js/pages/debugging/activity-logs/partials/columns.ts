@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ActivityLog, Can } from '@/types';
-import { createColumnHelper, SortingState } from '@tanstack/vue-table';
+import { createColumnHelper } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { computed, h, ref } from 'vue';
 
@@ -44,7 +44,7 @@ export const columns = [
     enableHiding: false,
   }),
   columnHelper.accessor('description', {
-    header: ({ column, table }) => {
+    header: ({ column }) => {
       const isSorted = column.getIsSorted();
       const direction = computed(() => {
         const sorted = column.getIsSorted();
@@ -65,12 +65,12 @@ export const columns = [
           ]),
         ]),
         h(DropdownMenuContent, { align: 'start' }, () => [
-          h(DropdownMenuLabel, 'Ordenar'),
+          h(DropdownMenuLabel, () => 'Ordenar'),
           h(DropdownMenuSeparator),
-          h(DropdownMenuRadioGroup, { modelValue: direction.value }, [
-            h(DropdownMenuRadioItem, { value: 'asc', onSelect: () => column.toggleSorting(false) }, 'Ascendente'),
-            h(DropdownMenuRadioItem, { value: 'desc', onSelect: () => column.toggleSorting(true) }, 'Descendente'),
-            h(DropdownMenuRadioItem, { value: 'none', onSelect: () => table.setSorting(() => <SortingState>[]) }, 'Restablecer'),
+          h(DropdownMenuRadioGroup, { modelValue: direction.value }, () => [
+            h(DropdownMenuRadioItem, { value: 'asc', onSelect: () => column.toggleSorting(false, true) }, () => 'ASC'),
+            h(DropdownMenuRadioItem, { value: 'desc', onSelect: () => column.toggleSorting(true, true) }, () => 'DESC'),
+            h(DropdownMenuRadioItem, { value: 'none', onSelect: () => column.clearSorting() }, () => 'Restablecer'),
           ]),
         ]),
       ]);
@@ -80,23 +80,34 @@ export const columns = [
   columnHelper.accessor('created_at_human', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
-      const isSortedDesc = column.getIsSorted() === 'desc';
+      const direction = computed(() => {
+        const sorted = column.getIsSorted();
+        if (sorted === 'asc') return 'asc';
+        if (sorted === 'desc') return 'desc';
+        return 'none';
+      });
 
-      return h(
-        Button,
-        {
-          variant: isSorted ? 'default' : 'ghost',
-          class: 'ml-auto',
-        },
-        () => [
-          'Fecha',
-          isSorted
-            ? isSortedDesc
+      return h(DropdownMenu, () => [
+        h(DropdownMenuTrigger, { asChild: true }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+            'Fecha',
+            isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
-              : h(ChevronUp, { class: 'ml-2 h-4 w-4' })
-            : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
-        ],
-      );
+              : isSorted === 'asc'
+                ? h(ChevronUp, { class: 'ml-2 h-4 w-4' })
+                : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
+          ]),
+        ]),
+        h(DropdownMenuContent, { align: 'start' }, () => [
+          h(DropdownMenuLabel, () => 'Ordenar'),
+          h(DropdownMenuSeparator),
+          h(DropdownMenuRadioGroup, { modelValue: direction.value }, () => [
+            h(DropdownMenuRadioItem, { value: 'asc', onSelect: () => column.toggleSorting(false, true) }, () => 'ASC'),
+            h(DropdownMenuRadioItem, { value: 'desc', onSelect: () => column.toggleSorting(true, true) }, () => 'DESC'),
+            h(DropdownMenuRadioItem, { value: 'none', onSelect: () => column.clearSorting() }, () => 'Restablecer'),
+          ]),
+        ]),
+      ]);
     },
     cell: (info) => h('div', info.getValue()),
   }),

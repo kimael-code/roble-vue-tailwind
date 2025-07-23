@@ -50,31 +50,23 @@ const rowSelection = ref<RowSelectionState>({});
 function handleSortingChange(item: any) {
   if (typeof item === 'function') {
     const sortValue = item(sorting.value);
-    const data: { [index: string]: any } = {};
+    const data: { [index: string]: any } = {
+      ...advancedFilters.value, // Preserve advanced filters
+      per_page: table.getState().pagination.pageSize,
+    };
 
     sortValue.forEach((element: any) => {
       const sortBy = element?.id ? element.id : '';
-      const sortDirection = sortBy ? (element?.desc ? 'desc' : 'asc') : '';
-      data[sortBy] = sortDirection;
+      if (sortBy) {
+        data[`sort_by[${sortBy}]`] = element?.desc ? 'desc' : 'asc';
+      }
     });
 
-    if (Object.keys(data).length) {
-      router.reload({
-        data: { ...advancedFilters.value, sort_by: data, per_page: table.getState().pagination.pageSize },
-        only: ['logs'],
-        onSuccess: () => (sorting.value = sortValue),
-      });
-    } else {
-      const url = page.url.replace(/&sort_by%5B[^%]+%5D=(?:asc|desc)(?=(?:&|$))/g, '');
-
-      router.visit(url, {
-        data: { ...advancedFilters.value },
-        only: ['logs'],
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => (sorting.value = sortValue),
-      });
-    }
+    router.reload({
+      data,
+      only: ['logs'],
+      onSuccess: () => (sorting.value = sortValue),
+    });
   }
 }
 
