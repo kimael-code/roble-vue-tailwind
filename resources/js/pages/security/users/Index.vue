@@ -14,16 +14,19 @@ import { valueUpdater } from '@/components/ui/table/utils';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, OperationType, PaginatedCollection, User } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { BreadcrumbItem, Can, OperationType, PaginatedCollection, Permission, User } from '@/types';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { getCoreRowModel, RowSelectionState, SortingState, TableOptions, useVueTable } from '@tanstack/vue-table';
 import { UserIcon } from 'lucide-vue-next';
-import { reactive, ref, watch, watchEffect } from 'vue';
-import { columns, permissions, processingRowId } from './partials/columns';
+import { computed, reactive, ref, watch, watchEffect } from 'vue';
+import { columns, permissions as permissionsDT, processingRowId } from './partials/columns';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import SheetAdvancedFilters from './partials/SheetAdvancedFilters.vue';
 
 const props = defineProps<{
   can: Can;
   filters: object;
+  permissions: Array<Permission>;
   users: PaginatedCollection<User>;
 }>();
 
@@ -36,8 +39,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const { action, resourceID, requestingCreate, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('users');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
+const showPdf = ref(false);
+const showAdvancedFilters = ref(false);
+const advancedSearchApplied = ref(false);
+const advancedFilters = ref({});
+const page = usePage();
 
-permissions.value = props.can;
+const urlQueryString = computed(() => {
+  const queryString = page.url.indexOf('?');
+
+  return queryString >= 0 ? page.url.substring(queryString) : '';
+});
+
+permissionsDT.value = props.can;
 const dropdownBtn = ref(false);
 const sorting = ref<SortingState>([]);
 const globalFilter = ref('');
@@ -46,16 +60,20 @@ const rowSelection = ref<RowSelectionState>({});
 function handleSortingChange(item: any) {
   if (typeof item === 'function') {
     const sortValue = item(sorting.value);
-    const data: { [index: string]: any } = {};
+    const data: { [index: string]: any } = {
+      ...advancedFilters.value, // Preserve advanced filters
+      per_page: table.getState().pagination.pageSize,
+    };
 
     sortValue.forEach((element: any) => {
       const sortBy = element?.id ? element.id : '';
-      const sortDirection = sortBy ? (element?.desc ? 'desc' : 'asc') : '';
-      data[sortBy] = sortDirection;
+      if (sortBy) {
+        data[`sort_by[${sortBy}]`] = element?.desc ? 'desc' : 'asc';
+      }
     });
 
     router.visit(route('users.index'), {
-      data: { sortBy: data, per_page: table.getState().pagination.pageSize },
+      data,
       only: ['users'],
       preserveScroll: true,
       preserveState: true,
@@ -159,6 +177,13 @@ watch(action, () => {
   }
 });
 watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : false));
+
+function handleAdvancedSearch() {
+  router.reload({
+    only: ['status', 'roles', 'permissions'],
+    onSuccess: () => (showAdvancedFilters.value = true),
+  });
+}
 </script>
 
 <template>
@@ -177,6 +202,7 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
         :search-only="['users']"
         :search-route="route('users.index')"
         :table="table"
+        :is-advanced-search="advancedSearchApplied"
         :is-loading-new="requestingCreate"
         :is-loading-dropdown="dropdownBtn"
         @batch-destroy="handleBatchDeletion"
@@ -189,6 +215,8 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
         @restore="(row) => handleAction('restore', row)"
         @activate="(row) => handleAction('enable', row)"
         @deactivate="(row) => handleAction('disable', row)"
+        @export="showPdf = true"
+        @advanced-search="handleAdvancedSearch"
       />
 
       <AlertDialog v-model:open="alertOpen">
@@ -205,6 +233,27 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Sheet v-model:open="showPdf">
+        <SheetContent side="bottom">
+          <SheetHeader>
+            <SheetTitle>Exportar a PDF</SheetTitle>
+            <SheetDescription>Reporte: Permisos</SheetDescription>
+          </SheetHeader>
+          <div class="h-[70dvh]">
+            <iframe :src="`${route('export-permissions-pdf.index')}${urlQueryString}`" frameborder="0" width="100%" height="100%"></iframe>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <SheetAdvancedFilters
+        :permissions
+        :roles
+        :status="['Desactivado', 'Eliminado']"
+        :show="showAdvancedFilters"
+        @close="showAdvancedFilters = false"
+        @advanced-search="(advFilters) => ((advancedSearchApplied = true), (advancedFilters = advFilters))"
+      />
     </ContentLayout>
   </AppLayout>
 </template>

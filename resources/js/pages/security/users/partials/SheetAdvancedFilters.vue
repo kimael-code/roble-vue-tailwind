@@ -2,32 +2,32 @@
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Role, User } from '@/types';
+import { Role } from '@/types';
 import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import ComboboxOperations from './ComboboxOperations.vue';
+import ComboboxPermissions from './ComboboxPermissions.vue';
 import ComboboxRoles from './ComboboxRoles.vue';
-import ComboboxUsers from './ComboboxUsers.vue';
+import ComboboxStatus from './ComboboxStatus.vue';
 
 defineProps<{
   show: boolean;
-  operations?: Array<string>;
+  permissions?: Array<string>;
   roles?: Array<Role>;
-  users?: Array<User>;
+  status?: Array<string>;
 }>();
 
 const emit = defineEmits(['close', 'advancedSearch']);
 
 const form = ref({
-  operations: [],
+  permissions: [],
   roles: [],
-  users: [],
+  status: [],
 });
 
 function submitSearch() {
   router.reload({
     data: form.value,
-    only: ['permissions'],
+    only: ['users'],
     onSuccess: () => emit('advancedSearch', form.value),
   });
 }
@@ -38,23 +38,23 @@ function submitSearch() {
     <Sheet :open="show" @update:open="$emit('close')">
       <SheetContent side="top">
         <SheetHeader>
-          <SheetTitle>Permisos: Filtros de Búsqueda Avanzados</SheetTitle>
+          <SheetTitle>Usuarios: Filtros de Búsqueda Avanzados</SheetTitle>
           <SheetDescription>Parametrice la consulta de registros haciendo uso de los siguientes controles.</SheetDescription>
         </SheetHeader>
-        <Tabs default-value="users" class="pr-4 pl-4" :unmount-on-hide="false">
+        <Tabs default-value="status" class="pr-4 pl-4" :unmount-on-hide="false">
           <TabsList class="grid w-full grid-cols-3">
-            <TabsTrigger value="users">Usuarios</TabsTrigger>
+            <TabsTrigger value="status">Estatus</TabsTrigger>
             <TabsTrigger value="roles">Roles</TabsTrigger>
-            <TabsTrigger value="operations">Operación</TabsTrigger>
+            <TabsTrigger value="permissions">Permisos</TabsTrigger>
           </TabsList>
-          <TabsContent value="users">
-            <ComboboxUsers :users @selected="(u) => (form.users = u)" />
+          <TabsContent value="status">
+            <ComboboxStatus :status @selected="(s) => (form.status = s)" />
           </TabsContent>
           <TabsContent value="roles">
             <ComboboxRoles :roles @selected="(r) => (form.roles = r)" />
           </TabsContent>
-          <TabsContent value="operations">
-            <ComboboxOperations :operations @selected="(o) => (form.operations = o)" />
+          <TabsContent value="permissions">
+            <ComboboxPermissions :permissions @selected="(o) => (form.permissions = o)" />
           </TabsContent>
         </Tabs>
         <SheetFooter>

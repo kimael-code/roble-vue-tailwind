@@ -62,9 +62,11 @@ function handleSortingChange(item: any) {
       }
     });
 
-    router.reload({
+    router.visit('activity-logs', {
       data,
       only: ['logs'],
+      preserveScroll: true,
+      preserveState: true,
       onSuccess: () => (sorting.value = sortValue),
     });
   }

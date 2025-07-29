@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Traits\LogsActivity;
@@ -32,7 +33,7 @@ class Permission extends SpatiePermission
      *
      * @var array
      */
-    protected $appends = ['created_at_human', 'updated_at_human'];
+    protected $appends = ['created_at_human', 'updated_at_human', 'db_operation'];
 
     protected function createdAtHuman(): Attribute
     {
@@ -71,6 +72,24 @@ class Permission extends SpatiePermission
                     return null;
                 }
             },
+        );
+    }
+
+    protected function dbOperation(): Attribute
+    {
+        return Attribute::make(
+            get: fn(mixed $value, array $attributes) => match (true)
+            {
+                Str::contains($attributes['name'], 'create') => 'CREATE',
+                Str::contains($attributes['name'], 'read') => 'READ',
+                Str::contains($attributes['name'], 'update') => 'UPDATE',
+                Str::contains($attributes['name'], 'delete') => 'DELETE',
+                Str::contains($attributes['name'], 'export') => 'COPY',
+                Str::contains($attributes['name'], 'activate') => 'UPDATE',
+                Str::contains($attributes['name'], 'deactivate') => 'UPDATE',
+                Str::contains($attributes['name'], 'restore') => 'UPDATE',
+                default => 'Desconocida',
+            }
         );
     }
 
@@ -121,7 +140,18 @@ class Permission extends SpatiePermission
             {
                 foreach ($sorts as $field => $direction)
                 {
-                    $query->orderBy($field, $direction);
+                    switch ($field)
+                    {
+                        case 'db_operation':
+                            $query->orderBy('name', $direction);
+                            break;
+                        case 'created_at_human':
+                            $query->orderBy('created_at', $direction);
+                            break;
+                        default:
+                            $query->orderBy($field, $direction);
+                            break;
+                    }
                 }
             })
             ->when($filters['roles'] ?? null, function (Builder $query, array $roles)
