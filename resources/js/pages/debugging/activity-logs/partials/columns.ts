@@ -75,7 +75,7 @@ export const columns = [
         ]),
       ]);
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.accessor('causer_name', {
     header: ({ column }) => {
@@ -109,7 +109,7 @@ export const columns = [
         ]),
       ]);
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.accessor('event', {
     header: ({ column }) => {
@@ -143,7 +143,7 @@ export const columns = [
         ]),
       ]);
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.accessor('log_name', {
     header: ({ column }) => {
@@ -177,7 +177,7 @@ export const columns = [
         ]),
       ]);
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.accessor('description', {
     header: ({ column }) => {
@@ -211,7 +211,7 @@ export const columns = [
         ]),
       ]);
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.accessor('subject_id', {
     header: ({ column }) => {
@@ -245,7 +245,7 @@ export const columns = [
         ]),
       ]);
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.accessor('ip_address', {
     header: ({ column }) => {
@@ -279,7 +279,7 @@ export const columns = [
         ]),
       ]);
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.display({
     id: 'actions',

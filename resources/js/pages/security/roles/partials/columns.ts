@@ -88,7 +88,7 @@ export const columns = [
         ],
       );
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.accessor('description', {
     header: ({ column }) => {
@@ -111,7 +111,7 @@ export const columns = [
         ],
       );
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.display({
     id: 'actions',

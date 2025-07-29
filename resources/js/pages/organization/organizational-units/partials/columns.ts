@@ -88,7 +88,7 @@ export const columns = [
         ],
       );
     },
-    cell: ({ row }) => h('div', row.getValue('name')),
+    cell: ({ row }) => h('div', { class: 'px-2' }, row.getValue('name')),
   }),
   columnHelper.accessor((row) => row.organization?.name, {
     id: 'organization',
@@ -112,7 +112,7 @@ export const columns = [
         ],
       );
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.accessor('status', {
     header: ({ column }) => {
@@ -138,7 +138,7 @@ export const columns = [
     cell: (info) => {
       const cssClass = info.getValue() === 'INACTIVO' ? 'text-red-500' : 'text-green-500';
 
-      return h('div', { class: cssClass }, info.getValue());
+      return h('div', { class: `${cssClass} px-2` }, info.getValue());
     },
   }),
   columnHelper.display({

@@ -69,13 +69,12 @@ class CreateUser
         }
     }
 
-    private static function givePermissions(User $user, array $permissionNames): void
+    private static function givePermissions(User $user, array $permissionDescriptions): void
     {
-        $user->givePermissionTo($permissionNames);
-
-        foreach ($permissionNames as $permissionID)
+        foreach ($permissionDescriptions as $permissionDescription)
         {
-            $permission = Permission::find($permissionID);
+            $permission = Permission::where('description', $permissionDescription)->first();
+            $user->givePermissionTo($permission);
             $authUser = auth()->user();
 
             activity(__('Security/Users'))

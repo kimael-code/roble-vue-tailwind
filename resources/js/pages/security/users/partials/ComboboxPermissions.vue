@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Combobox, ComboboxAnchor, ComboboxEmpty, ComboboxGroup, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox';
 import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input';
+import { Permission } from '@/types';
+import { router } from '@inertiajs/vue3';
 import { useFilter } from 'reka-ui';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<{
-  permissions?: Array<string>;
+  permissions?: Array<Permission>;
 }>();
 
 const emit = defineEmits(['selected']);
@@ -17,11 +19,27 @@ const searchTerm = ref('');
 const { contains } = useFilter({ sensitivity: 'base' });
 
 const filteredPermissions = computed(() => {
-  const options = props.permissions?.filter((o) => !modelValue.value.includes(o));
-  return searchTerm.value ? options?.filter((option) => contains(option, searchTerm.value)) : options;
+  const options = props.permissions?.filter((o) => !modelValue.value.includes(o.description));
+  return searchTerm.value ? options?.filter((option) => contains(option.description, searchTerm.value)) : options;
 });
 
+function loadPermissions(search: string) {
+  router.reload({
+    only: ['permissions'],
+    data: { search },
+    onSuccess: () => {
+      open.value = true;
+    },
+  });
+}
+
 watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: true });
+
+watch(searchTerm, (newSearchTerm) => {
+  if (newSearchTerm.length > 0) {
+    loadPermissions(newSearchTerm);
+  }
+});
 </script>
 
 <template>
@@ -39,7 +57,7 @@ watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: tr
           <ComboboxInput v-model="searchTerm" as-child>
             <TagsInputInput
               :auto-focus="true"
-              placeholder="Operaciones..."
+              placeholder="Permisos..."
               class="h-auto w-full min-w-[200px] border-none p-0 focus-visible:ring-0"
               @keydown.enter.prevent
             />
@@ -51,8 +69,8 @@ watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: tr
           <ComboboxGroup>
             <ComboboxItem
               v-for="permission in filteredPermissions"
-              :key="permission"
-              :value="permission"
+              :key="permission.id"
+              :value="permission.name"
               @select.prevent="
                 (ev) => {
                   if (typeof ev.detail.value === 'string') {
@@ -66,7 +84,7 @@ watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: tr
                 }
               "
             >
-              {{ permission }}
+              {{ permission.description }}
             </ComboboxItem>
           </ComboboxGroup>
         </ComboboxList>

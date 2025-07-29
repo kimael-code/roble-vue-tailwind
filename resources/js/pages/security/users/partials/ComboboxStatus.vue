@@ -5,7 +5,7 @@ import { useFilter } from 'reka-ui';
 import { computed, ref, watch } from 'vue';
 
 const props = defineProps<{
-  status?: Array<string>;
+  statuses?: Array<{ [key: string]: string }>;
 }>();
 
 const emit = defineEmits(['selected']);
@@ -17,8 +17,8 @@ const searchTerm = ref('');
 const { contains } = useFilter({ sensitivity: 'base' });
 
 const filteredStatus = computed(() => {
-  const options = props.status?.filter((i) => !modelValue.value.includes(i));
-  return searchTerm.value ? options?.filter((option) => contains(option, searchTerm.value)) : options;
+  const options = props.statuses?.filter((i) => !modelValue.value.includes(i.value));
+  return searchTerm.value ? options?.filter((option) => contains(option.value, searchTerm.value)) : options;
 });
 
 watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: true });
@@ -39,7 +39,7 @@ watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: tr
           <ComboboxInput v-model="searchTerm" as-child>
             <TagsInputInput
               :auto-focus="true"
-              placeholder="Usuarios..."
+              placeholder="Estatus..."
               class="h-auto w-full min-w-[200px] border-none p-0 focus-visible:ring-0"
               @keydown.enter.prevent
             />
@@ -51,8 +51,8 @@ watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: tr
           <ComboboxGroup>
             <ComboboxItem
               v-for="status in filteredStatus"
-              :key="status"
-              :value="status"
+              :key="status.value"
+              :value="status.value"
               @select.prevent="
                 (ev) => {
                   if (typeof ev.detail.value === 'string') {
@@ -66,7 +66,7 @@ watch(modelValue, (newModelValue) => emit('selected', newModelValue), { deep: tr
                 }
               "
             >
-              {{ status }}
+              {{ status.name }}
             </ComboboxItem>
           </ComboboxGroup>
         </ComboboxList>

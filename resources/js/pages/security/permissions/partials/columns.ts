@@ -98,7 +98,7 @@ export const columns = [
           ]),
         ]),
         h(DropdownMenuContent, { align: 'start' }, () => [
-          h(DropdownMenuLabel, () => 'Nombre'),
+          h(DropdownMenuLabel, () => 'Ordenar'),
           h(DropdownMenuSeparator),
           h(DropdownMenuRadioGroup, { modelValue: direction.value }, () => [
             h(DropdownMenuRadioItem, { value: 'asc', onSelect: () => column.toggleSorting(false, true) }, () => 'ASC'),
@@ -108,7 +108,7 @@ export const columns = [
         ]),
       ]);
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.accessor('description', {
     header: ({ column }) => {
@@ -142,11 +142,11 @@ export const columns = [
         ]),
       ]);
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.accessor('db_operation', {
     header: 'Operación BD',
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
     enableSorting: false,
   }),
   columnHelper.accessor('created_at_human', {
@@ -181,7 +181,7 @@ export const columns = [
         ]),
       ]);
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.display({
     id: 'actions',

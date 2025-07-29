@@ -26,7 +26,7 @@ import {
   Trash2,
   XIcon,
 } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 defineProps<{
@@ -49,9 +49,6 @@ defineEmits<{
 }>();
 
 const menuIsOpen = ref(false);
-const isDarkTheme = computed(() => {
-  return document.documentElement.classList.contains('dark');
-});
 </script>
 
 <template>
@@ -59,7 +56,7 @@ const isDarkTheme = computed(() => {
     <DropdownMenuTrigger as-child>
       <Tooltip>
         <TooltipTrigger as-child>
-          <Button :variant="isDarkTheme ? 'secondary' : 'ghost'" class="h-6 w-6 p-0 shadow-md" :disabled="loading" @click="menuIsOpen = true">
+          <Button variant="secondary" class="h-6 w-6 p-0 shadow-md" :disabled="loading" @click="menuIsOpen = true">
             <LoaderCircleIcon v-if="loading" class="animate-spin" />
             <EllipsisIcon v-else />
           </Button>

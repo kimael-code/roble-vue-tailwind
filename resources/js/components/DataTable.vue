@@ -324,11 +324,11 @@ function handlePerPage(perPageValue: number) {
 .sticky-left {
   position: sticky;
   left: 0;
-  z-index: 10;
+  /*z-index: 10;*/
 }
 .sticky-right {
   position: sticky;
   right: 0;
-  z-index: 10;
+  /*z-index: 10;*/
 }
 </style>

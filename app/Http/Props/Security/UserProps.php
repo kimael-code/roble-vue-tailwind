@@ -41,9 +41,19 @@ class UserProps
 
         return [
             'can' => self::getPermissions(),
-            'filters' => Request::all(['search', 'sortBy',]),
+            'filters' => Request::all(['permissions', 'roles', 'statuses', 'search', 'sortBy',]),
+            'permissions' => Inertia::lazy(
+                fn() => Permission::filter(Request::only(['search',]))
+                    ->select(['id', 'name', 'description'])
+                    ->get()
+            ),
+            'roles' => Inertia::lazy(
+                fn() => Role::filter(Request::only(['search',]))
+                    ->select(['id', 'name',])
+                    ->get()
+            ),
             'users' => fn() => new UserCollection(
-                User::withTrashed()->filter(Request::only(['search', 'sortBy',]))
+                User::withTrashed()->filter(Request::only(['permissions', 'roles', 'statuses', 'search', 'sortBy',]))
                     ->paginate($perPage)
                     ->withQueryString()
             ),

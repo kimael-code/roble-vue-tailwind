@@ -82,6 +82,10 @@ class User extends Authenticatable
     public function scopeFilter(Builder $query, array $filters): void
     {
         $query
+            ->when(empty($filters) ?? null, function (Builder $query)
+            {
+                $query->latest();
+            })
             ->when($filters['search'] ?? null, function (Builder $query, string $term)
             {
                 $query->where(function (Builder $query) use ($term)
@@ -108,9 +112,26 @@ class User extends Authenticatable
                     }
                 }
             })
-            ->when(empty($filters) ?? null, function (Builder $query)
+            ->when($filters['permissions'] ?? null, function (Builder $query, array $permissions)
             {
-                $query->latest();
+                foreach ($permissions as $permission)
+                {
+                    $query->permission($permission);
+                }
+            })
+            ->when($filters['roles'] ?? null, function (Builder $query, array $roles)
+            {
+                foreach ($roles as $role)
+                {
+                    $query->role($role);
+                }
+            })
+            ->when($filters['statuses'] ?? null, function (Builder $query, array $statuses)
+            {
+                foreach ($statuses as $status)
+                {
+                    $query->whereNotNull($status);
+                }
             });
     }
 }

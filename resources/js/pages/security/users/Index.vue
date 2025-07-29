@@ -10,23 +10,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { valueUpdater } from '@/components/ui/table/utils';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, OperationType, PaginatedCollection, Permission, User } from '@/types';
+import { BreadcrumbItem, Can, OperationType, PaginatedCollection, Permission, Role, User } from '@/types';
 import { Head, router, usePage } from '@inertiajs/vue3';
 import { getCoreRowModel, RowSelectionState, SortingState, TableOptions, useVueTable } from '@tanstack/vue-table';
 import { UserIcon } from 'lucide-vue-next';
 import { computed, reactive, ref, watch, watchEffect } from 'vue';
 import { columns, permissions as permissionsDT, processingRowId } from './partials/columns';
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import SheetAdvancedFilters from './partials/SheetAdvancedFilters.vue';
 
 const props = defineProps<{
   can: Can;
   filters: object;
-  permissions: Array<Permission>;
+  permissions?: Array<Permission>;
+  roles?: Array<Role>;
   users: PaginatedCollection<User>;
 }>();
 
@@ -249,7 +250,10 @@ function handleAdvancedSearch() {
       <SheetAdvancedFilters
         :permissions
         :roles
-        :status="['Desactivado', 'Eliminado']"
+        :statuses="[
+          { value: 'disabled_at', name: 'Desactivado' },
+          { value: 'deleted_at', name: 'Eliminado' },
+        ]"
         :show="showAdvancedFilters"
         @close="showAdvancedFilters = false"
         @advanced-search="(advFilters) => ((advancedSearchApplied = true), (advancedFilters = advFilters))"
