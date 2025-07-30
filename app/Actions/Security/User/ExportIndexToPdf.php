@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Security\Permission;
+namespace App\Actions\Security\User;
 
 use App\Models\Organization\Organization;
 use App\Models\Security\Permission;
@@ -40,14 +40,17 @@ class ExportIndexToPdf extends BasePdf
         $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Usuario(s)');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
         $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['users'] ?: 'Todos');
+        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Estatus');
+        $this->setFont(family: 'iosevkafixedss12', size: 10);
+        $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['status'] ?: 'Todo');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
         $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Rol(es)');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
         $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['roles'] ?: 'Todos');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Operación');
+        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Permisos(s)');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['operations'] ?: 'Todas');
+        $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['permissions'] ?: 'Todos');
 
         $this->setLineStyle([
             'width' => 0.75 / $this->k,
@@ -59,17 +62,18 @@ class ExportIndexToPdf extends BasePdf
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
         $this->setFillColor(0, 53, 41);
         $this->setTextColor(255, 255, 255);
-        $this->Cell(w: 0, txt: '2. DETALLE DE LOS PERMISOS REGISTRADOS', border: 0, ln: 1, fill: true);
+        $this->Cell(w: 0, txt: '2. DETALLE DE LOS USUARIOS REGISTRADOS', border: 0, ln: 1, fill: true);
         $this->setTextColor(0, 0, 0);
 
         $this->setFont(family: 'dejavusans', style: 'B', size: 9);
         $this->MultiCell(w: 10, h: 5, align: 'L', ln: 0, txt: '#');
-        $this->MultiCell(w: 46, h: 5, align: 'L', ln: 0, txt: $this->getString('Nombre', 'name'));
-        $this->MultiCell(w: 46, h: 5, align: 'L', ln: 0, txt: $this->getString('Descripción', 'description'));
+        $this->MultiCell(w: 46, h: 5, align: 'L', ln: 0, txt: $this->getString('Usuario', 'name'));
+        $this->MultiCell(w: 46, h: 5, align: 'L', ln: 0, txt: $this->getString('Correo Electrónico', 'email'));
         $this->MultiCell(w: 30, h: 5, align: 'L', ln: 0, txt: $this->getString('Fecha Creado', 'created_at_human'));
-        $this->MultiCell(w: 25.7, h: 5, align: 'L', ln: 0, txt: 'Operación BD');
+        $this->MultiCell(w: 30, h: 5, align: 'L', ln: 0, txt: $this->getString('Desactivado', 'disabled_at'));
+        $this->MultiCell(w: 30, h: 5, align: 'L', ln: 0, txt: $this->getString('Eliminado', 'deleted_at'));
         $this->MultiCell(w: 45.5, h: 5, align: 'L', ln: 0, txt: 'Rol/es');
-        $this->MultiCell(w: 45.5, h: 5, align: 'L', ln: 1, txt: 'Usuario/s');
+        $this->MultiCell(w: 45.5, h: 5, align: 'L', ln: 1, txt: 'Permiso/s');
 
         // establece el margen superior a la altura ocupada por el header
         $this->tMargin = $this->GetY();

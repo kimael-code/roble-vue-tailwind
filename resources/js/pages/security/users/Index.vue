@@ -242,7 +242,7 @@ function handleAdvancedSearch() {
             <SheetDescription>Reporte: Permisos</SheetDescription>
           </SheetHeader>
           <div class="h-[70dvh]">
-            <iframe :src="`${route('export-permissions-pdf.index')}${urlQueryString}`" frameborder="0" width="100%" height="100%"></iframe>
+            <iframe :src="`${route('export-users-pdf.index')}${urlQueryString}`" frameborder="0" width="100%" height="100%"></iframe>
           </div>
         </SheetContent>
       </Sheet>
