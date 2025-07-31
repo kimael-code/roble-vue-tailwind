@@ -106,6 +106,10 @@ class User extends Authenticatable
                     {
                         $query->orderBy('disabled_at', $direction);
                     }
+                    elseif ($field === 'created_at_human')
+                    {
+                        $query->orderBy('created_at', $direction);
+                    }
                     else
                     {
                         $query->orderBy($field, $direction);

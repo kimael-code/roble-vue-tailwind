@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Reports;
 
-use App\Actions\Security\Permission\ExportIndexToPdf;
+use App\Actions\Security\User\ExportIndexToPdf;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 

@@ -5,6 +5,7 @@ namespace App\Actions\Security\User;
 use App\Models\Organization\Organization;
 use App\Models\Security\Permission;
 use App\Models\Security\Role;
+use App\Models\User;
 use App\Support\DataExport\BasePdf;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\View;
@@ -42,7 +43,7 @@ class ExportIndexToPdf extends BasePdf
         $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['users'] ?: 'Todos');
         $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Estatus');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['status'] ?: 'Todo');
+        $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['statuses'] ?: 'Todo');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
         $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Rol(es)');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
@@ -66,12 +67,12 @@ class ExportIndexToPdf extends BasePdf
         $this->setTextColor(0, 0, 0);
 
         $this->setFont(family: 'dejavusans', style: 'B', size: 9);
-        $this->MultiCell(w: 10, h: 5, align: 'L', ln: 0, txt: '#');
-        $this->MultiCell(w: 46, h: 5, align: 'L', ln: 0, txt: $this->getString('Usuario', 'name'));
-        $this->MultiCell(w: 46, h: 5, align: 'L', ln: 0, txt: $this->getString('Correo Electrónico', 'email'));
-        $this->MultiCell(w: 30, h: 5, align: 'L', ln: 0, txt: $this->getString('Fecha Creado', 'created_at_human'));
-        $this->MultiCell(w: 30, h: 5, align: 'L', ln: 0, txt: $this->getString('Desactivado', 'disabled_at'));
-        $this->MultiCell(w: 30, h: 5, align: 'L', ln: 0, txt: $this->getString('Eliminado', 'deleted_at'));
+        $this->MultiCell(w: 10  , h: 5, align: 'L', ln: 0, txt: '#');
+        $this->MultiCell(w: 30.5, h: 5, align: 'L', ln: 0, txt: $this->getString('Usuario', 'name'));
+        $this->MultiCell(w: 46  , h: 5, align: 'L', ln: 0, txt: $this->getString('Correo Electrónico', 'email'));
+        $this->MultiCell(w: 24  , h: 5, align: 'L', ln: 0, txt: $this->getString('Creado', 'created_at_human'));
+        $this->MultiCell(w: 24  , h: 5, align: 'L', ln: 0, txt: $this->getString('Desactivado', 'disabled_at_human'));
+        $this->MultiCell(w: 24  , h: 5, align: 'L', ln: 0, txt: $this->getString('Eliminado', 'deleted_at_human'));
         $this->MultiCell(w: 45.5, h: 5, align: 'L', ln: 0, txt: 'Rol/es');
         $this->MultiCell(w: 45.5, h: 5, align: 'L', ln: 1, txt: 'Permiso/s');
 
@@ -83,16 +84,16 @@ class ExportIndexToPdf extends BasePdf
     public function make(): string
     {
         // metadatos del archivo
-        $this->setTitle('REPORTE: PERMISOS');
-        $this->setSubject('Reporte de Permisos registrados');
-        $this->setKeywords('reporte, PDF, permiso, permisos');
+        $this->setTitle('REPORTE: USUARIOS');
+        $this->setSubject('Reporte de Usuarios registrados');
+        $this->setKeywords('reporte, PDF, usuario, usuarios');
 
         $organizationLogo = Organization::active()->first()->logo_path ?? '';
 
         $this->setHeaderData(
             ln: storage_path("app/public/{$organizationLogo}"),
             lw: 60,
-            ht: 'REPORTE: PERMISOS',
+            ht: 'REPORTE: USUARIOS',
             hs: now()->isoFormat('L LTS'),
             tc: [0, 30, 15],
             lc: [0, 128, 100],
@@ -120,43 +121,49 @@ class ExportIndexToPdf extends BasePdf
 
         $this->AddPage();
 
-        $html = View::make('pdf.permissions.index', [
-            'permissions' => Permission::filter($this->filters)->get(),
-        ]);
+        $html = View::make('pdf.users.index', [
+            'users' => User::filter($this->filters)->get(),
+        ])->render();
+        // dd($html);
 
         $this->writeHTML($html);
 
-        return $this->Output('REPORTE: PERMISOS');
+        return $this->Output('REPORTE: USUARIOS');
     }
 
     private function getFilters(): array
     {
         $filters = [
+            'permissions' => '',
             'roles' => '',
-            'users' => '',
-            'operations' => '',
-            'set_menu' => '',
             'search' => '',
+            'statuses' => '',
+            'users' => '',
         ];
+
+        if (isset($this->filters['permissions']))
+        {
+            $filters['permissions'] .= Arr::join($this->filters['permissions'], ', ');
+        }
 
         if (isset($this->filters['roles']))
         {
             $filters['roles'] .= Arr::join($this->filters['roles'], ', ');
         }
 
-        if (isset($this->filters['users']))
-        {
-            $filters['users'] .= Arr::join($this->filters['users'], ', ');
-        }
-
-        if (isset($this->filters['operations']))
-        {
-            $filters['operations'] .= Arr::join($this->filters['operations'], ', ');
-        }
-
         if (isset($this->filters['search']))
         {
             $filters['search'] .= $this->filters['search'];
+        }
+
+        if (isset($this->filters['statuses']))
+        {
+            $filters['statuses'] .= Arr::join($this->filters['statuses'], ', ');
+        }
+
+        if (isset($this->filters['users']))
+        {
+            $filters['users'] .= Arr::join($this->filters['users'], ', ');
         }
 
         return $filters;
