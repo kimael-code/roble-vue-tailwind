@@ -4,11 +4,11 @@ namespace App\Actions\Security\User;
 
 use App\Models\Organization\Organization;
 use App\Models\Security\Permission;
-use App\Models\Security\Role;
 use App\Models\User;
 use App\Support\DataExport\BasePdf;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Str;
 
 class ExportIndexToPdf extends BasePdf
 {
@@ -41,6 +41,7 @@ class ExportIndexToPdf extends BasePdf
         $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Usuario(s)');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
         $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['users'] ?: 'Todos');
+        $this->setFont(family: 'helvetica', style: 'B', size: 10);
         $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Estatus');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
         $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['statuses'] ?: 'Todo');
@@ -65,16 +66,6 @@ class ExportIndexToPdf extends BasePdf
         $this->setTextColor(255, 255, 255);
         $this->Cell(w: 0, txt: '2. DETALLE DE LOS USUARIOS REGISTRADOS', border: 0, ln: 1, fill: true);
         $this->setTextColor(0, 0, 0);
-
-        $this->setFont(family: 'dejavusans', style: 'B', size: 9);
-        $this->MultiCell(w: 10  , h: 5, align: 'L', ln: 0, txt: '#');
-        $this->MultiCell(w: 30.5, h: 5, align: 'L', ln: 0, txt: $this->getString('Usuario', 'name'));
-        $this->MultiCell(w: 46  , h: 5, align: 'L', ln: 0, txt: $this->getString('Correo Electrónico', 'email'));
-        $this->MultiCell(w: 24  , h: 5, align: 'L', ln: 0, txt: $this->getString('Creado', 'created_at_human'));
-        $this->MultiCell(w: 24  , h: 5, align: 'L', ln: 0, txt: $this->getString('Desactivado', 'disabled_at_human'));
-        $this->MultiCell(w: 24  , h: 5, align: 'L', ln: 0, txt: $this->getString('Eliminado', 'deleted_at_human'));
-        $this->MultiCell(w: 45.5, h: 5, align: 'L', ln: 0, txt: 'Rol/es');
-        $this->MultiCell(w: 45.5, h: 5, align: 'L', ln: 1, txt: 'Permiso/s');
 
         // establece el margen superior a la altura ocupada por el header
         $this->tMargin = $this->GetY();
@@ -117,16 +108,53 @@ class ExportIndexToPdf extends BasePdf
 
         // ---------------------------------------------------------
 
-        $this->setFont(family: 'iosevkafixedss12', size: 8, );
+        $users = User::filter($this->filters)->get();
 
-        $this->AddPage();
+        foreach ($users as $key => $user)
+        {
+            $userPermissionsCreate = $user->getAllPermissions()
+                ->filter(fn(Permission $permission) => Str::startsWith($permission->name, 'create'))
+                ->sortBy('description')
+                ->values()
+                ->all();
+            $userPermissionsRead = $user->getAllPermissions()
+                ->filter(fn(Permission $permission) => Str::startsWith($permission->name, 'read'))
+                ->sortBy('description')
+                ->values()
+                ->all();
+            $userPermissionsUpdate = $user->getAllPermissions()
+                ->filter(fn(Permission $permission) => Str::startsWith($permission->name, ['activate', 'deactivate', 'restore', 'update']))
+                ->sortBy('description')
+                ->values()
+                ->all();
+            $userPermissionsDelete = $user->getAllPermissions()
+                ->filter(fn(Permission $permission) => Str::startsWith($permission->name, ['delete', 'force']))
+                ->sortBy('description')
+                ->values()
+                ->all();
+            $userPermissionsExport = $user->getAllPermissions()
+                ->filter(fn(Permission $permission) => Str::startsWith($permission->name, 'export'))
+                ->sortBy('description')
+                ->values()
+                ->all();
+            $userRoleNames = $user->getRoleNames()->sort()->values()->all();
 
-        $html = View::make('pdf.users.index', [
-            'users' => User::filter($this->filters)->get(),
-        ])->render();
-        // dd($html);
+            $html = View::make('pdf.users.index', [
+                'key' => $key,
+                'user' => $user,
+                'userPermissionsCreate' => $userPermissionsCreate,
+                'userPermissionsRead' => $userPermissionsRead,
+                'userPermissionsUpdate' => $userPermissionsUpdate,
+                'userPermissionsDelete' => $userPermissionsDelete,
+                'userPermissionsExport' => $userPermissionsExport,
+                'userRoleNames' => $userRoleNames,
+            ])
+                ->render();
 
-        $this->writeHTML($html);
+            $this->startPageGroup();
+            $this->AddPage();
+            $this->writeHTML($html);
+        }
 
         return $this->Output('REPORTE: USUARIOS');
     }
@@ -169,19 +197,7 @@ class ExportIndexToPdf extends BasePdf
         return $filters;
     }
 
-    public function getUsers(Permission $permission): string
-    {
-        $usersByDirectPermission = $permission->users()->pluck('email')->implode(', ');
-        $usersByRoles = $permission->roles->map(
-            fn(Role $role) => $role->users->pluck('email')->implode(', ')
-        )->implode(', ');
-
-        $users = trim("{$usersByDirectPermission}, {$usersByRoles}", ', ');
-
-        return $users;
-    }
-
-    private function getString(string $txt, string $col): string
+    public function getString(string $txt, string $col): string
     {
         if ($col === 'created_at_human')
         {

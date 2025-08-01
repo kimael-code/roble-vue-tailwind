@@ -1,34 +1,137 @@
-<table cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
-    @foreach ($users as $user)
-        <tr nobr="true">
-            <td style="border-top: 0.5px solid #000;" width="35.5">{{ $loop->iteration }}</td>
-            <td style="border-top: 0.5px solid #000;" width="108">{{ $user->name }}</td>
-            <td style="border-top: 0.5px solid #000;" width="163">{{ $user->email }}</td>
-            <td style="border-top: 0.5px solid #000;" width="85">{{ $user->created_at_human }}</td>
-            <td style="border-top: 0.5px solid #000;" width="85">{{ $user->disabled_at_human ?? 'N/A' }}</td>
-            <td style="border-top: 0.5px solid #000;" width="85">{{ $user->deleted_at_human ?? 'N/A' }}</td>
-            <td style="border-top: 0.5px solid #000;" width="161.5">
-                @if ($user->getRoleNames()->isNotEmpty())
-                    <ul>
-                        @foreach ($user->getRoleNames()->sort()->values()->all() as $userRoleName)
-                            <li>{{ $userRoleName }}</li>
-                        @endforeach
-                    </ul>
-                @else
-                    Sin Rol Asignado
-                @endif
-            </td>
-            <td style="border-top: 0.5px solid #000;" width="161.5">
-                @if ($user->getAllPermissions()->isNotEmpty())
-                    <ul>
-                        @foreach ($user->getAllPermissions()->sortBy('description')->values()->all() as $userPermission)
-                            <li>{{ $userPermission->description }}</li>
-                        @endforeach
-                    </ul>
-                @else
-                    Sin Permisos Asignados
-                @endif
-            </td>
-        </tr>
-    @endforeach
+@inject('exporter', 'App\Actions\Security\User\ExportIndexToPdf')
+
+<style>
+    .td-header-no-border {
+        font-family: dejavusans;
+        font-size: 9pt;
+    }
+    .td-data-no-border {
+        font-family: iosevkafixedss12;
+        font-size: 10pt;
+    }
+    .td-header {
+        font-family: dejavusans;
+        font-size: 9pt;
+        border-top: 0.5px solid #000;
+    }
+    .td-data {
+        font-family: iosevkafixedss12;
+        font-size: 10pt;
+        border-top: 0.5px solid #000;
+    }
+</style>
+
+<table style="border-collapse: collapse;">
+    <tr>
+        <td class="td-header" width="150"><b>N°</b></td>
+        <td class="td-data" width="734">{{ $key + 1 }}</td>
+    </tr>
+    <tr>
+        <td class="td-header" width="150"><b>{{ $exporter->getString('Usuario', 'name') }}</b></td>
+        <td class="td-data">{{ $user?->name }}{{ $user?->person ? "[{$user?->person->names} {$user?->person->surnames}]" : '' }}</td>
+    </tr>
+    <tr>
+        <td class="td-header" width="150"><b>{{ $exporter->getString('Correo Electrónico', 'email') }}</b></td>
+        <td class="td-data">{{ $user?->email }}</td>
+    </tr>
+    <tr>
+        <td class="td-header" width="150"><b>{{ $exporter->getString('Creado', 'created_at_human') }}</b></td>
+        <td class="td-data">{{ $user?->created_at_human }}</td>
+    </tr>
+    <tr>
+        <td class="td-header" width="150"><b>{{ $exporter->getString('Desactivado', 'disabled_at_human') }}</b></td>
+        <td class="td-data">{{ $user->disabled_at_human ?? 'N/A' }}</td>
+    </tr>
+    <tr>
+        <td class="td-header" width="150"><b>{{ $exporter->getString('Eliminado', 'deleted_at_human') }}</b></td>
+        <td class="td-data">{{ $user->deleted_at_human ?? 'N/A' }}</td>
+    </tr>
+    <tr nobr="true">
+        <td class="td-header" width="150"><b>Rol/es Asignado/s</b></td>
+        <td class="td-data">
+            @if (count($userRoleNames))
+                <ul>
+                    @foreach ($userRoleNames as $role)
+                        <li>{{ $role }}</li>
+                    @endforeach
+                </ul>
+            @else
+                Sin asignar
+            @endif
+        </td>
+    </tr>
+    <tr nobr="true">
+        <td class="td-header" width="150"><b>Permiso/s Concedidos</b></td>
+        <td class="td-data"></td>
+    </tr>
+    <tr nobr="true">
+        <td class="td-header-no-border" width="150" align="right">Lectura</td>
+        <td class="td-data-no-border">
+            @if (count($userPermissionsRead))
+                <ul>
+                    @foreach ($userPermissionsRead as $readPermissions)
+                        <li>{{ $readPermissions->description }}</li>
+                    @endforeach
+                </ul>
+            @else
+                Sin asignar
+            @endif
+        </td>
+    </tr>
+    <tr nobr="true">
+        <td class="td-header" width="150" align="right">Escritura</td>
+        <td class="td-data">
+            @if (count($userPermissionsCreate))
+                <ul>
+                    @foreach ($userPermissionsCreate as $createPermissions)
+                        <li>{{ $createPermissions->description }}</li>
+                    @endforeach
+                </ul>
+            @else
+                Sin asignar
+            @endif
+        </td>
+    </tr>
+    <tr nobr="true">
+        <td class="td-header" width="150" align="right">Actualización</td>
+        <td class="td-data">
+            @if (count($userPermissionsUpdate))
+                <ul>
+                    @foreach ($userPermissionsUpdate as $updatePermissions)
+                        <li>{{ $updatePermissions->description }}</li>
+                    @endforeach
+                </ul>
+            @else
+                Sin asignar
+            @endif
+        </td>
+    </tr>
+    <tr nobr="true">
+        <td class="td-header" width="150" align="right">Eliminación</td>
+        <td class="td-data">
+            @if (count($userPermissionsDelete))
+                <ul>
+                    @foreach ($userPermissionsDelete as $deletePermissions)
+                        <li>{{ $deletePermissions->description }}</li>
+                    @endforeach
+                </ul>
+            @else
+                Sin asignar
+            @endif
+        </td>
+    </tr>
+    <tr nobr="true">
+        <td class="td-header" width="150" align="right">Exportación</td>
+        <td class="td-data">
+            @if (count($userPermissionsExport))
+                <ul>
+                    @foreach ($userPermissionsExport as $exportPermissions)
+                        <li>{{ $exportPermissions->description }}</li>
+                    @endforeach
+                </ul>
+            @else
+                Sin asignar
+            @endif
+        </td>
+    </tr>
 </table>
