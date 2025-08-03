@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-vue-next';
 import type { Config } from 'ziggy-js';
 
-type OperationType = 'destroy' | 'force_destroy' | 'restore' | 'enable' | 'disable' | null;
+type OperationType = 'destroy' | 'force_destroy' | 'batch_destroy' | 'restore' | 'enable' | 'disable' | null;
 
 export interface Auth {
   user: User;

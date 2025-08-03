@@ -3,7 +3,7 @@ import { Can, PaginatedCollection } from '@/types';
 import { router, useForm } from '@inertiajs/vue3';
 import { ColumnDef, FlexRender, Table as TanstackTable } from '@tanstack/vue-table';
 import { watchDebounced } from '@vueuse/core';
-import { BinocularsIcon, DeleteIcon, EllipsisIcon, EraserIcon, FileDownIcon, LoaderCircleIcon, PlusIcon } from 'lucide-vue-next';
+import { BinocularsIcon, DeleteIcon, EllipsisIcon, EraserIcon, FileDownIcon, LoaderCircleIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next';
 import { TooltipPortal } from 'reka-ui';
 import { ref } from 'vue';
 import { Badge } from './ui/badge';
@@ -188,6 +188,7 @@ function handlePerPage(perPageValue: number) {
               :disabled="table.getFilteredSelectedRowModel().rows.length < 1"
               @click="$emit('batchDestroy')"
             >
+            <Trash2Icon class="text-red-600" />
               <span>Eliminar selección</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>

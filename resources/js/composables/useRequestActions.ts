@@ -26,6 +26,10 @@ export function useRequestActions(resourceName: string) {
     prefetch?: boolean;
   }
 
+  interface DataType {
+    [index: string]: any;
+  }
+
   const action = ref<OperationType>(null);
   const resourceID = ref<number | string | null>(null);
   const request = useForm({});
@@ -35,28 +39,32 @@ export function useRequestActions(resourceName: string) {
   const requestingEdit = ref(false);
   const requestingDestroy = ref(false);
   const requestingForceDestroy = ref(false);
+  const requestingBatchDestroy = ref(false);
   const requestingRestore = ref(false);
   const requestingEnable = ref(false);
   const requestingDisable = ref(false);
 
-  function requestAction(id: number | string, options?: RequestOptions) {
-    resourceID.value = id;
+  function requestAction(data: DataType, options?: RequestOptions) {
+    resourceID.value = data.id;
 
     switch (action.value) {
       case 'destroy':
-        requestDestroy(id, options);
+        requestDestroy(data.id, options);
         break;
       case 'force_destroy':
-        requestForceDestroy(id, options);
+        requestForceDestroy(data.id, options);
+        break;
+      case 'batch_destroy':
+        requestBatchDestroy(data, options);
         break;
       case 'restore':
-        requestRestore(id, options);
+        requestRestore(data.id, options);
         break;
       case 'enable':
-        requestEnable(id, options);
+        requestEnable(data.id, options);
         break;
       case 'disable':
-        requestDisable(id, options);
+        requestDisable(data.id, options);
         break;
 
       default:
@@ -139,6 +147,23 @@ export function useRequestActions(resourceName: string) {
     });
   }
 
+  function requestBatchDestroy(selectedRows: { [x: string]: boolean }, options?: RequestOptions) {
+    requestingBatchDestroy.value = false;
+    resourceID.value = null;
+
+    request
+      .transform((data) => ({ ...data, ...selectedRows }))
+      .post(route('batch-deletion', { resource: resourceName }), {
+        ...options,
+        onStart: () => (requestingBatchDestroy.value = true),
+        onFinish: () => {
+          requestingBatchDestroy.value = false;
+          action.value = null;
+          resourceID.value = null;
+        },
+      });
+  }
+
   function requestRestore(id: number | string, options?: RequestOptions) {
     requestingRestore.value = false;
     resourceID.value = id;
@@ -194,6 +219,7 @@ export function useRequestActions(resourceName: string) {
     requestEdit,
     requestDestroy,
     requestForceDestroy,
+    requestBatchDestroy,
     requestRestore,
     requestEnable,
     requestDisable,
@@ -202,6 +228,7 @@ export function useRequestActions(resourceName: string) {
     requestingEdit,
     requestingDestroy,
     requestingForceDestroy,
+    requestingBatchDestroy,
     requestingRestore,
     requestingEnable,
     requestingDisable,

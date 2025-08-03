@@ -108,6 +108,10 @@ class Organization extends BaseModel
     public function scopeFilter(Builder $query, array $filters): void
     {
         $query
+            ->when(empty($filters) ?? null, function (Builder $query)
+            {
+                $query->orderByDesc('disabled_at')->latest();
+            })
             ->when($filters['search'] ?? null, function (Builder $query, string $term)
             {
                 $query->where(function (Builder $query) use ($term)
@@ -131,10 +135,6 @@ class Organization extends BaseModel
                         $query->orderBy($field, $direction);
                     }
                 }
-            })
-            ->when(empty($filters) ?? null, function (Builder $query)
-            {
-                $query->latest();
             });
     }
 }
