@@ -54,7 +54,6 @@ class UserProps
             ),
             'users' => fn() => new UserCollection(
                 User::withTrashed()->filter(Request::only(['permissions', 'roles', 'statuses', 'search', 'sort_by',]))
-                    // ->ddRawSql()
                     ->paginate($perPage)
                     ->withQueryString()
             ),

@@ -39,7 +39,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, resourceID, requestingBatchDestroy, requestingCreate, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('permissions');
+const { action, resourceID, requestState, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('permissions');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
 const showPdf = ref(false);
 const showAdvancedFilters = ref(false);
@@ -177,8 +177,8 @@ function handleAdvancedSearch() {
         :search-route="route('permissions.index')"
         :table="table"
         :is-advanced-search="advancedSearchApplied"
-        :is-loading-new="requestingCreate"
-        :is-loading-dropdown="requestingBatchDestroy"
+        :is-loading-new="requestState.create"
+        :is-loading-dropdown="requestState.batchDestroy"
         @batch-destroy="handleBatchAction('batch_destroy')"
         @search="(s) => (globalFilter = s)"
         @new="requestCreate"

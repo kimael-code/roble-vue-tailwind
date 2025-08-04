@@ -55,7 +55,7 @@ export const columns = [
 
       return h(DropdownMenu, () => [
         h(DropdownMenuTrigger, { asChild: true }, () => [
-          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'Fecha',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
@@ -89,7 +89,7 @@ export const columns = [
 
       return h(DropdownMenu, () => [
         h(DropdownMenuTrigger, { asChild: true }, () => [
-          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'Usuario',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
@@ -123,7 +123,7 @@ export const columns = [
 
       return h(DropdownMenu, () => [
         h(DropdownMenuTrigger, { asChild: true }, () => [
-          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'Actividad',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
@@ -157,7 +157,7 @@ export const columns = [
 
       return h(DropdownMenu, () => [
         h(DropdownMenuTrigger, { asChild: true }, () => [
-          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'Módulo/Func.',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
@@ -191,7 +191,7 @@ export const columns = [
 
       return h(DropdownMenu, () => [
         h(DropdownMenuTrigger, { asChild: true }, () => [
-          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'Descripción',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
@@ -225,7 +225,7 @@ export const columns = [
 
       return h(DropdownMenu, () => [
         h(DropdownMenuTrigger, { asChild: true }, () => [
-          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'ID',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
@@ -259,7 +259,7 @@ export const columns = [
 
       return h(DropdownMenu, () => [
         h(DropdownMenuTrigger, { asChild: true }, () => [
-          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'IP Origen',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })

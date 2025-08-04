@@ -180,7 +180,7 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
 
 function handleAdvancedSearch() {
   router.reload({
-    only: ['status', 'roles', 'permissions'],
+    only: ['roles', 'permissions'],
     onSuccess: () => (showAdvancedFilters.value = true),
   });
 }

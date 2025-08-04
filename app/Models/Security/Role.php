@@ -108,8 +108,8 @@ class Role extends SpatieRole
             {
                 $query->where(function (Builder $query) use ($term)
                 {
-                    $query->where('name', 'ilike', "%$term%")
-                        ->orWhere('description', 'ilike', "%$term%");
+                    $query->whereRaw('unaccent(name) ilike unaccent(?)', ["%$term%"])
+                        ->orWhereRaw('unaccent(description) ilike unaccent(?)', ["%$term%"]);
                 });
             })
             ->when($filters['sort_by'] ?? null, function (Builder $query, array $sorts)

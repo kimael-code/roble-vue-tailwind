@@ -88,7 +88,7 @@ export const columns = [
 
       return h(DropdownMenu, () => [
         h(DropdownMenuTrigger, { asChild: true }, () => [
-          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'Nombre',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
@@ -122,7 +122,7 @@ export const columns = [
 
       return h(DropdownMenu, () => [
         h(DropdownMenuTrigger, { asChild: true }, () => [
-          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'Descripción',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
@@ -146,7 +146,7 @@ export const columns = [
   }),
   columnHelper.accessor('db_operation', {
     header: 'Operación BD',
-    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
+    cell: (info) => h('div', info.getValue()),
     enableSorting: false,
   }),
   columnHelper.accessor('created_at_human', {
@@ -161,7 +161,7 @@ export const columns = [
 
       return h(DropdownMenu, () => [
         h(DropdownMenuTrigger, { asChild: true }, () => [
-          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'Fecha Creado',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })

@@ -194,7 +194,7 @@ export const columns = [
 
       return h(DropdownMenu, () => [
         h(DropdownMenuTrigger, { asChild: true }, () => [
-          h(Button, { variant: isSorted ? 'default' : 'ghost', class: 'ml-auto' }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'Eliminado',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
