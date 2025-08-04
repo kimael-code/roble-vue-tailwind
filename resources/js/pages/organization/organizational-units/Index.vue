@@ -34,7 +34,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, resourceID, requestingBatchDestroy, requestingCreate, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('organizational-units');
+const { action, resourceID, requestState, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('organizational-units');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
 
 permissions.value = props.can;
@@ -45,16 +45,19 @@ const rowSelection = ref<RowSelectionState>({});
 function handleSortingChange(item: any) {
   if (typeof item === 'function') {
     const sortValue = item(sorting.value);
-    const data: { [index: string]: any } = {};
+    const data: { [index: string]: any } = {
+      per_page: table.getState().pagination.pageSize,
+    };
 
     sortValue.forEach((element: any) => {
       const sortBy = element?.id ? element.id : '';
-      const sortDirection = sortBy ? (element?.desc ? 'desc' : 'asc') : '';
-      data[sortBy] = sortDirection;
+      if (sortBy) {
+        data[`sort_by[${sortBy}]`] = element?.desc ? 'desc' : 'asc';
+      }
     });
 
     router.visit(route('organizational-units.index'), {
-      data: { sortBy: data, per_page: table.getState().pagination.pageSize },
+      data,
       only: ['organizationalUnits'],
       preserveScroll: true,
       preserveState: true,
@@ -149,8 +152,8 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
         :search-only="['organizationalUnits']"
         :search-route="route('organizational-units.index')"
         :table="table"
-        :is-loading-new="requestingCreate"
-        :is-loading-dropdown="requestingBatchDestroy"
+        :is-loading-new="requestState.create"
+        :is-loading-dropdown="requestState.batchDestroy"
         @batch-destroy="handleBatchAction('batch_destroy')"
         @search="(s) => (globalFilter = s)"
         @new="requestCreate"

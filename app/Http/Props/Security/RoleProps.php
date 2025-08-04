@@ -35,9 +35,9 @@ class RoleProps
 
         return [
             'can'     => self::getPermissions(),
-            'filters' => Request::all(['search', 'sortBy',]),
+            'filters' => Request::all(['search', 'sort_by',]),
             'roles'   => fn() => new RoleCollection(
-                Role::filter(Request::only(['search', 'sortBy',]))
+                Role::filter(Request::only(['search', 'sort_by',]))
                     ->paginate($perPage)
                     ->withQueryString()
             ),

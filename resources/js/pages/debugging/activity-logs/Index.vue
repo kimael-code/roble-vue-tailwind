@@ -29,7 +29,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { requestRead, requestingRead } = useRequestActions('activity-logs');
+const { requestRead, requestState } = useRequestActions('activity-logs');
 const showPdf = ref(false);
 const showAdvancedFilters = ref(false);
 const advancedSearchApplied = ref(false);
@@ -106,7 +106,7 @@ const tableOptions = reactive<TableOptions<ActivityLog>>({
 
 const table = useVueTable(tableOptions);
 
-watchEffect(() => (requestingRead.value === false ? (processingRowId.value = null) : false));
+watchEffect(() => (requestState.value.read === false ? (processingRowId.value = null) : false));
 
 function handleAdvancedSearch() {
   router.reload({

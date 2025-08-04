@@ -94,7 +94,7 @@ class User extends Authenticatable
                         ->orWhere('email', 'ilike', "%$term%");
                 });
             })
-            ->when($filters['sortBy'] ?? null, function (Builder $query, array $sorts)
+            ->when($filters['sort_by'] ?? null, function (Builder $query, array $sorts)
             {
                 foreach ($sorts as $field => $direction)
                 {
