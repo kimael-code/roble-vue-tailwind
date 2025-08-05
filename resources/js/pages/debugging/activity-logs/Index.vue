@@ -29,7 +29,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { requestRead, requestingRead } = useRequestActions('activity-logs');
+const { requestRead, requestState } = useRequestActions('activity-logs');
 const showPdf = ref(false);
 const showAdvancedFilters = ref(false);
 const advancedSearchApplied = ref(false);
@@ -50,31 +50,25 @@ const rowSelection = ref<RowSelectionState>({});
 function handleSortingChange(item: any) {
   if (typeof item === 'function') {
     const sortValue = item(sorting.value);
-    const data: { [index: string]: any } = {};
+    const data: { [index: string]: any } = {
+      ...advancedFilters.value, // Preserve advanced filters
+      per_page: table.getState().pagination.pageSize,
+    };
 
     sortValue.forEach((element: any) => {
       const sortBy = element?.id ? element.id : '';
-      const sortDirection = sortBy ? (element?.desc ? 'desc' : 'asc') : '';
-      data[sortBy] = sortDirection;
+      if (sortBy) {
+        data[`sort_by[${sortBy}]`] = element?.desc ? 'desc' : 'asc';
+      }
     });
 
-    if (Object.keys(data).length) {
-      router.reload({
-        data: { ...advancedFilters.value, sort_by: data, per_page: table.getState().pagination.pageSize },
-        only: ['logs'],
-        onSuccess: () => (sorting.value = sortValue),
-      });
-    } else {
-      const url = page.url.replace(/&sort_by%5B[^%]+%5D=(?:asc|desc)(?=(?:&|$))/g, '');
-
-      router.visit(url, {
-        data: { ...advancedFilters.value },
-        only: ['logs'],
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => (sorting.value = sortValue),
-      });
-    }
+    router.visit('activity-logs', {
+      data,
+      only: ['logs'],
+      preserveScroll: true,
+      preserveState: true,
+      onSuccess: () => (sorting.value = sortValue),
+    });
   }
 }
 
@@ -112,7 +106,7 @@ const tableOptions = reactive<TableOptions<ActivityLog>>({
 
 const table = useVueTable(tableOptions);
 
-watchEffect(() => (requestingRead.value === false ? (processingRowId.value = null) : false));
+watchEffect(() => (requestState.value.read === false ? (processingRowId.value = null) : false));
 
 function handleAdvancedSearch() {
   router.reload({

@@ -77,11 +77,15 @@ class ActivityLogProps
                 ActivityLog::filter($filtersOnly)
                     ->select([
                         'activity_log.id',
+                        'activity_log.log_name',
                         'activity_log.description',
-                        'activity_log.causer_id',
+                        'activity_log.subject_id',
                         'activity_log.causer_type',
+                        'activity_log.causer_id',
+                        'activity_log.properties',
                         'activity_log.created_at',
                         'activity_log.updated_at',
+                        'activity_log.event',
                     ])
                     ->with('causer')
                     ->paginate($perPage)

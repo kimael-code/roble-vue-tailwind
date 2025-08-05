@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Security;
+namespace App\Actions\Security\Permission;
 
 use App\Models\Security\Permission;
 
@@ -9,8 +9,8 @@ class BatchDeletePermission
     public static function execute(array $ids): array
     {
         $msg = [
-            'msg' => 'registros eliminados.',
-            'title' => 'PROCESADO',
+            'message' => 'registros eliminados.',
+            'title' => __('PROCESSED!'),
             'type' => 'success',
         ];
         $deleteCount = 0;
@@ -25,7 +25,7 @@ class BatchDeletePermission
 
             $permission = Permission::find($id);
 
-            if ($permission->users()->count() > 0 || $permission->roles()->count() > 0)
+            if ($permission->users()->exists() || $permission->roles()->exists())
             {
                 $nonDeleteCount += 1;
             }
@@ -38,27 +38,27 @@ class BatchDeletePermission
 
         if ($deleteCount === 1)
         {
-            $msg['msg'] = "$deleteCount registro eliminado";
+            $msg['message'] = "$deleteCount registro eliminado";
             $msg['type'] = 'success';
         }
         else
         {
-            $msg['msg'] = "$deleteCount registros eliminados";
+            $msg['message'] = "$deleteCount registros eliminados";
             $msg['type'] = 'success';
         }
 
         if ($nonDeleteCount === 1)
         {
-            $msg['msg'] .= ". $nonDeleteCount registro NO eliminado. Causa: asociado a otros registros";
+            $msg['message'] .= ". $nonDeleteCount registro NO eliminado. Causa: asociado a otros registros";
             $msg['type'] = 'warning';
         }
         elseif ($nonDeleteCount > 1)
         {
-            $msg['msg'] .= ". $nonDeleteCount registros NO eliminados. Causa: asociados a otros registros";
+            $msg['message'] .= ". $nonDeleteCount registros NO eliminados. Causa: asociados a otros registros";
             $msg['type'] = 'warning';
         }
 
-        $msg['msg'] .= '.';
+        $msg['message'] .= '.';
 
         return $msg;
     }

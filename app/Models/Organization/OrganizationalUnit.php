@@ -115,7 +115,7 @@ class OrganizationalUnit extends BaseModel
                         ->orWhereRaw('unaccent(acronym) ilike unaccent(?)', ["%$term%"]);
                 });
             })
-            ->when($filters['sortBy'] ?? null, function (Builder $query, array $sorts)
+            ->when($filters['sort_by'] ?? null, function (Builder $query, array $sorts)
             {
                 foreach ($sorts as $field => $direction)
                 {

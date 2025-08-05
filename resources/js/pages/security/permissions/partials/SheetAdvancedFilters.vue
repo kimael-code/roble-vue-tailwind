@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Role, User } from '@/types';
-import { router, useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import ComboboxOperations from './ComboboxOperations.vue';
 import ComboboxRoles from './ComboboxRoles.vue';
 import ComboboxUsers from './ComboboxUsers.vue';
@@ -19,20 +18,17 @@ defineProps<{
 
 const emit = defineEmits(['close', 'advancedSearch']);
 
-const form = useForm({
+const form = ref({
   operations: [],
   roles: [],
   users: [],
-  sort_by: {
-    id: 'asc',
-  },
 });
 
 function submitSearch() {
   router.reload({
-    data: form.data(),
+    data: form.value,
     only: ['permissions'],
-    onSuccess: () => emit('advancedSearch', form.data),
+    onSuccess: () => emit('advancedSearch', form.value),
   });
 }
 </script>
@@ -61,29 +57,6 @@ function submitSearch() {
             <ComboboxOperations :operations @selected="(o) => (form.operations = o)" />
           </TabsContent>
         </Tabs>
-        <div class="grid gap-4 p-4">
-          <div class="grid grid-cols-2 items-center gap-4 md:grid-cols-12">
-            <Label for="order_by"> Ordenar Por </Label>
-            <Select v-model="form.sort_by">
-              <SelectTrigger id="order_by" class="w-full md:col-span-4 md:col-start-2">
-                <SelectValue placeholder="Seleccione un orden" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Ordenar por</SelectLabel>
-                  <SelectItem :value="{ id: 'asc' }"> ID asc. </SelectItem>
-                  <SelectItem :value="{ id: 'desc' }"> ID desc. </SelectItem>
-                  <SelectItem :value="{ name: 'asc' }"> Nombre asc. </SelectItem>
-                  <SelectItem :value="{ name: 'desc' }"> Nombre desc. </SelectItem>
-                  <SelectItem :value="{ description: 'asc' }"> Descripción asc. </SelectItem>
-                  <SelectItem :value="{ description: 'desc' }"> Descripción desc. </SelectItem>
-                  <SelectItem :value="{ created_at: 'asc' }"> Fecha Creado asc. </SelectItem>
-                  <SelectItem :value="{ created_at: 'desc' }"> Fecha Creado desc. </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
         <SheetFooter>
           <SheetClose as-child>
             <Button type="button" @click="submitSearch"> Aplicar Filtros </Button>

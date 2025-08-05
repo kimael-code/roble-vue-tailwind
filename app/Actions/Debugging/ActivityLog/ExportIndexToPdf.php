@@ -73,7 +73,7 @@ class ExportIndexToPdf extends BasePdf
 
         $this->setFont(family: 'dejavusans', style: 'B', size: 9);
         $this->MultiCell(w: 30, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('Fecha/Hora', 'created_at'));
-        $this->MultiCell(w: 35, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('Usuario', 'causer'));
+        $this->MultiCell(w: 35, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('Usuario', 'causer_name'));
         $this->MultiCell(w: 25, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('Actividad', 'event'));
         $this->MultiCell(w: 30, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('Módulo/Func.', 'log_name'));
         $this->MultiCell(w: 85, h: 5, maxh: 5, align: 'L', valign: 'M', ln: 0, txt: $this->getString('Descripción', 'description'));

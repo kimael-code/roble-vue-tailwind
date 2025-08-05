@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TagsInput, TagsInputInput, TagsInputItem, TagsInputItemDelete, TagsInputItemText } from '@/components/ui/tags-input';
 import { User } from '@/types';
-import { router, useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import ComboboxEvents from './ComboboxEvents.vue';
 import ComboboxLogNames from './ComboboxLogNames.vue';
 import ComboboxUsers from './ComboboxUsers.vue';
@@ -21,7 +20,7 @@ defineProps<{
 
 const emit = defineEmits(['close', 'advancedSearch']);
 
-const form = useForm({
+const form = ref({
   date: '',
   date_range: {},
   ip_dirs: [],
@@ -31,16 +30,13 @@ const form = useForm({
   time: '',
   time_from: '',
   time_until: '',
-  sort_by: {
-    created_at: 'desc',
-  },
 });
 
 function submitSearch() {
   router.reload({
-    data: form.data(),
+    data: form.value,
     only: ['logs'],
-    onSuccess: () => emit('advancedSearch', form.data),
+    onSuccess: () => emit('advancedSearch', form.value),
   });
 }
 </script>
@@ -90,35 +86,6 @@ function submitSearch() {
             </TagsInput>
           </TabsContent>
         </Tabs>
-        <div class="grid gap-4 p-4">
-          <div class="grid grid-cols-2 items-center gap-4 md:grid-cols-12">
-            <Label for="order_by"> Ordenar Por </Label>
-            <Select v-model="form.sort_by">
-              <SelectTrigger id="order_by" class="w-full md:col-span-4 md:col-start-2">
-                <SelectValue placeholder="Seleccione un orden" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectLabel>Ordenar por</SelectLabel>
-                  <SelectItem :value="{ created_at: 'asc' }"> Fecha Creado asc. </SelectItem>
-                  <SelectItem :value="{ created_at: 'desc' }"> Fecha Creado desc. </SelectItem>
-                  <SelectItem :value="{ causer: 'asc' }"> Usuario asc. </SelectItem>
-                  <SelectItem :value="{ causer: 'desc' }"> Usuario desc. </SelectItem>
-                  <SelectItem :value="{ event: 'asc' }"> Actividad asc. </SelectItem>
-                  <SelectItem :value="{ event: 'desc' }"> Actividad desc. </SelectItem>
-                  <SelectItem :value="{ log_name: 'asc' }"> Módulo/Func. asc. </SelectItem>
-                  <SelectItem :value="{ log_name: 'desc' }"> Módulo/Func. desc. </SelectItem>
-                  <SelectItem :value="{ description: 'asc' }"> Descripción asc. </SelectItem>
-                  <SelectItem :value="{ description: 'desc' }"> Descripción desc. </SelectItem>
-                  <SelectItem :value="{ subject_id: 'asc' }"> ID asc. </SelectItem>
-                  <SelectItem :value="{ subject_id: 'desc' }"> ID desc. </SelectItem>
-                  <SelectItem :value="{ ip_address: 'asc' }"> Dirección IP asc. </SelectItem>
-                  <SelectItem :value="{ ip_address: 'desc' }"> Dirección IP desc. </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
         <SheetFooter>
           <SheetClose as-child>
             <Button type="button" @click="submitSearch"> Aplicar Filtros </Button>

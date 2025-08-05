@@ -35,9 +35,14 @@ class RoleProps
 
         return [
             'can'     => self::getPermissions(),
-            'filters' => Request::all(['search', 'sortBy',]),
+            'filters' => Request::all(['search', 'sort_by', 'permissions']),
+            'permissions' => Inertia::lazy(
+                fn() => Permission::filter(Request::only(['search',]))
+                    ->select(['id', 'name', 'description'])
+                    ->get()
+            ),
             'roles'   => fn() => new RoleCollection(
-                Role::filter(Request::only(['search', 'sortBy',]))
+                Role::filter(Request::only(['search', 'sort_by', 'permissions']))
                     ->paginate($perPage)
                     ->withQueryString()
             ),

@@ -34,11 +34,10 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, resourceID, requestingCreate, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('organizational-units');
+const { action, resourceID, requestState, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('organizational-units');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
 
 permissions.value = props.can;
-const dropdownBtn = ref(false);
 const sorting = ref<SortingState>([]);
 const globalFilter = ref('');
 const rowSelection = ref<RowSelectionState>({});
@@ -46,16 +45,19 @@ const rowSelection = ref<RowSelectionState>({});
 function handleSortingChange(item: any) {
   if (typeof item === 'function') {
     const sortValue = item(sorting.value);
-    const data: { [index: string]: any } = {};
+    const data: { [index: string]: any } = {
+      per_page: table.getState().pagination.pageSize,
+    };
 
     sortValue.forEach((element: any) => {
       const sortBy = element?.id ? element.id : '';
-      const sortDirection = sortBy ? (element?.desc ? 'desc' : 'asc') : '';
-      data[sortBy] = sortDirection;
+      if (sortBy) {
+        data[`sort_by[${sortBy}]`] = element?.desc ? 'desc' : 'asc';
+      }
     });
 
     router.visit(route('organizational-units.index'), {
-      data: { sortBy: data, per_page: table.getState().pagination.pageSize },
+      data,
       only: ['organizationalUnits'],
       preserveScroll: true,
       preserveState: true,
@@ -64,22 +66,15 @@ function handleSortingChange(item: any) {
   }
 }
 
-function handleBatchDeletion() {
-  dropdownBtn.value = true;
-
-  router.post(route('batch-deletion', { resource: 'organizationalUnits' }), rowSelection.value, {
-    preserveState: false,
-    onFinish: () => {
-      dropdownBtn.value = false;
-      rowSelection.value = {};
-    },
-  });
+function handleAction(operation: OperationType, rowData: Record<string, any>) {
+  alertData.value = rowData;
+  action.value = operation;
+  processingRowId.value = rowData.id;
 }
 
-function handleAction(act: OperationType, rowData: Record<string, any>) {
-  alertData.value = rowData;
-  action.value = act;
-  processingRowId.value = rowData.id;
+function handleBatchAction(operation: OperationType) {
+  action.value = operation;
+  alertData.value = rowSelection.value;
 }
 
 const tableOptions = reactive<TableOptions<OrganizationalUnit>>({
@@ -125,6 +120,13 @@ watch(action, () => {
       alertDescription.value = `Esta acción no podrá revertirse. Los datos de «${alertData.value.name}» se perderán permanentemente.`;
       alertOpen.value = true;
       break;
+    case 'batch_destroy':
+      alertAction.value = 'Eliminar seleccionados';
+      alertActionCss.value = 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
+      alertTitle.value = `¿Eliminar los registros que Usted ha seleccionado?`;
+      alertDescription.value = `Esta acción no podrá revertirse. Los datos se perderán permanentemente.`;
+      alertOpen.value = true;
+      break;
 
     default:
       break;
@@ -150,9 +152,9 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
         :search-only="['organizationalUnits']"
         :search-route="route('organizational-units.index')"
         :table="table"
-        :is-loading-new="requestingCreate"
-        :is-loading-dropdown="dropdownBtn"
-        @batch-destroy="handleBatchDeletion"
+        :is-loading-new="requestState.create"
+        :is-loading-dropdown="requestState.batchDestroy"
+        @batch-destroy="handleBatchAction('batch_destroy')"
         @search="(s) => (globalFilter = s)"
         @new="requestCreate"
         @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
@@ -168,7 +170,7 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel @click="((action = null), (processingRowId = null))">Cancelar</AlertDialogCancel>
-            <AlertDialogAction :class="alertActionCss" @click="requestAction(alertData.id, { preserveState: false })">
+            <AlertDialogAction :class="alertActionCss" @click="requestAction(alertData, { preserveState: false })">
               {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>

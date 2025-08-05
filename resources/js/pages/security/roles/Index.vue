@@ -10,20 +10,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { valueUpdater } from '@/components/ui/table/utils';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, OperationType, PaginatedCollection, Role } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { BreadcrumbItem, Can, OperationType, PaginatedCollection, Permission, Role } from '@/types';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { getCoreRowModel, RowSelectionState, SortingState, TableOptions, useVueTable } from '@tanstack/vue-table';
 import { Users } from 'lucide-vue-next';
-import { reactive, ref, watch, watchEffect } from 'vue';
-import { columns, permissions, processingRowId } from './partials/columns';
+import { computed, reactive, ref, watch, watchEffect } from 'vue';
+import { columns, permissions as permissionsDT, processingRowId } from './partials/columns';
+import SheetAdvancedFilters from './partials/SheetAdvancedFilters.vue';
 
 const props = defineProps<{
   can: Can;
   filters: object;
+  permissions?: Array<Permission>;
   roles: PaginatedCollection<Role>;
 }>();
 
@@ -34,11 +37,21 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, resourceID, requestingCreate, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('roles');
+const { action, resourceID, requestState, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('roles');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
+const showPdf = ref(false);
+const showAdvancedFilters = ref(false);
+const advancedSearchApplied = ref(false);
+const advancedFilters = ref({});
+const page = usePage();
 
-permissions.value = props.can;
-const dropdownBtn = ref(false);
+const urlQueryString = computed(() => {
+  const queryString = page.url.indexOf('?');
+
+  return queryString >= 0 ? page.url.substring(queryString) : '';
+});
+
+permissionsDT.value = props.can;
 const sorting = ref<SortingState>([]);
 const globalFilter = ref('');
 const rowSelection = ref<RowSelectionState>({});
@@ -46,16 +59,19 @@ const rowSelection = ref<RowSelectionState>({});
 function handleSortingChange(item: any) {
   if (typeof item === 'function') {
     const sortValue = item(sorting.value);
-    const data: { [index: string]: any } = {};
+    const data: { [index: string]: any } = {
+      per_page: table.getState().pagination.pageSize,
+    };
 
     sortValue.forEach((element: any) => {
       const sortBy = element?.id ? element.id : '';
-      const sortDirection = sortBy ? (element?.desc ? 'desc' : 'asc') : '';
-      data[sortBy] = sortDirection;
+      if (sortBy) {
+        data[`sort_by[${sortBy}]`] = element?.desc ? 'desc' : 'asc';
+      }
     });
 
     router.visit(route('roles.index'), {
-      data: { sortBy: data, per_page: table.getState().pagination.pageSize },
+      data,
       only: ['roles'],
       preserveScroll: true,
       preserveState: true,
@@ -64,22 +80,22 @@ function handleSortingChange(item: any) {
   }
 }
 
-function handleBatchDeletion() {
-  dropdownBtn.value = true;
-
-  router.post(route('batch-deletion', { resource: 'roles' }), rowSelection.value, {
-    preserveState: false,
-    onFinish: () => {
-      dropdownBtn.value = false;
-      rowSelection.value = {};
-    },
-  });
+function handleAction(operation: OperationType, rowData: Record<string, any>) {
+  alertData.value = rowData;
+  action.value = operation;
+  processingRowId.value = rowData.id;
 }
 
-function handleAction(act: OperationType, rowData: Record<string, any>) {
-  alertData.value = rowData;
-  action.value = act;
-  processingRowId.value = rowData.id;
+function handleBatchAction(operation: OperationType) {
+  action.value = operation;
+  alertData.value = rowSelection.value;
+}
+
+function handleAdvancedSearch() {
+  router.reload({
+    only: ['permissions'],
+    onSuccess: () => (showAdvancedFilters.value = true),
+  });
 }
 
 const tableOptions = reactive<TableOptions<Role>>({
@@ -125,6 +141,13 @@ watch(action, () => {
       alertDescription.value = `Esta acción no podrá revertirse. Los datos de «${alertData.value.name}» se perderán permanentemente.`;
       alertOpen.value = true;
       break;
+    case 'batch_destroy':
+      alertAction.value = 'Eliminar seleccionados';
+      alertActionCss.value = 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
+      alertTitle.value = `¿Eliminar los registros que Usted ha seleccionado?`;
+      alertDescription.value = `Esta acción no podrá revertirse. Los datos se perderán permanentemente.`;
+      alertOpen.value = true;
+      break;
 
     default:
       break;
@@ -150,14 +173,17 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
         :search-only="['roles']"
         :search-route="route('roles.index')"
         :table="table"
-        :is-loading-new="requestingCreate"
-        :is-loading-dropdown="dropdownBtn"
-        @batch-destroy="handleBatchDeletion"
+        :is-advanced-search="advancedSearchApplied"
+        :is-loading-new="requestState.create"
+        :is-loading-dropdown="requestState.batchDestroy"
+        @batch-destroy="handleBatchAction('batch_destroy')"
         @search="(s) => (globalFilter = s)"
         @new="requestCreate"
         @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
         @update="(row) => (requestEdit(row.id), (processingRowId = row.id))"
         @destroy="(row) => handleAction('destroy', row)"
+        @export="showPdf = true"
+        @advanced-search="handleAdvancedSearch"
       />
 
       <AlertDialog v-model:open="alertOpen">
@@ -168,12 +194,31 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel @click="((action = null), (processingRowId = null))">Cancelar</AlertDialogCancel>
-            <AlertDialogAction :class="alertActionCss" @click="requestAction(alertData.id, { preserveState: false })">
+            <AlertDialogAction :class="alertActionCss" @click="requestAction(alertData, { preserveState: false })">
               {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Sheet v-model:open="showPdf">
+        <SheetContent side="bottom">
+          <SheetHeader>
+            <SheetTitle>Exportar a PDF</SheetTitle>
+            <SheetDescription>Reporte: Permisos</SheetDescription>
+          </SheetHeader>
+          <div class="h-[70dvh]">
+            <iframe :src="`${route('export-roles-pdf.index')}${urlQueryString}`" frameborder="0" width="100%" height="100%"></iframe>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <SheetAdvancedFilters
+        :permissions
+        :show="showAdvancedFilters"
+        @close="showAdvancedFilters = false"
+        @advanced-search="(advFilters) => ((advancedSearchApplied = true), (advancedFilters = advFilters))"
+      />
     </ContentLayout>
   </AppLayout>
 </template>

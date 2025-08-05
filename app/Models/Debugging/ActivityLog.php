@@ -16,19 +16,54 @@ class ActivityLog extends Activity
      *
      * @var array
      */
-    protected $appends = ['created_at_human', 'updated_at_human'];
+    protected $appends = ['created_at_human', 'updated_at_human', 'causer_name', 'ip_address',];
 
     protected function createdAtHuman(): Attribute
     {
         return Attribute::make(
-            get: fn(mixed $value, array $attributes) => Carbon::createFromTimeString($attributes['created_at'])->isoFormat('L LT') . ' (' . Carbon::createFromTimeString($attributes['created_at'])->diffForHumans() . ')',
+            get: fn(mixed $value, array $attributes) => Carbon::createFromTimeString($attributes['created_at'])
+                ->isoFormat('L LT')
+                . ' (' . Carbon::createFromTimeString($attributes['created_at'])->diffForHumans() . ')',
         );
     }
 
     protected function updatedAtHuman(): Attribute
     {
         return Attribute::make(
-            get: fn(mixed $value, array $attributes) => Carbon::createFromTimeString($attributes['updated_at'])->isoFormat('L LT') . ' (' . Carbon::createFromTimeString($attributes['updated_at'])->diffForHumans() . ')',
+            get: fn(mixed $value, array $attributes) => Carbon::createFromTimeString($attributes['updated_at'])
+                ->isoFormat('L LT')
+                . ' (' . Carbon::createFromTimeString($attributes['updated_at'])->diffForHumans() . ')',
+        );
+    }
+
+    protected function causerName(): Attribute
+    {
+        return Attribute::make(
+            get: function (mixed $value, array $attributes)
+            {
+                $causerName = '';
+
+                if (isset($attributes['causer_id']))
+                {
+                    $causerName = $this->causer?->name;
+                }
+
+                return $causerName;
+            }
+        );
+    }
+
+    protected function ipAddress(): Attribute
+    {
+        return Attribute::make(
+            get: function (mixed $value, array $attributes)
+            {
+                $properties = json_decode($attributes['properties'], true);
+
+                return $properties && isset($properties['request']['ip_address'])
+                    ? $properties['request']['ip_address']
+                    : '';
+            },
         );
     }
 
@@ -57,7 +92,7 @@ class ActivityLog extends Activity
                 {
                     switch ($field)
                     {
-                        case 'causer':
+                        case 'causer_name':
                             $query->join('users', 'users.id', '=', 'activity_log.causer_id')
                                 ->orderBy('users.name', $direction);
                             break;
@@ -65,7 +100,10 @@ class ActivityLog extends Activity
                             $query->orderBy('activity_log.created_at', $direction);
                             break;
                         case 'ip_address':
-                            $query->orderBy('properties->request->ip_address', $direction);
+                            if ($direction === 'asc' || $direction === 'desc')
+                            {
+                                $query->orderByRaw("(properties->'request'->>'ip_address')::inet {$direction}");
+                            }
                             break;
 
                         default:

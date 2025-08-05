@@ -56,7 +56,7 @@ const menuIsOpen = ref(false);
     <DropdownMenuTrigger as-child>
       <Tooltip>
         <TooltipTrigger as-child>
-          <Button variant="ghost" class="h-8 w-8 p-0" :disabled="loading" @click="menuIsOpen = true">
+          <Button variant="secondary" class="h-6 w-6 p-0 shadow-md" :disabled="loading" @click="menuIsOpen = true">
             <LoaderCircleIcon v-if="loading" class="animate-spin" />
             <EllipsisIcon v-else />
           </Button>
@@ -84,7 +84,7 @@ const menuIsOpen = ref(false);
         </DropdownMenuItem>
       </DropdownMenuGroup>
 
-      <DropdownMenuSeparator v-if="can.export" />
+      <DropdownMenuSeparator v-if="can.activate || can.deactivate || can.restore || can.delete || can.f_delete" />
       <DropdownMenuGroup>
         <DropdownMenuSub v-if="can.activate || can.deactivate">
           <DropdownMenuSubTrigger>

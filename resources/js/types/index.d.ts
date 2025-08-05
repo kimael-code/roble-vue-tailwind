@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-vue-next';
 import type { Config } from 'ziggy-js';
 
-type OperationType = 'destroy' | 'force_destroy' | 'restore' | 'enable' | 'disable' | null;
+type OperationType = 'create' | 'read' | 'edit' | 'destroy' | 'force_destroy' | 'batch_destroy' | 'restore' | 'enable' | 'disable' | null;
 
 export interface Auth {
   user: User;
@@ -84,6 +84,7 @@ export interface Role {
 
 export interface Permission extends Role {
   set_menu: boolean;
+  db_operation: string;
   pivot?: { [index: string]: string | number };
 }
 
@@ -213,9 +214,11 @@ export interface ActivityLog {
   log_name: string;
   description: string;
   subject_type: string | null;
-  subject_id: number | null;
+  subject_id: number | undefined;
   causer_type: string | null;
   causer_id: number;
+  causer_name: string | undefined;
+  ip_address: string;
   properties: {
     request: {
       ip_address: string;

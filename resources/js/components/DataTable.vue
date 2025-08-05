@@ -3,7 +3,7 @@ import { Can, PaginatedCollection } from '@/types';
 import { router, useForm } from '@inertiajs/vue3';
 import { ColumnDef, FlexRender, Table as TanstackTable } from '@tanstack/vue-table';
 import { watchDebounced } from '@vueuse/core';
-import { DeleteIcon, EllipsisIcon, EraserIcon, LoaderCircleIcon, PlusIcon } from 'lucide-vue-next';
+import { BinocularsIcon, DeleteIcon, EllipsisIcon, EraserIcon, FileDownIcon, LoaderCircleIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next';
 import { TooltipPortal } from 'reka-ui';
 import { ref } from 'vue';
 import { Badge } from './ui/badge';
@@ -157,11 +157,13 @@ function handlePerPage(perPageValue: number) {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem @click="$emit('advancedSearch')">
+              <BinocularsIcon />
               <span>Buscar avanzado</span>
             </DropdownMenuItem>
             <DropdownMenuSub v-if="can.export">
-              <DropdownMenuSubTrigger>
-                <span>Exportar a</span>
+              <DropdownMenuSubTrigger inset>
+                <FileDownIcon class="mr-2 h-4 w-4" />
+                Exportar a
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
@@ -186,6 +188,7 @@ function handlePerPage(perPageValue: number) {
               :disabled="table.getFilteredSelectedRowModel().rows.length < 1"
               @click="$emit('batchDestroy')"
             >
+            <Trash2Icon class="text-red-600" />
               <span>Eliminar selección</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>
@@ -210,7 +213,8 @@ function handlePerPage(perPageValue: number) {
       <Table>
         <TableHeader>
           <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
-            <TableHead v-for="header in headerGroup.headers" :key="header.id" @click="header.column.getToggleSortingHandler()?.($event)">
+            <!-- @vue-expect-error extender columDef para añadir la propiedad class al objeto meta -->
+            <TableHead v-for="header in headerGroup.headers" :key="header.id" :class="header.column.columnDef.meta?.class">
               <FlexRender v-if="!header.isPlaceholder" :render="header.column.columnDef.header" :props="header.getContext()" />
             </TableHead>
           </TableRow>
@@ -219,7 +223,8 @@ function handlePerPage(perPageValue: number) {
           <template v-if="table.getRowModel().rows?.length">
             <template v-for="row in table.getRowModel().rows" :key="row.id">
               <TableRow :data-state="row.getIsSelected() && 'selected'">
-                <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id">
+                <!-- @vue-expect-error extender columDef para añadir la propiedad class al objeto meta -->
+                <TableCell v-for="cell in row.getVisibleCells()" :key="cell.id" :class="cell.column.columnDef.meta?.class">
                   <FlexRender
                     :render="cell.column.columnDef.cell"
                     :props="cell.getContext()"
@@ -315,3 +320,16 @@ function handlePerPage(perPageValue: number) {
     </div>
   </div>
 </template>
+
+<style lang="css" scoped>
+.sticky-left {
+  position: sticky;
+  left: 0;
+  /*z-index: 10;*/
+}
+.sticky-right {
+  position: sticky;
+  right: 0;
+  /*z-index: 10;*/
+}
+</style>

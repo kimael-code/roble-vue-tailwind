@@ -1,11 +1,12 @@
 import DataTableActions from '@/components/DataTableActions.vue';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Can, Role } from '@/types';
 import { createColumnHelper } from '@tanstack/vue-table';
 import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
-import { h, ref } from 'vue';
+import { computed, h, ref } from 'vue';
 
 const columnHelper = createColumnHelper<Role>();
 
@@ -69,53 +70,110 @@ export const columns = [
   }),
   columnHelper.accessor('name', {
     header: ({ column }) => {
-      const isSorted = column.getIsSorted();
-      const isSortedDesc = column.getIsSorted() === 'desc';
+          const isSorted = column.getIsSorted();
+          const direction = computed(() => {
+            const sorted = column.getIsSorted();
+            if (sorted === 'asc') return 'asc';
+            if (sorted === 'desc') return 'desc';
+            return 'none';
+          });
 
-      return h(
-        Button,
-        {
-          variant: isSorted ? 'default' : 'ghost',
-          class: 'ml-auto',
+          return h(DropdownMenu, () => [
+            h(DropdownMenuTrigger, { asChild: true }, () => [
+              h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
+                'Nombre',
+                isSorted === 'desc'
+                  ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
+                  : isSorted === 'asc'
+                    ? h(ChevronUp, { class: 'ml-2 h-4 w-4' })
+                    : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
+              ]),
+            ]),
+            h(DropdownMenuContent, { align: 'start' }, () => [
+              h(DropdownMenuLabel, () => 'Ordenar'),
+              h(DropdownMenuSeparator),
+              h(DropdownMenuRadioGroup, { modelValue: direction.value }, () => [
+                h(DropdownMenuRadioItem, { value: 'asc', onSelect: () => column.toggleSorting(false, true) }, () => 'ASC'),
+                h(DropdownMenuRadioItem, { value: 'desc', onSelect: () => column.toggleSorting(true, true) }, () => 'DESC'),
+                h(DropdownMenuRadioItem, { value: 'none', onSelect: () => column.clearSorting() }, () => 'Restablecer'),
+              ]),
+            ]),
+          ]);
         },
-        () => [
-          'Nombre',
-          isSorted
-            ? isSortedDesc
-              ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
-              : h(ChevronUp, { class: 'ml-2 h-4 w-4' })
-            : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
-        ],
-      );
-    },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.accessor('description', {
     header: ({ column }) => {
       const isSorted = column.getIsSorted();
-      const isSortedDesc = column.getIsSorted() === 'desc';
+      const direction = computed(() => {
+        const sorted = column.getIsSorted();
+        if (sorted === 'asc') return 'asc';
+        if (sorted === 'desc') return 'desc';
+        return 'none';
+      });
 
-      return h(
-        Button,
-        {
-          variant: isSorted ? 'default' : 'ghost',
-          class: 'ml-auto',
-        },
-        () => [
-          'Descripción',
-          isSorted
-            ? isSortedDesc
+      return h(DropdownMenu, () => [
+        h(DropdownMenuTrigger, { asChild: true }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
+            'Descripción',
+            isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
-              : h(ChevronUp, { class: 'ml-2 h-4 w-4' })
-            : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
-        ],
-      );
+              : isSorted === 'asc'
+                ? h(ChevronUp, { class: 'ml-2 h-4 w-4' })
+                : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
+          ]),
+        ]),
+        h(DropdownMenuContent, { align: 'start' }, () => [
+          h(DropdownMenuLabel, () => 'Ordenar'),
+          h(DropdownMenuSeparator),
+          h(DropdownMenuRadioGroup, { modelValue: direction.value }, () => [
+            h(DropdownMenuRadioItem, { value: 'asc', onSelect: () => column.toggleSorting(false, true) }, () => 'ASC'),
+            h(DropdownMenuRadioItem, { value: 'desc', onSelect: () => column.toggleSorting(true, true) }, () => 'DESC'),
+            h(DropdownMenuRadioItem, { value: 'none', onSelect: () => column.clearSorting() }, () => 'Restablecer'),
+          ]),
+        ]),
+      ]);
     },
-    cell: (info) => h('div', info.getValue()),
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
+  }),
+  columnHelper.accessor('created_at_human', {
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
+      const direction = computed(() => {
+        const sorted = column.getIsSorted();
+        if (sorted === 'asc') return 'asc';
+        if (sorted === 'desc') return 'desc';
+        return 'none';
+      });
+
+      return h(DropdownMenu, () => [
+        h(DropdownMenuTrigger, { asChild: true }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
+            'Fecha Creado',
+            isSorted === 'desc'
+              ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
+              : isSorted === 'asc'
+                ? h(ChevronUp, { class: 'ml-2 h-4 w-4' })
+                : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
+          ]),
+        ]),
+        h(DropdownMenuContent, { align: 'start' }, () => [
+          h(DropdownMenuLabel, () => 'Ordenar'),
+          h(DropdownMenuSeparator),
+          h(DropdownMenuRadioGroup, { modelValue: direction.value }, () => [
+            h(DropdownMenuRadioItem, { value: 'asc', onSelect: () => column.toggleSorting(false, true) }, () => 'ASC'),
+            h(DropdownMenuRadioItem, { value: 'desc', onSelect: () => column.toggleSorting(true, true) }, () => 'DESC'),
+            h(DropdownMenuRadioItem, { value: 'none', onSelect: () => column.clearSorting() }, () => 'Restablecer'),
+          ]),
+        ]),
+      ]);
+    },
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
   }),
   columnHelper.display({
     id: 'actions',
     enableHiding: false,
+    meta: { class: 'sticky-right' },
     cell: ({ row }) => {
       return h(DataTableActions, {
         row: row.original,

@@ -39,7 +39,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, resourceID, requestingCreate, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('permissions');
+const { action, resourceID, requestState, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('permissions');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
 const showPdf = ref(false);
 const showAdvancedFilters = ref(false);
@@ -54,7 +54,6 @@ const urlQueryString = computed(() => {
 });
 
 DTpermissions.value = props.can;
-const dropdownBtn = ref(false);
 const sorting = ref<SortingState>([]);
 const globalFilter = ref('');
 const rowSelection = ref<RowSelectionState>({});
@@ -62,50 +61,37 @@ const rowSelection = ref<RowSelectionState>({});
 function handleSortingChange(item: any) {
   if (typeof item === 'function') {
     const sortValue = item(sorting.value);
-    const data: { [index: string]: any } = {};
+    const data: { [index: string]: any } = {
+      ...advancedFilters.value, // Preserve advanced filters
+      per_page: table.getState().pagination.pageSize,
+    };
 
     sortValue.forEach((element: any) => {
       const sortBy = element?.id ? element.id : '';
-      const sortDirection = sortBy ? (element?.desc ? 'desc' : 'asc') : '';
-      data[sortBy] = sortDirection;
+      if (sortBy) {
+        data[`sort_by[${sortBy}]`] = element?.desc ? 'desc' : 'asc';
+      }
     });
 
-    if (Object.keys(data).length) {
-      router.reload({
-        data: { ...advancedFilters.value, sort_by: data, per_page: table.getState().pagination.pageSize },
-        only: ['permissions'],
-        onSuccess: () => (sorting.value = sortValue),
-      });
-    } else {
-      const url = page.url.replace(/&sort_by%5B[^%]+%5D=(?:asc|desc)(?=(?:&|$))/g, '');
-
-      router.visit(url, {
-        data: { ...advancedFilters.value },
-        only: ['permissions'],
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => (sorting.value = sortValue),
-      });
-    }
+    router.visit(route('permissions.index'), {
+      data,
+      only: ['permissions'],
+      preserveScroll: true,
+      preserveState: true,
+      onSuccess: () => (sorting.value = sortValue),
+    });
   }
 }
 
-function handleBatchDeletion() {
-  dropdownBtn.value = true;
-
-  router.post(route('batch-deletion', { resource: 'permissions' }), rowSelection.value, {
-    preserveState: false,
-    onFinish: () => {
-      dropdownBtn.value = false;
-      rowSelection.value = {};
-    },
-  });
+function handleAction(operation: OperationType, rowData: Record<string, any>) {
+  alertData.value = rowData;
+  action.value = operation;
+  processingRowId.value = rowData.id;
 }
 
-function handleAction(act: OperationType, rowData: Record<string, any>) {
-  alertData.value = rowData;
-  action.value = act;
-  processingRowId.value = rowData.id;
+function handleBatchAction(operation: OperationType) {
+  action.value = operation;
+  alertData.value = rowSelection.value;
 }
 
 const tableOptions = reactive<TableOptions<Permission>>({
@@ -151,6 +137,13 @@ watch(action, () => {
       alertDescription.value = `Esta acción no podrá revertirse. Los datos de «${alertData.value.name}» se perderán permanentemente.`;
       alertOpen.value = true;
       break;
+    case 'batch_destroy':
+      alertAction.value = 'Eliminar seleccionados';
+      alertActionCss.value = 'bg-destructive text-destructive-foreground hover:bg-destructive/90';
+      alertTitle.value = `¿Eliminar los registros que Usted ha seleccionado?`;
+      alertDescription.value = `Esta acción no podrá revertirse. Los datos se perderán permanentemente.`;
+      alertOpen.value = true;
+      break;
 
     default:
       break;
@@ -184,9 +177,9 @@ function handleAdvancedSearch() {
         :search-route="route('permissions.index')"
         :table="table"
         :is-advanced-search="advancedSearchApplied"
-        :is-loading-new="requestingCreate"
-        :is-loading-dropdown="dropdownBtn"
-        @batch-destroy="handleBatchDeletion"
+        :is-loading-new="requestState.create"
+        :is-loading-dropdown="requestState.batchDestroy"
+        @batch-destroy="handleBatchAction('batch_destroy')"
         @search="(s) => (globalFilter = s)"
         @new="requestCreate"
         @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
@@ -204,7 +197,7 @@ function handleAdvancedSearch() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel @click="((action = null), (processingRowId = null))">Cancelar</AlertDialogCancel>
-            <AlertDialogAction :class="alertActionCss" @click="requestAction(alertData.id, { preserveState: false })">
+            <AlertDialogAction :class="alertActionCss" @click="requestAction(alertData, { preserveState: false })">
               {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>

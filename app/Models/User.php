@@ -82,15 +82,19 @@ class User extends Authenticatable
     public function scopeFilter(Builder $query, array $filters): void
     {
         $query
+            ->when(empty($filters) ?? null, function (Builder $query)
+            {
+                $query->latest();
+            })
             ->when($filters['search'] ?? null, function (Builder $query, string $term)
             {
                 $query->where(function (Builder $query) use ($term)
                 {
-                    $query->where('name', 'ilike', "%$term%")
-                        ->orWhere('email', 'ilike', "%$term%");
+                    $query->whereRaw('unaccent(name) ilike unaccent(?)', ["%$term%"])
+                        ->orWhereRaw('unaccent(email) ilike unaccent(?)', ["%$term%"]);
                 });
             })
-            ->when($filters['sortBy'] ?? null, function (Builder $query, array $sorts)
+            ->when($filters['sort_by'] ?? null, function (Builder $query, array $sorts)
             {
                 foreach ($sorts as $field => $direction)
                 {
@@ -102,15 +106,36 @@ class User extends Authenticatable
                     {
                         $query->orderBy('disabled_at', $direction);
                     }
+                    elseif ($field === 'created_at_human')
+                    {
+                        $query->orderBy('created_at', $direction);
+                    }
                     else
                     {
                         $query->orderBy($field, $direction);
                     }
                 }
             })
-            ->when(empty($filters) ?? null, function (Builder $query)
+            ->when($filters['permissions'] ?? null, function (Builder $query, array $permissions)
             {
-                $query->latest();
+                foreach ($permissions as $permission)
+                {
+                    $query->permission($permission);
+                }
+            })
+            ->when($filters['roles'] ?? null, function (Builder $query, array $roles)
+            {
+                foreach ($roles as $role)
+                {
+                    $query->role($role);
+                }
+            })
+            ->when($filters['statuses'] ?? null, function (Builder $query, array $statuses)
+            {
+                foreach ($statuses as $status)
+                {
+                    $query->whereNotNull($status);
+                }
             });
     }
 }
