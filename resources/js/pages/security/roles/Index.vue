@@ -10,20 +10,23 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { valueUpdater } from '@/components/ui/table/utils';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
-import { BreadcrumbItem, Can, OperationType, PaginatedCollection, Role } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
+import { BreadcrumbItem, Can, OperationType, PaginatedCollection, Permission, Role } from '@/types';
+import { Head, router, usePage } from '@inertiajs/vue3';
 import { getCoreRowModel, RowSelectionState, SortingState, TableOptions, useVueTable } from '@tanstack/vue-table';
 import { Users } from 'lucide-vue-next';
-import { reactive, ref, watch, watchEffect } from 'vue';
-import { columns, permissions, processingRowId } from './partials/columns';
+import { computed, reactive, ref, watch, watchEffect } from 'vue';
+import { columns, permissions as permissionsDT, processingRowId } from './partials/columns';
+import SheetAdvancedFilters from './partials/SheetAdvancedFilters.vue';
 
 const props = defineProps<{
   can: Can;
   filters: object;
+  permissions?: Array<Permission>;
   roles: PaginatedCollection<Role>;
 }>();
 
@@ -36,8 +39,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const { action, resourceID, requestState, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('roles');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
+const showPdf = ref(false);
+const showAdvancedFilters = ref(false);
+const advancedSearchApplied = ref(false);
+const advancedFilters = ref({});
+const page = usePage();
 
-permissions.value = props.can;
+const urlQueryString = computed(() => {
+  const queryString = page.url.indexOf('?');
+
+  return queryString >= 0 ? page.url.substring(queryString) : '';
+});
+
+permissionsDT.value = props.can;
 const sorting = ref<SortingState>([]);
 const globalFilter = ref('');
 const rowSelection = ref<RowSelectionState>({});
@@ -75,6 +89,13 @@ function handleAction(operation: OperationType, rowData: Record<string, any>) {
 function handleBatchAction(operation: OperationType) {
   action.value = operation;
   alertData.value = rowSelection.value;
+}
+
+function handleAdvancedSearch() {
+  router.reload({
+    only: ['permissions'],
+    onSuccess: () => (showAdvancedFilters.value = true),
+  });
 }
 
 const tableOptions = reactive<TableOptions<Role>>({
@@ -152,6 +173,7 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
         :search-only="['roles']"
         :search-route="route('roles.index')"
         :table="table"
+        :is-advanced-search="advancedSearchApplied"
         :is-loading-new="requestState.create"
         :is-loading-dropdown="requestState.batchDestroy"
         @batch-destroy="handleBatchAction('batch_destroy')"
@@ -160,6 +182,8 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
         @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
         @update="(row) => (requestEdit(row.id), (processingRowId = row.id))"
         @destroy="(row) => handleAction('destroy', row)"
+        @export="showPdf = true"
+        @advanced-search="handleAdvancedSearch"
       />
 
       <AlertDialog v-model:open="alertOpen">
@@ -176,6 +200,25 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Sheet v-model:open="showPdf">
+        <SheetContent side="bottom">
+          <SheetHeader>
+            <SheetTitle>Exportar a PDF</SheetTitle>
+            <SheetDescription>Reporte: Permisos</SheetDescription>
+          </SheetHeader>
+          <div class="h-[70dvh]">
+            <iframe :src="`${route('export-roles-pdf.index')}${urlQueryString}`" frameborder="0" width="100%" height="100%"></iframe>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <SheetAdvancedFilters
+        :permissions
+        :show="showAdvancedFilters"
+        @close="showAdvancedFilters = false"
+        @advanced-search="(advFilters) => ((advancedSearchApplied = true), (advancedFilters = advFilters))"
+      />
     </ContentLayout>
   </AppLayout>
 </template>

@@ -81,7 +81,7 @@ export const columns = [
           return h(DropdownMenu, () => [
             h(DropdownMenuTrigger, { asChild: true }, () => [
               h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
-                'Rol',
+                'Nombre',
                 isSorted === 'desc'
                   ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
                   : isSorted === 'asc'
@@ -116,6 +116,40 @@ export const columns = [
         h(DropdownMenuTrigger, { asChild: true }, () => [
           h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
             'Descripción',
+            isSorted === 'desc'
+              ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
+              : isSorted === 'asc'
+                ? h(ChevronUp, { class: 'ml-2 h-4 w-4' })
+                : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
+          ]),
+        ]),
+        h(DropdownMenuContent, { align: 'start' }, () => [
+          h(DropdownMenuLabel, () => 'Ordenar'),
+          h(DropdownMenuSeparator),
+          h(DropdownMenuRadioGroup, { modelValue: direction.value }, () => [
+            h(DropdownMenuRadioItem, { value: 'asc', onSelect: () => column.toggleSorting(false, true) }, () => 'ASC'),
+            h(DropdownMenuRadioItem, { value: 'desc', onSelect: () => column.toggleSorting(true, true) }, () => 'DESC'),
+            h(DropdownMenuRadioItem, { value: 'none', onSelect: () => column.clearSorting() }, () => 'Restablecer'),
+          ]),
+        ]),
+      ]);
+    },
+    cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
+  }),
+  columnHelper.accessor('created_at_human', {
+    header: ({ column }) => {
+      const isSorted = column.getIsSorted();
+      const direction = computed(() => {
+        const sorted = column.getIsSorted();
+        if (sorted === 'asc') return 'asc';
+        if (sorted === 'desc') return 'desc';
+        return 'none';
+      });
+
+      return h(DropdownMenu, () => [
+        h(DropdownMenuTrigger, { asChild: true }, () => [
+          h(Button, { variant: isSorted ? 'default' : 'ghost' }, () => [
+            'Fecha Creado',
             isSorted === 'desc'
               ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
               : isSorted === 'asc'

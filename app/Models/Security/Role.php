@@ -104,6 +104,10 @@ class Role extends SpatieRole
     public function scopeFilter(Builder $query, array $filters): void
     {
         $query
+            ->when(empty($filters) ?? null, function (Builder $query)
+            {
+                $query->latest();
+            })
             ->when($filters['search'] ?? null, function (Builder $query, string $term)
             {
                 $query->where(function (Builder $query) use ($term)
@@ -120,22 +124,21 @@ class Role extends SpatieRole
                     {
                         $query->orderBy('deleted_at', $direction);
                     }
+                    if ($field === 'created_at_human')
+                    {
+                        $query->orderBy('created_at', $direction);
+                    }
                     else
                     {
                         $query->orderBy($field, $direction);
                     }
                 }
             })
-            ->when(empty($filters) ?? null, function (Builder $query)
+            ->when($filters['permissions'] ?? null, function (Builder $query, array $permissionDescriptions)
             {
-                $query->latest();
-            })
-            ->when($filters['role_n'] ?? null, function (Builder $query, string $term)
-            {
-                $query->where(function (Builder $query) use ($term)
-                {
-                    $query->where('name', 'ilike', "%$term%");
-                });
+                $permissions = Permission::whereIn('description', $permissionDescriptions)->get();
+
+                $query->whereAttachedTo($permissions);
             });
     }
 }
