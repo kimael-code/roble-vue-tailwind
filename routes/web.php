@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\{
+    BatchActivationController,
+    BatchDeactivationController,
     BatchDeletionController,
     DashboardController,
     Debugging\ActivityLogController,
@@ -21,6 +23,8 @@ Route::get('/', fn() => Inertia::render('Welcome'))->name('home');
 Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
 {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
+    Route::post('/batch-activation/{resource}', BatchActivationController::class)->name('batch-activation');
+    Route::post('/batch-deactivation/{resource}', BatchDeactivationController::class)->name('batch-deactivation');
     Route::post('/batch-deletion/{resource}', BatchDeletionController::class)->name('batch-deletion');
 
     Route::controller(NotificationController::class)->group(function ()

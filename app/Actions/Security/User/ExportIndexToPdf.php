@@ -148,6 +148,11 @@ class ExportIndexToPdf extends BasePdf
                 'userPermissionsDelete' => $userPermissionsDelete,
                 'userPermissionsExport' => $userPermissionsExport,
                 'userRoleNames' => $userRoleNames,
+                'headerUser' => $this->getString('Usuario', 'name'),
+                'headerEmail' => $this->getString('Correo Electrónico', 'email'),
+                'headerCreatedAt' => $this->getString('Creado', 'created_at_human'),
+                'headerDisabledAt' => $this->getString('Desactivado', 'disabled_at_human'),
+                'headerDeletedAt' => $this->getString('Eliminado', 'deleted_at_human'),
             ])
                 ->render();
 

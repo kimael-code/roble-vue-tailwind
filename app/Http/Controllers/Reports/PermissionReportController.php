@@ -10,8 +10,11 @@ class PermissionReportController extends Controller
 {
     public function indexToPdf(Request $request): string
     {
-        $pdf = new ExportIndexToPdf(filters: $request->all());
+        if ($request->user()->cannot('export permissions'))
+        {
+            abort(403);
+        }
 
-        return $pdf->make();
+        return new ExportIndexToPdf(filters: $request->all())->make();
     }
 }

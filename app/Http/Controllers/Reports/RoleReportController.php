@@ -10,6 +10,11 @@ class RoleReportController extends Controller
 {
     public function indexToPdf(Request $request): string
     {
+        if ($request->user()->cannot('export roles'))
+        {
+            abort(403);
+        }
+
         return new ExportIndexToPdf(filters: $request->all())->make();
     }
 }

@@ -48,6 +48,8 @@ export function useRequestActions(resourceName: string) {
     restore: false,
     enable: false,
     disable: false,
+    batchActivate: false,
+    batchDeactivate: false,
     batchDestroy: false,
   });
 
@@ -72,6 +74,12 @@ export function useRequestActions(resourceName: string) {
         break;
       case 'disable':
         requestDisable(data.id, options);
+        break;
+      case 'batch_activate':
+        requestBatchActivate(data, options);
+        break;
+      case 'batch_deactivate':
+        requestBatchDeactivate(data, options);
         break;
 
       default:
@@ -152,6 +160,40 @@ export function useRequestActions(resourceName: string) {
         resourceID.value = null;
       },
     });
+  }
+
+  function requestBatchActivate(selectedRows: { [x: string]: boolean }, options?: RequestOptions) {
+    requestState.value.batchActivate = false;
+    resourceID.value = null;
+
+    request
+      .transform((data) => ({ ...data, ...selectedRows }))
+      .post(route('batch-activation', { resource: resourceName }), {
+        ...options,
+        onStart: () => (requestState.value.batchActivate = true),
+        onFinish: () => {
+          requestState.value.batchActivate = false;
+          action.value = null;
+          resourceID.value = null;
+        },
+      });
+  }
+
+  function requestBatchDeactivate(selectedRows: { [x: string]: boolean }, options?: RequestOptions) {
+    requestState.value.batchDeactivate = false;
+    resourceID.value = null;
+
+    request
+      .transform((data) => ({ ...data, ...selectedRows }))
+      .post(route('batch-deactivation', { resource: resourceName }), {
+        ...options,
+        onStart: () => (requestState.value.batchDeactivate = true),
+        onFinish: () => {
+          requestState.value.batchDeactivate = false;
+          action.value = null;
+          resourceID.value = null;
+        },
+      });
   }
 
   function requestBatchDestroy(selectedRows: { [x: string]: boolean }, options?: RequestOptions) {

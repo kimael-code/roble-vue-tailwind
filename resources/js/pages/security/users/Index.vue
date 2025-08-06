@@ -171,6 +171,20 @@ watch(action, () => {
       alertDescription.value = `Esta acción podrá revertirse. Los datos no se eliminarán, sin embargo, los usuarios no podrán ingresar al sistema.`;
       alertOpen.value = true;
       break;
+    case 'batch_activate':
+      alertAction.value = 'Activar seleccionados';
+      alertActionCss.value = '';
+      alertTitle.value = `¿Activar los usuarios que Usted ha seleccionado?`;
+      alertDescription.value = `Los usuarios recuperarán el acceso al sistema. Sus datos serán restaurados.`;
+      alertOpen.value = true;
+      break;
+    case 'batch_deactivate':
+      alertAction.value = 'Desactivar seleccionados';
+      alertActionCss.value = 'bg-amber-500 text-foreground hover:bg-amber-500/90';
+      alertTitle.value = `¿Desactivar los usuarios que Usted ha seleccionado?`;
+      alertDescription.value = `Los usuarios perderán el acceso al sistema. Sus datos se conservarán.`;
+      alertOpen.value = true;
+      break;
 
     default:
       break;
@@ -205,6 +219,8 @@ function handleAdvancedSearch() {
         :is-advanced-search="advancedSearchApplied"
         :is-loading-new="requestState.create"
         :is-loading-dropdown="requestState.batchDestroy"
+        @batch-activate="handleBatchAction('batch_activate')"
+        @batch-deactivate="handleBatchAction('batch_deactivate')"
         @batch-destroy="handleBatchAction('batch_destroy')"
         @search="(s) => (globalFilter = s)"
         @new="requestCreate"
