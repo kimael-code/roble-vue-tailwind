@@ -34,7 +34,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, resourceID, requestState, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('organizations');
+const { action, resourceID, requestState, requestAction } = useRequestActions('organizations');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
 
 permissions.value = props.can;
@@ -156,9 +156,9 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
         :is-loading-dropdown="requestState.batchDestroy"
         @batch-destroy="handleBatchAction('batch_destroy')"
         @search="(s) => (globalFilter = s)"
-        @new="requestCreate"
-        @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
-        @update="(row) => (requestEdit(row.id), (processingRowId = row.id))"
+        @new="requestAction({ operation: 'create' })"
+        @read="(row) => (requestAction({ operation: 'read', data: { id: row.id } }), (processingRowId = row.id))"
+        @update="(row) => (requestAction({ operation: 'edit', data: { id: row.id } }), (processingRowId = row.id))"
         @destroy="(row) => handleAction('destroy', row)"
       />
 
@@ -170,7 +170,7 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel @click="((action = null), (processingRowId = null))">Cancelar</AlertDialogCancel>
-            <AlertDialogAction :class="alertActionCss" @click="requestAction(alertData, { preserveState: false })">
+            <AlertDialogAction :class="alertActionCss" @click="requestAction({ data: { id: alertData.id }, options: { preserveState: false } })">
               {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>

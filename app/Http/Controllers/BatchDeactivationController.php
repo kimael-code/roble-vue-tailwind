@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Security\User\BatchDeactivateUser;
+use App\Actions\Security\BatchDeactivateUser;
 use Illuminate\Http\Request;
 
 class BatchDeactivationController extends Controller

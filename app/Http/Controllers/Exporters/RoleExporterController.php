@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Reports;
+namespace App\Http\Controllers\Exporters;
 
-use App\Actions\Security\Role\ExportIndexToPdf;
+use App\Actions\Security\ExportRolesToPdf;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class RoleReportController extends Controller
+class RoleExporterController extends Controller
 {
     public function indexToPdf(Request $request): string
     {
@@ -15,6 +15,6 @@ class RoleReportController extends Controller
             abort(403);
         }
 
-        return new ExportIndexToPdf(filters: $request->all())->make();
+        return new ExportRolesToPdf(filters: $request->all())->make();
     }
 }

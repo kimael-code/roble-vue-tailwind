@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Security\User;
+namespace App\Actions\Security;
 
 use App\Models\User;
 
@@ -40,7 +40,7 @@ class BatchDeactivateUser
             }
             else
             {
-                $user->disabled_at = now()->toIso8601String();
+                $user->disabled_at = now();
                 $user->save();
                 $deactivateCount += 1;
             }

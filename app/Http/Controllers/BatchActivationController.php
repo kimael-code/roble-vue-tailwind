@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Security\User\BatchActivateUser;
+use App\Actions\Security\BatchActivateUser;
 use Illuminate\Http\Request;
 
 class BatchActivationController extends Controller

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Security\Permission;
+namespace App\Actions\Security;
 
 use App\Models\Security\Permission;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Actions\Organization\Organization;
+namespace App\Actions\Security;
 
-use App\Models\Organization\Organization;
+use App\Models\Security\Role;
 
-class BatchDeleteOrganization
+class BatchDeleteRole
 {
     public static function execute(array $ids): array
     {
@@ -23,15 +23,15 @@ class BatchDeleteOrganization
                 continue;
             }
 
-            $organization = Organization::find($id);
+            $role = Role::find($id);
 
-            if (!$organization->disabled_at || $organization->organizationalUnits()->exists())
+            if ($role->permissions()->exists() || $role->users()->exists())
             {
                 $nonDeleteCount += 1;
             }
             else
             {
-                $organization->delete();
+                $role->delete();
                 $deleteCount += 1;
             }
         }

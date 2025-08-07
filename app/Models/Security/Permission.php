@@ -29,6 +29,13 @@ class Permission extends SpatiePermission
     protected $traceObjectName = 'permission';
 
     /**
+     * The storage format of the model's date columns.
+     *
+     * @var string
+     */
+    protected $dateFormat = 'Y-m-d H:i:s.u';
+
+    /**
      * The accessors to append to the model's array form.
      *
      * @var array

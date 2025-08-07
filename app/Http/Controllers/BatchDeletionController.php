@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Actions\Organization\Organization\BatchDeleteOrganization;
-use App\Actions\Organization\OrganizationalUnit\BatchDeleteOrganizationalUnit;
-use App\Actions\Security\Permission\BatchDeletePermission;
-use App\Actions\Security\Role\BatchDeleteRole;
-use App\Actions\Security\User\BatchDeleteUser;
+use App\Actions\Organization\BatchDeleteOrganization;
+use App\Actions\Organization\BatchDeleteOrganizationalUnit;
+use App\Actions\Security\BatchDeletePermission;
+use App\Actions\Security\BatchDeleteRole;
+use App\Actions\Security\BatchDeleteUser;
 use Illuminate\Http\Request;
 
 class BatchDeletionController extends Controller

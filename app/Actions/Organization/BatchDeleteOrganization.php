@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Actions\Organization\OrganizationalUnit;
+namespace App\Actions\Organization;
 
-use App\Models\Organization\OrganizationalUnit;
+use App\Models\Organization\Organization;
 
-class BatchDeleteOrganizationalUnit
+class BatchDeleteOrganization
 {
     public static function execute(array $ids): array
     {
@@ -23,19 +23,15 @@ class BatchDeleteOrganizationalUnit
                 continue;
             }
 
-            $organizationalUnit = OrganizationalUnit::find($id);
+            $organization = Organization::find($id);
 
-            if (
-                !$organizationalUnit->disabled_at
-                || $organizationalUnit->organizationalUnits()->exists()
-                || $organizationalUnit->users()->exists()
-            )
+            if (!$organization->disabled_at || $organization->organizationalUnits()->exists())
             {
                 $nonDeleteCount += 1;
             }
             else
             {
-                $organizationalUnit->delete();
+                $organization->delete();
                 $deleteCount += 1;
             }
         }
