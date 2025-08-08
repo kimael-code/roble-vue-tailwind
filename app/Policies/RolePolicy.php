@@ -45,6 +45,11 @@ class RolePolicy
      */
     public function delete(User $user, Role $role): Response|bool|null
     {
+        if ($role->id === 0 || $role->name === __('Superuser'))
+        {
+            return Response::deny(__('The Superuser role cannot be deleted.'));
+        }
+
         if ($role->permissions->isNotEmpty())
         {
             return Response::deny(__('There are permissions having this role.'));

@@ -29,7 +29,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { ActivityLog, BreadcrumbItem, Can, Organization, OrganizationalUnit, PaginatedCollection, SearchFilter } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { ArrowLeftIcon, Building, EllipsisIcon, LoaderCircle, Plus } from 'lucide-vue-next';
+import { ArrowLeftIcon, Building, EllipsisIcon, LoaderCircleIcon, PlusIcon } from 'lucide-vue-next';
 import { watch } from 'vue';
 import OrganizationalUnits from './partials/OrganizationalUnits.vue';
 
@@ -116,7 +116,7 @@ watch(action, () => {
               <Tooltip>
                 <TooltipTrigger as-child>
                   <Button variant="secondary" @click="requestAction({ operation: 'read_all' })" :disabled="requestState.readAll">
-                    <LoaderCircle v-if="requestState.readAll" class="h-4 w-4 animate-spin" />
+                    <LoaderCircleIcon v-if="requestState.readAll" class="h-4 w-4 animate-spin" />
                     <ArrowLeftIcon v-else class="mr-2 h-4 w-4" />
                     Regresar
                   </Button>
@@ -129,7 +129,7 @@ watch(action, () => {
                 <DropdownMenuTrigger as-child>
                   <Button variant="outline" :disabled="resourceID !== null">
                     <EllipsisIcon v-if="resourceID === null" />
-                    <LoaderCircle v-else class="animate-spin" />
+                    <LoaderCircleIcon v-else class="animate-spin" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
@@ -146,8 +146,8 @@ watch(action, () => {
                 </DropdownMenuContent>
               </DropdownMenu>
               <Button v-if="can.create" class="ml-3" @click="requestAction({ operation: 'create' })" :disabled="requestState.create">
-                <LoaderCircle v-if="requestState.create" class="h-4 w-4 animate-spin" />
-                <Plus v-else class="mr-2 h-4 w-4" />
+                <LoaderCircleIcon v-if="requestState.create" class="h-4 w-4 animate-spin" />
+                <PlusIcon v-else class="mr-2 h-4 w-4" />
                 Nuevo
               </Button>
             </div>

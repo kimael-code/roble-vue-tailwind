@@ -20,31 +20,31 @@ class UserSeeder extends Seeder
     {
         $users = [
             [
-                'name'            => 'root',
-                'email'           => 'root@company.com',
-                'password'        => Hash::make('root'),
-                'remember_token'  => Str::random(10),
+                'name' => 'root',
+                'email' => 'root@company.com',
+                'password' => Hash::make('root'),
+                'remember_token' => Str::random(10),
                 'is_password_set' => false,
-                'role'            => __('Superuser'),
+                'role' => __('Superuser'),
             ],
             [
-                'name'            => 'admin',
-                'email'           => 'admin@company.com',
-                'password'        => Hash::make('admin'),
-                'remember_token'  => Str::random(10),
+                'name' => 'admin',
+                'email' => 'admin@company.com',
+                'password' => Hash::make('admin'),
+                'remember_token' => Str::random(10),
                 'is_password_set' => false,
-                'role'            => __('Systems Administrator'),
+                'role' => __('Systems Administrator'),
             ],
         ];
 
         $devUsers = [
             [
-                'name'            => 'admin.dev',
-                'email'           => 'admin.dev@example.com',
-                'password'        => Hash::make('12345678'),
-                'remember_token'  => Str::random(10),
+                'name' => 'admin.dev',
+                'email' => 'admin.dev@example.com',
+                'password' => Hash::make('12345678'),
+                'remember_token' => Str::random(10),
                 'is_password_set' => true,
-                'role'            => __('Systems Administrator'),
+                'role' => __('Systems Administrator'),
             ],
         ];
 
@@ -60,10 +60,10 @@ class UserSeeder extends Seeder
         foreach ($users as $user)
         {
             $createdUser = User::create([
-                'name'            => $user['name'],
-                'email'           => $user['email'],
-                'password'        => $user['password'],
-                'remember_token'  => $user['remember_token'],
+                'name' => $user['name'],
+                'email' => $user['email'],
+                'password' => $user['password'],
+                'remember_token' => $user['remember_token'],
                 'is_password_set' => $user['is_password_set'],
             ]);
             $createdUser->assignRole($user['role']);

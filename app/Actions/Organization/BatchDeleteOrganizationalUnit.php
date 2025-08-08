@@ -53,12 +53,12 @@ class BatchDeleteOrganizationalUnit
 
         if ($nonDeleteCount === 1)
         {
-            $msg['message'] .= ". $nonDeleteCount registro NO eliminado. Causa: asociado a otros registros";
+            $msg['message'] .= ". $nonDeleteCount registro NO eliminado. Causa/s: asociación de registros";
             $msg['type'] = 'warning';
         }
         elseif ($nonDeleteCount > 1)
         {
-            $msg['message'] .= ". $nonDeleteCount registros NO eliminados. Causa: asociados a otros registros";
+            $msg['message'] .= ". $nonDeleteCount registros NO eliminados. Causa/s: asociación de registros";
             $msg['type'] = 'warning';
         }
 

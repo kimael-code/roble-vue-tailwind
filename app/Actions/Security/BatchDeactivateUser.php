@@ -59,7 +59,7 @@ class BatchDeactivateUser
 
         if ($nonDeactivateCount === 1)
         {
-            $msg['message'] .= ". $nonDeactivateCount registro NO desactivado. Causa: $nonDeactivateReasons";
+            $msg['message'] .= ". $nonDeactivateCount registro NO desactivado. Causa/s: $nonDeactivateReasons";
             $msg['type'] = 'warning';
         }
         elseif ($nonDeactivateCount > 1)

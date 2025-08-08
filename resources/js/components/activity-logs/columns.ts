@@ -66,6 +66,7 @@ export const columns = [
     id: 'actions',
     enableHiding: false,
     enableSorting: false,
+    meta: { class: 'sticky-right' },
     cell: ({ row }) => {
       return h(DataTableActions, {
         row: row.original,

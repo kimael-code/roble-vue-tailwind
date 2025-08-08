@@ -49,12 +49,12 @@ class BatchDeletePermission
 
         if ($nonDeleteCount === 1)
         {
-            $msg['message'] .= ". $nonDeleteCount registro NO eliminado. Causa: asociado a otros registros";
+            $msg['message'] .= ". $nonDeleteCount registro NO eliminado. Causa: asociación de registros";
             $msg['type'] = 'warning';
         }
         elseif ($nonDeleteCount > 1)
         {
-            $msg['message'] .= ". $nonDeleteCount registros NO eliminados. Causa: asociados a otros registros";
+            $msg['message'] .= ". $nonDeleteCount registros NO eliminados. Causa: asociación de registros";
             $msg['type'] = 'warning';
         }
 

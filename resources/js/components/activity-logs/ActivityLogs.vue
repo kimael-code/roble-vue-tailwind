@@ -14,7 +14,7 @@ const props = defineProps<{
   resourceId: string | number;
 }>();
 
-const { resourceID, requestRead } = useRequestActions('activity-logs');
+const { resourceID, requestAction } = useRequestActions('activity-logs');
 
 const sorting = ref<SortingState>([]);
 const globalFilter = ref('');
@@ -82,6 +82,6 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
     :search-route="route(pageRouteName, resourceId)"
     :table
     @search="(s) => (globalFilter = s)"
-    @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
+    @read="(row) => (requestAction({ operation: 'read', data: { id: row.id } }), (processingRowId = row.id))"
   />
 </template>

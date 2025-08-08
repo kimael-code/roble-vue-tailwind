@@ -26,12 +26,25 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { ActivityLog, BreadcrumbItem, Can, PaginatedCollection, Permission, Role, SearchFilter, User } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { EllipsisIcon, LoaderCircle, PencilIcon, Plus, RotateCcwIcon, ToggleLeftIcon, ToggleRightIcon, Trash2Icon, UserIcon, XIcon } from 'lucide-vue-next';
+import {
+  ArrowLeftIcon,
+  EllipsisIcon,
+  LoaderCircleIcon,
+  PencilIcon,
+  PlusIcon,
+  RotateCcwIcon,
+  ToggleLeftIcon,
+  ToggleRightIcon,
+  Trash2Icon,
+  UserIcon,
+  XIcon,
+} from 'lucide-vue-next';
 import { computed, watch } from 'vue';
 import Permisos from './partials/Permisos.vue';
 import Roles from './partials/Roles.vue';
@@ -57,7 +70,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, requestCreate, requestAction, requestEdit, requestingCreate, resourceID } = useRequestActions('users');
+const { action, requestState, requestAction, resourceID } = useRequestActions('users');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription } = useConfirmAction();
 
 const userOUs = computed(() => {
@@ -131,95 +144,112 @@ watch(action, () => {
             </CardHeader>
             <CardContent>
               <template v-if="user.person">
-                <p class="text-muted-foreground text-sm">{{ user.person?.id_card }}</p>
-                <p class="text-muted-foreground text-sm">{{ `${user.person?.names} ${user.person?.surnames}` }}</p>
-                <p class="text-muted-foreground text-sm">{{ user.person?.position }}</p>
-                <p class="text-muted-foreground text-sm">{{ user.person?.staff_type }}</p>
-                <p class="text-muted-foreground text-sm">{{ user.person?.emails?.join(', ') }}</p>
-                <p class="text-muted-foreground text-sm">{{ user.person?.phones?.join(', ') }}</p>
+                <p class="text-sm text-muted-foreground">{{ user.person?.id_card }}</p>
+                <p class="text-sm text-muted-foreground">{{ `${user.person?.names} ${user.person?.surnames}` }}</p>
+                <p class="text-sm text-muted-foreground">{{ user.person?.position }}</p>
+                <p class="text-sm text-muted-foreground">{{ user.person?.staff_type }}</p>
+                <p class="text-sm text-muted-foreground">{{ user.person?.emails?.join(', ') }}</p>
+                <p class="text-sm text-muted-foreground">{{ user.person?.phones?.join(', ') }}</p>
                 <br />
               </template>
               <p class="text-sm font-medium">Unidad Administrativa</p>
-              <p class="text-muted-foreground text-sm">{{ userOUs }}</p>
+              <p class="text-sm text-muted-foreground">{{ userOUs }}</p>
               <br />
               <p class="text-sm font-medium">Creado</p>
-              <p class="text-muted-foreground text-sm">{{ user.created_at_human }}</p>
+              <p class="text-sm text-muted-foreground">{{ user.created_at_human }}</p>
               <br />
               <p class="text-sm font-medium">Modificado</p>
-              <p class="text-muted-foreground text-sm">{{ user.updated_at_human }}</p>
+              <p class="text-sm text-muted-foreground">{{ user.updated_at_human }}</p>
               <br />
               <p class="text-sm font-medium">Estatus</p>
               <p v-if="user.disabled_at" class="text-sm text-amber-500">DESACTIVADO</p>
               <p v-if="user.disabled_at" class="text-sm text-amber-500">{{ user.disabled_at_human }}</p>
               <p v-if="user.deleted_at" class="text-sm text-red-500">ELIMINADO</p>
-              <p v-if="user.deleted_at" class="text-sm text-red-500 ">{{ user.deleted_at_human }}</p>
+              <p v-if="user.deleted_at" class="text-sm text-red-500">{{ user.deleted_at_human }}</p>
               <p v-if="!user.disabled_at && !user.deleted_at" class="text-sm text-green-500">ACTIVO</p>
             </CardContent>
           </Card>
         </div>
         <div class="col-span-3">
-          <div class="flex items-center justify-end pb-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger as-child>
-                <Button variant="outline" :disabled="resourceID !== null">
-                  <EllipsisIcon v-if="resourceID === null" />
-                  <LoaderCircle v-else class="animate-spin" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem v-if="can.update" @click="requestEdit(user.id, { preserveState: false })">
-                    <PencilIcon />
-                    <span>Editar</span>
-                  </DropdownMenuItem>
+          <div class="flex items-center justify-between pb-3">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger as-child>
+                  <Button variant="secondary" @click="requestAction({ operation: 'read_all' })" :disabled="requestState.readAll">
+                    <LoaderCircleIcon v-if="requestState.readAll" class="h-4 w-4 animate-spin" />
+                    <ArrowLeftIcon v-else class="mr-2 h-4 w-4" />
+                    Regresar
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent> Regresar al listado de usuarios </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <div class="flex items-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button variant="outline" :disabled="resourceID !== null">
+                    <EllipsisIcon v-if="resourceID === null" />
+                    <LoaderCircleIcon v-else class="animate-spin" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem
+                      v-if="can.update"
+                      @click="requestAction({ operation: 'edit', data: { id: user.id }, options: { preserveState: false } })"
+                    >
+                      <PencilIcon />
+                      <span>Editar</span>
+                    </DropdownMenuItem>
 
-                  <DropdownMenuSub v-if="can.activate || can.deactivate">
-                    <DropdownMenuSubTrigger>
-                      <span>Activación</span>
-                    </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuItem v-if="can.activate" :disabled="user.disabled_at === null" @click="action = 'enable'">
-                          <ToggleRightIcon />
-                          <span>Activar</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem v-if="can.deactivate" :disabled="user.disabled_at !== null" @click="action = 'disable'">
-                          <ToggleLeftIcon />
-                          <span>Desactivar</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
+                    <DropdownMenuSub v-if="can.activate || can.deactivate">
+                      <DropdownMenuSubTrigger>
+                        <span>Activación</span>
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                          <DropdownMenuItem v-if="can.activate" :disabled="user.disabled_at === null" @click="action = 'enable'">
+                            <ToggleRightIcon />
+                            <span>Activar</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem v-if="can.deactivate" :disabled="user.disabled_at !== null" @click="action = 'disable'">
+                            <ToggleLeftIcon />
+                            <span>Desactivar</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
 
-                  <DropdownMenuSub v-if="can.restore || can.delete || can.f_delete">
-                    <DropdownMenuSubTrigger> Eliminación </DropdownMenuSubTrigger>
-                    <DropdownMenuPortal>
-                      <DropdownMenuSubContent>
-                        <DropdownMenuItem v-if="can.restore" :disabled="!user.deleted_at" @click="action = 'restore'">
-                          <RotateCcwIcon />
-                          <span>Restaurar</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem v-if="can.delete" :disabled="user.deleted_at ? true : false" @click="action = 'destroy'">
-                          <Trash2Icon />
-                          <span>Eliminar</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem v-if="can.f_delete" :disabled="!user.deleted_at" @click="action = 'force_destroy'">
-                          <XIcon />
-                          <span>Eliminar permanentemente</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuSubContent>
-                    </DropdownMenuPortal>
-                  </DropdownMenuSub>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button v-if="can.create" class="ml-3" @click="requestCreate" :disabled="requestingCreate">
-              <LoaderCircle v-if="requestingCreate" class="h-4 w-4 animate-spin" />
-              <Plus v-else class="mr-2 h-4 w-4" />
-              Nuevo
-            </Button>
+                    <DropdownMenuSub v-if="can.restore || can.delete || can.f_delete">
+                      <DropdownMenuSubTrigger> Eliminación </DropdownMenuSubTrigger>
+                      <DropdownMenuPortal>
+                        <DropdownMenuSubContent>
+                          <DropdownMenuItem v-if="can.restore" :disabled="!user.deleted_at" @click="action = 'restore'">
+                            <RotateCcwIcon />
+                            <span>Restaurar</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem v-if="can.delete" :disabled="user.deleted_at ? true : false" @click="action = 'destroy'">
+                            <Trash2Icon />
+                            <span>Eliminar</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem v-if="can.f_delete" :disabled="!user.deleted_at" @click="action = 'force_destroy'">
+                            <XIcon />
+                            <span>Eliminar permanentemente</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button v-if="can.create" class="ml-3" @click="requestAction({ operation: 'create' })" :disabled="requestState.create">
+                <LoaderCircleIcon v-if="requestState.create" class="h-4 w-4 animate-spin" />
+                <PlusIcon v-else class="mr-2 h-4 w-4" />
+                Nuevo
+              </Button>
+            </div>
           </div>
           <Tabs default-value="roles" class="w-auto">
             <TabsList class="grid w-full grid-cols-3">
@@ -248,7 +278,7 @@ watch(action, () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel @click="action = null">Cancelar</AlertDialogCancel>
-            <AlertDialogAction :class="alertActionCss" @click="requestAction(user.id, { preserveState: false })">
+            <AlertDialogAction :class="alertActionCss" @click="requestAction({ data: { id: user.id }, options: { preserveState: false } })">
               {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>

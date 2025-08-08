@@ -170,7 +170,7 @@ watchEffect(() => (resourceID.value === null ? (processingRowId.value = null) : 
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel @click="((action = null), (processingRowId = null))">Cancelar</AlertDialogCancel>
-            <AlertDialogAction :class="alertActionCss" @click="requestAction({ data: { id: alertData.id }, options: { preserveState: false } })">
+            <AlertDialogAction :class="alertActionCss" @click="requestAction({ data: alertData, options: { preserveState: false } })">
               {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>
