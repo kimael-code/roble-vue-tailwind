@@ -24,7 +24,7 @@ class UpdateOrganization
             $organization->logo_path = $newFilePath ?? null ? $newFilePath : $inputs['logo_path'];
             $organization->acronym = $inputs['acronym'] ?? $organization->acronym;
             $organization->address = $inputs['address'] ?? $organization->address;
-            $organization->disabled_at = $inputs['disabled'] ? now()->toIso8601String() : null;
+            $organization->disabled_at = $inputs['disabled'] ? now() : null;
 
             $logoHasChanged = $organization->isDirty('logo_path');
 

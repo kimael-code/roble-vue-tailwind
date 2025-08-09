@@ -30,7 +30,7 @@ class EnableUser
                 [
                     'type' => __('user'),
                     'name' => "({$user->name})",
-                    'timestamp' => now()->toIso8601String(),
+                    'timestamp' => now(),
                 ],
                 'enabled',
                 ['routeName' => 'users', 'routeParam' => 'user']

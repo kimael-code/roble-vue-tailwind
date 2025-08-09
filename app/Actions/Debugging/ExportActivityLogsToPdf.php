@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Debugging\ActivityLog;
+namespace App\Actions\Debugging;
 
 use App\Models\Debugging\ActivityLog;
 use App\Models\Organization\Organization;
@@ -9,7 +9,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\View;
 
-class ExportIndexToPdf extends BasePdf
+class ExportActivityLogsToPdf extends BasePdf
 {
     public function __construct(
         protected string $orientation = 'L',

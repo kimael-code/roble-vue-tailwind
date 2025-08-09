@@ -3,7 +3,18 @@ import { Can, PaginatedCollection } from '@/types';
 import { router, useForm } from '@inertiajs/vue3';
 import { ColumnDef, FlexRender, Table as TanstackTable } from '@tanstack/vue-table';
 import { watchDebounced } from '@vueuse/core';
-import { BinocularsIcon, DeleteIcon, EllipsisIcon, EraserIcon, FileDownIcon, LoaderCircleIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next';
+import {
+  BinocularsIcon,
+  DeleteIcon,
+  EllipsisIcon,
+  EraserIcon,
+  FileDownIcon,
+  LoaderCircleIcon,
+  PlusIcon,
+  ToggleLeftIcon,
+  ToggleRightIcon,
+  Trash2Icon,
+} from 'lucide-vue-next';
 import { TooltipPortal } from 'reka-ui';
 import { ref } from 'vue';
 import { Badge } from './ui/badge';
@@ -51,6 +62,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits([
+  'batchActivate',
+  'batchDeactivate',
   'batchDestroy',
   'export',
   'exportRow',
@@ -180,15 +193,33 @@ function handlePerPage(perPageValue: number) {
               </DropdownMenuPortal>
             </DropdownMenuSub>
           </DropdownMenuGroup>
-          <DropdownMenuSeparator v-if="can.delete" />
+          <DropdownMenuSeparator v-if="can.delete || can.activate || can.deactivate" />
           <DropdownMenuGroup>
+            <DropdownMenuItem
+              v-if="can.activate"
+              class="text-amber-600 transition-colors focus:bg-accent focus:text-accent-foreground"
+              :disabled="table.getFilteredSelectedRowModel().rows.length < 1"
+              @click="$emit('batchActivate')"
+            >
+              <ToggleRightIcon class="text-amber-600" />
+              <span>Activar selección</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              v-if="can.deactivate"
+              class="text-amber-600 transition-colors focus:bg-accent focus:text-accent-foreground"
+              :disabled="table.getFilteredSelectedRowModel().rows.length < 1"
+              @click="$emit('batchDeactivate')"
+            >
+              <ToggleLeftIcon class="text-amber-600" />
+              <span>Desactivar selección</span>
+            </DropdownMenuItem>
             <DropdownMenuItem
               v-if="can.delete"
               class="text-red-600 transition-colors focus:bg-accent focus:text-accent-foreground"
               :disabled="table.getFilteredSelectedRowModel().rows.length < 1"
               @click="$emit('batchDestroy')"
             >
-            <Trash2Icon class="text-red-600" />
+              <Trash2Icon class="text-red-600" />
               <span>Eliminar selección</span>
             </DropdownMenuItem>
           </DropdownMenuGroup>

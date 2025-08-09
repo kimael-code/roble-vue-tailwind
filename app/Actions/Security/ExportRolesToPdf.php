@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Actions\Security\User;
+namespace App\Actions\Security;
 
 use App\Models\Organization\Organization;
 use App\Models\Security\Permission;
-use App\Models\User;
+use App\Models\Security\Role;
 use App\Support\DataExport\BasePdf;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Str;
 
-class ExportIndexToPdf extends BasePdf
+class ExportRolesToPdf extends BasePdf
 {
     public function __construct(
         protected string $orientation = 'L',
@@ -38,19 +38,7 @@ class ExportIndexToPdf extends BasePdf
         $this->setFont(family: 'iosevkafixedss12', size: 10);
         $this->MultiCell(w: 0, h: 0, align: 'L', ln: 1, txt: $filters['search'] ?: 'Todo');
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Usuario(s)');
-        $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['users'] ?: 'Todos');
-        $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Estatus');
-        $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['statuses'] ?: 'Todo');
-        $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Rol(es)');
-        $this->setFont(family: 'iosevkafixedss12', size: 10);
-        $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['roles'] ?: 'Todos');
-        $this->setFont(family: 'helvetica', style: 'B', size: 10);
-        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Permisos(s)');
+        $this->MultiCell(w: 40, h: 0, align: 'L', border: 'T', ln: 0, txt: 'Permiso(s)');
         $this->setFont(family: 'iosevkafixedss12', size: 10);
         $this->MultiCell(w: 0, h: 0, align: 'L', border: 'T', ln: 1, txt: $filters['permissions'] ?: 'Todos');
 
@@ -64,7 +52,7 @@ class ExportIndexToPdf extends BasePdf
         $this->setFont(family: 'helvetica', style: 'B', size: 10);
         $this->setFillColor(0, 53, 41);
         $this->setTextColor(255, 255, 255);
-        $this->Cell(w: 0, txt: '2. DETALLE DE LOS USUARIOS REGISTRADOS', border: 0, ln: 1, fill: true);
+        $this->Cell(w: 0, txt: '2. DETALLE DE LOS ROLES REGISTRADOS', border: 0, ln: 1, fill: true);
         $this->setTextColor(0, 0, 0);
 
         // establece el margen superior a la altura ocupada por el header
@@ -75,16 +63,16 @@ class ExportIndexToPdf extends BasePdf
     public function make(): string
     {
         // metadatos del archivo
-        $this->setTitle('REPORTE: USUARIOS');
-        $this->setSubject('Reporte de Usuarios registrados');
-        $this->setKeywords('reporte, PDF, usuario, usuarios');
+        $this->setTitle('REPORTE: ROLES');
+        $this->setSubject('Reporte de Roles registrados');
+        $this->setKeywords('reporte, PDF, rol, roles');
 
         $organizationLogo = Organization::active()->first()->logo_path ?? '';
 
         $this->setHeaderData(
             ln: storage_path("app/public/{$organizationLogo}"),
             lw: 60,
-            ht: 'REPORTE: USUARIOS',
+            ht: 'REPORTE: ROLES',
             hs: now()->isoFormat('L LTS'),
             tc: [0, 30, 15],
             lc: [0, 128, 100],
@@ -108,46 +96,67 @@ class ExportIndexToPdf extends BasePdf
 
         // ---------------------------------------------------------
 
-        $users = User::filter($this->filters)->get();
+        $roles = Role::filter($this->filters)->get();
 
-        foreach ($users as $key => $user)
+        foreach ($roles as $key => $role)
         {
-            $userPermissionsCreate = $user->getAllPermissions()
-                ->filter(fn(Permission $permission) => Str::startsWith($permission->name, 'create'))
+            $rolePermissionsCreate = $role->permissions
+                ->filter(
+                    fn(Permission $permission) => isset($this->filters['permissions'])
+                    ? Str::contains($permission->description, $this->filters['permissions']) && Str::startsWith($permission->name, 'create')
+                    : Str::startsWith($permission->name, 'create')
+                )
                 ->sortBy('description')
                 ->values()
                 ->all();
-            $userPermissionsRead = $user->getAllPermissions()
-                ->filter(fn(Permission $permission) => Str::startsWith($permission->name, 'read'))
+            $rolePermissionsRead = $role->permissions
+                ->filter(
+                    fn(Permission $permission) => isset($this->filters['permissions'])
+                    ? Str::contains($permission->description, $this->filters['permissions']) && Str::startsWith($permission->name, 'read')
+                    : Str::startsWith($permission->name, 'read')
+                )
                 ->sortBy('description')
                 ->values()
                 ->all();
-            $userPermissionsUpdate = $user->getAllPermissions()
-                ->filter(fn(Permission $permission) => Str::startsWith($permission->name, ['activate', 'deactivate', 'restore', 'update']))
+            $rolePermissionsUpdate = $role->permissions
+                ->filter(
+                    fn(Permission $permission) => isset($this->filters['permissions'])
+                    ? Str::contains($permission->description, $this->filters['permissions']) && Str::startsWith($permission->name, ['activate', 'deactivate', 'restore', 'update'])
+                    : Str::startsWith($permission->name, ['activate', 'deactivate', 'restore', 'update'])
+                )
                 ->sortBy('description')
                 ->values()
                 ->all();
-            $userPermissionsDelete = $user->getAllPermissions()
-                ->filter(fn(Permission $permission) => Str::startsWith($permission->name, ['delete', 'force']))
+            $rolePermissionsDelete = $role->permissions
+                ->filter(
+                    fn(Permission $permission) => isset($this->filters['permissions'])
+                    ? Str::contains($permission->description, $this->filters['permissions']) && Str::startsWith($permission->name, ['delete', 'force'])
+                    : Str::startsWith($permission->name, ['delete', 'force'])
+                )
                 ->sortBy('description')
                 ->values()
                 ->all();
-            $userPermissionsExport = $user->getAllPermissions()
-                ->filter(fn(Permission $permission) => Str::startsWith($permission->name, 'export'))
+            $rolePermissionsExport = $role->permissions
+                ->filter(
+                    fn(Permission $permission) => isset($this->filters['permissions'])
+                    ? Str::contains($permission->description, $this->filters['permissions']) && Str::startsWith($permission->name, 'export')
+                    : Str::startsWith($permission->name, 'export')
+                )
                 ->sortBy('description')
                 ->values()
                 ->all();
-            $userRoleNames = $user->getRoleNames()->sort()->values()->all();
 
-            $html = View::make('pdf.users.index', [
+            $html = View::make('pdf.roles.index', [
                 'key' => $key,
-                'user' => $user,
-                'userPermissionsCreate' => $userPermissionsCreate,
-                'userPermissionsRead' => $userPermissionsRead,
-                'userPermissionsUpdate' => $userPermissionsUpdate,
-                'userPermissionsDelete' => $userPermissionsDelete,
-                'userPermissionsExport' => $userPermissionsExport,
-                'userRoleNames' => $userRoleNames,
+                'role' => $role,
+                'rolePermissionsCreate' => $rolePermissionsCreate,
+                'rolePermissionsRead' => $rolePermissionsRead,
+                'rolePermissionsUpdate' => $rolePermissionsUpdate,
+                'rolePermissionsDelete' => $rolePermissionsDelete,
+                'rolePermissionsExport' => $rolePermissionsExport,
+                'headerName' => $this->getString('Rol', 'name'),
+                'headerDescription' => $this->getString('Descripción', 'description'),
+                'headerCreatedAt' => $this->getString('Fecha Creado', 'created_at_human'),
             ])
                 ->render();
 
@@ -156,17 +165,14 @@ class ExportIndexToPdf extends BasePdf
             $this->writeHTML($html);
         }
 
-        return $this->Output('REPORTE: USUARIOS');
+        return $this->Output('REPORTE: ROLES');
     }
 
     private function getFilters(): array
     {
         $filters = [
             'permissions' => '',
-            'roles' => '',
             'search' => '',
-            'statuses' => '',
-            'users' => '',
         ];
 
         if (isset($this->filters['permissions']))
@@ -174,24 +180,9 @@ class ExportIndexToPdf extends BasePdf
             $filters['permissions'] .= Arr::join($this->filters['permissions'], ', ');
         }
 
-        if (isset($this->filters['roles']))
-        {
-            $filters['roles'] .= Arr::join($this->filters['roles'], ', ');
-        }
-
         if (isset($this->filters['search']))
         {
             $filters['search'] .= $this->filters['search'];
-        }
-
-        if (isset($this->filters['statuses']))
-        {
-            $filters['statuses'] .= Arr::join($this->filters['statuses'], ', ');
-        }
-
-        if (isset($this->filters['users']))
-        {
-            $filters['users'] .= Arr::join($this->filters['users'], ', ');
         }
 
         return $filters;

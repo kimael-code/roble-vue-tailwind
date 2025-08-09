@@ -23,12 +23,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { ActivityLog, BreadcrumbItem, Can, Organization, OrganizationalUnit, PaginatedCollection, SearchFilter } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { Building, EllipsisIcon, LoaderCircle, Plus } from 'lucide-vue-next';
+import { ArrowLeftIcon, Building, EllipsisIcon, LoaderCircleIcon, PlusIcon } from 'lucide-vue-next';
 import { watch } from 'vue';
 import OrganizationalUnits from './partials/OrganizationalUnits.vue';
 
@@ -51,7 +52,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, requestCreate, requestAction, requestEdit, requestingCreate, resourceID } = useRequestActions('organizations');
+const { action, requestState, requestAction, resourceID } = useRequestActions('organizations');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription } = useConfirmAction();
 
 watch(action, () => {
@@ -91,16 +92,16 @@ watch(action, () => {
               </div>
               <br />
               <p class="text-sm font-medium">Acrónimo</p>
-              <p class="text-muted-foreground text-sm">{{ organization.acronym }}</p>
+              <p class="text-sm text-muted-foreground">{{ organization.acronym }}</p>
               <br />
               <p class="text-sm font-medium">Dirección</p>
-              <p class="text-muted-foreground text-sm">{{ organization.address }}</p>
+              <p class="text-sm text-muted-foreground">{{ organization.address }}</p>
               <br />
               <p class="text- text-sm font-medium">Creado</p>
-              <p class="text-muted-foreground text-sm">{{ organization.created_at_human }}</p>
+              <p class="text-sm text-muted-foreground">{{ organization.created_at_human }}</p>
               <br />
               <p class="text-sm font-medium">Modificado</p>
-              <p class="text-muted-foreground text-sm">{{ organization.updated_at_human }}</p>
+              <p class="text-sm text-muted-foreground">{{ organization.updated_at_human }}</p>
               <br />
               <p class="text- text-sm font-medium">Estatus</p>
               <p class="text-sm" :class="{ 'text-green-500': !organization.disabled_at, 'text-red-500': organization.disabled_at }">
@@ -110,32 +111,46 @@ watch(action, () => {
           </Card>
         </div>
         <div class="col-span-3">
-          <div class="flex items-center justify-end pb-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger as-child>
-                <Button variant="outline" :disabled="resourceID !== null">
-                  <EllipsisIcon v-if="resourceID === null" />
-                  <LoaderCircle v-else class="animate-spin" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem @click="requestEdit(props.organization.id, { preserveState: false })">
-                    <span>Editar</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem @click="action = 'destroy'">
-                    <span>Eliminar</span>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button v-if="can.create" class="ml-3" @click="requestCreate" :disabled="requestingCreate">
-              <LoaderCircle v-if="requestingCreate" class="h-4 w-4 animate-spin" />
-              <Plus v-else class="mr-2 h-4 w-4" />
-              Nuevo
-            </Button>
+          <div class="flex items-center justify-between pb-3">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger as-child>
+                  <Button variant="secondary" @click="requestAction({ operation: 'read_all' })" :disabled="requestState.readAll">
+                    <LoaderCircleIcon v-if="requestState.readAll" class="h-4 w-4 animate-spin" />
+                    <ArrowLeftIcon v-else class="mr-2 h-4 w-4" />
+                    Regresar
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent> Regresar al listado de entes </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <div class="flex items-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button variant="outline" :disabled="resourceID !== null">
+                    <EllipsisIcon v-if="resourceID === null" />
+                    <LoaderCircleIcon v-else class="animate-spin" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem @click="requestAction({ operation: 'edit', data: { id: organization.id }, options: { preserveState: false } })">
+                      <span>Editar</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="action = 'destroy'">
+                      <span>Eliminar</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button v-if="can.create" class="ml-3" @click="requestAction({ operation: 'create' })" :disabled="requestState.create">
+                <LoaderCircleIcon v-if="requestState.create" class="h-4 w-4 animate-spin" />
+                <PlusIcon v-else class="mr-2 h-4 w-4" />
+                Nuevo
+              </Button>
+            </div>
           </div>
           <Tabs default-value="ous" class="w-auto">
             <TabsList class="grid w-full grid-cols-2">
@@ -160,7 +175,7 @@ watch(action, () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel @click="action = null">Cancelar</AlertDialogCancel>
-            <AlertDialogAction :class="alertActionCss" @click="requestAction(organization.id, { preserveState: false })">
+            <AlertDialogAction :class="alertActionCss" @click="requestAction({ data: { id: organization.id }, options: { preserveState: false } })">
               {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>

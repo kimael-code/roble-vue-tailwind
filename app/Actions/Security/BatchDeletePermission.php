@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Actions\Organization\Organization;
+namespace App\Actions\Security;
 
-use App\Models\Organization\Organization;
+use App\Models\Security\Permission;
 
-class BatchDeleteOrganization
+class BatchDeletePermission
 {
     public static function execute(array $ids): array
     {
@@ -23,15 +23,15 @@ class BatchDeleteOrganization
                 continue;
             }
 
-            $organization = Organization::find($id);
+            $permission = Permission::find($id);
 
-            if (!$organization->disabled_at || $organization->organizationalUnits()->exists())
+            if ($permission->users()->exists() || $permission->roles()->exists())
             {
                 $nonDeleteCount += 1;
             }
             else
             {
-                $organization->delete();
+                $permission->delete();
                 $deleteCount += 1;
             }
         }
@@ -49,12 +49,12 @@ class BatchDeleteOrganization
 
         if ($nonDeleteCount === 1)
         {
-            $msg['message'] .= ". $nonDeleteCount registro NO eliminado. Causa: asociado a otros registros";
+            $msg['message'] .= ". $nonDeleteCount registro NO eliminado. Causa: asociación de registros";
             $msg['type'] = 'warning';
         }
         elseif ($nonDeleteCount > 1)
         {
-            $msg['message'] .= ". $nonDeleteCount registros NO eliminados. Causa: asociados a otros registros";
+            $msg['message'] .= ". $nonDeleteCount registros NO eliminados. Causa: asociación de registros";
             $msg['type'] = 'warning';
         }
 

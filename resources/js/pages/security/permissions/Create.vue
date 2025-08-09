@@ -10,7 +10,7 @@ import ContentLayout from '@/layouts/ContentLayout.vue';
 import { BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import { useForm } from 'laravel-precognition-vue-inertia';
-import { KeySquare, LoaderCircle } from 'lucide-vue-next';
+import { KeySquare, LoaderCircleIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -115,11 +115,11 @@ function index() {
           </CardContent>
           <CardFooter class="flex justify-between px-6 pb-6">
             <Button variant="outline" :disabled="buttonCancel" @click="index">
-              <LoaderCircle v-if="buttonCancel" class="h-4 w-4 animate-spin" />
+              <LoaderCircleIcon v-if="buttonCancel" class="h-4 w-4 animate-spin" />
               Cancelar
             </Button>
             <Button :disabled="buttonCancel || form.processing" @click="submit">
-              <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
+              <LoaderCircleIcon v-if="form.processing" class="h-4 w-4 animate-spin" />
               Guardar
             </Button>
           </CardFooter>

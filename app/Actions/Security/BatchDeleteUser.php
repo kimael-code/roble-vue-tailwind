@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Security\User;
+namespace App\Actions\Security;
 
 use App\Models\User;
 
@@ -39,20 +39,20 @@ class BatchDeleteUser
             if ($user->is(auth()->user()))
             {
                 $nonDeleteCount += 1;
-                $nonDeleteReasons .= 'usted no puede eliminar su propia cuenta';
                 $nonDeleteReasons .= $nonDeleteCount > 1 ? ', ' : '';
+                $nonDeleteReasons .= 'usted no puede eliminar su propia cuenta';
             }
             elseif ($sysadminsCount === 1 && $superusersCount === 0 && $user->hasRole($sysAdminRole))
             {
                 $nonDeleteCount += 1;
-                $nonDeleteReasons .= 'única cuenta de administrador de sistemas';
                 $nonDeleteReasons .= $nonDeleteCount > 1 ? ', ' : '';
+                $nonDeleteReasons .= 'única cuenta de administrador de sistemas';
             }
             elseif ($sysadminsCount === 0 && $superusersCount === 1 && $user->hasRole($sysAdminRole))
             {
                 $nonDeleteCount += 1;
-                $nonDeleteReasons .= 'única cuenta de administrador de sistemas';
                 $nonDeleteReasons .= $nonDeleteCount > 1 ? ', ' : '';
+                $nonDeleteReasons .= 'única cuenta de administrador de sistemas';
             }
             else
             {
@@ -74,12 +74,12 @@ class BatchDeleteUser
 
         if ($nonDeleteCount === 1)
         {
-            $msg['message'] .= ". $nonDeleteCount registro NO eliminado. Causa: $nonDeleteReasons";
+            $msg['message'] .= ". $nonDeleteCount registro NO eliminado. Causa/s: $nonDeleteReasons";
             $msg['type'] = 'warning';
         }
         elseif ($nonDeleteCount > 1)
         {
-            $msg['message'] .= ". $nonDeleteCount registros NO eliminados. Causa: $nonDeleteReasons";
+            $msg['message'] .= ". $nonDeleteCount registros NO eliminados. Causa/s: $nonDeleteReasons";
             $msg['type'] = 'warning';
         }
 

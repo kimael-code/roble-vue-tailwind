@@ -135,6 +135,7 @@ export const columns = [
       ]);
     },
     cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
+    meta: { class: 'whitespace-normal' },
   }),
   columnHelper.accessor('created_at_human', {
     header: ({ column }) => {
@@ -169,6 +170,7 @@ export const columns = [
       ]);
     },
     cell: (info) => h('div', { class: 'px-2' }, info.getValue()),
+    meta: { class: 'whitespace-normal' },
   }),
   columnHelper.display({
     id: 'actions',

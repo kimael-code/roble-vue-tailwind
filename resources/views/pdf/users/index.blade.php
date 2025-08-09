@@ -27,23 +27,23 @@
         <td class="td-data" width="734">{{ $key + 1 }}</td>
     </tr>
     <tr>
-        <td class="td-header" width="150"><b>{{ $exporter->getString('Usuario', 'name') }}</b></td>
+        <td class="td-header" width="150"><b>{{ $headerUser }}</b></td>
         <td class="td-data">{{ $user?->name }}{{ $user?->person ? "[{$user?->person->names} {$user?->person->surnames}]" : '' }}</td>
     </tr>
     <tr>
-        <td class="td-header" width="150"><b>{{ $exporter->getString('Correo Electrónico', 'email') }}</b></td>
+        <td class="td-header" width="150"><b>{{ $headerEmail }}</b></td>
         <td class="td-data">{{ $user?->email }}</td>
     </tr>
     <tr>
-        <td class="td-header" width="150"><b>{{ $exporter->getString('Creado', 'created_at_human') }}</b></td>
+        <td class="td-header" width="150"><b>{{ $headerCreatedAt }}</b></td>
         <td class="td-data">{{ $user?->created_at_human }}</td>
     </tr>
     <tr>
-        <td class="td-header" width="150"><b>{{ $exporter->getString('Desactivado', 'disabled_at_human') }}</b></td>
+        <td class="td-header" width="150"><b>{{ $headerDisabledAt }}</b></td>
         <td class="td-data">{{ $user->disabled_at_human ?? 'N/A' }}</td>
     </tr>
     <tr>
-        <td class="td-header" width="150"><b>{{ $exporter->getString('Eliminado', 'deleted_at_human') }}</b></td>
+        <td class="td-header" width="150"><b>{{ $headerDeletedAt }}</b></td>
         <td class="td-data">{{ $user->deleted_at_human ?? 'N/A' }}</td>
     </tr>
     <tr nobr="true">

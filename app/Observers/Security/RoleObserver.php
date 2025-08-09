@@ -92,7 +92,7 @@ class RoleObserver
                 [
                     'type' => __('role'),
                     'name' => "{$role->name}",
-                    'timestamp' => now()->toIso8601String(),
+                    'timestamp' => now(),
                 ],
                 'deleted',
                 ['routeName' => 'roles', 'routeParam' => 'role']

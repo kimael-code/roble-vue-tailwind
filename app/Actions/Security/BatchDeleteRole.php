@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Actions\Organization\OrganizationalUnit;
+namespace App\Actions\Security;
 
-use App\Models\Organization\OrganizationalUnit;
+use App\Models\Security\Role;
 
-class BatchDeleteOrganizationalUnit
+class BatchDeleteRole
 {
     public static function execute(array $ids): array
     {
@@ -15,6 +15,7 @@ class BatchDeleteOrganizationalUnit
         ];
         $deleteCount = 0;
         $nonDeleteCount = 0;
+        $nonDeleteReasons = '';
 
         foreach ($ids as $id => $isSelected)
         {
@@ -23,19 +24,23 @@ class BatchDeleteOrganizationalUnit
                 continue;
             }
 
-            $organizationalUnit = OrganizationalUnit::find($id);
+            $role = Role::find($id);
 
-            if (
-                !$organizationalUnit->disabled_at
-                || $organizationalUnit->organizationalUnits()->exists()
-                || $organizationalUnit->users()->exists()
-            )
+            if ($role->id === 0 || $role->name === __('Superuser'))
             {
                 $nonDeleteCount += 1;
+                $nonDeleteReasons .= $nonDeleteCount > 1 ? ', ' : '';
+                $nonDeleteReasons .= 'Superusuario no es eliminable';
+            }
+            elseif ($role->permissions()->exists() || $role->users()->exists())
+            {
+                $nonDeleteCount += 1;
+                $nonDeleteReasons .= $nonDeleteCount > 1 ? ', ' : '';
+                $nonDeleteReasons .= 'asociación de registros';
             }
             else
             {
-                $organizationalUnit->delete();
+                $role->delete();
                 $deleteCount += 1;
             }
         }
@@ -53,12 +58,12 @@ class BatchDeleteOrganizationalUnit
 
         if ($nonDeleteCount === 1)
         {
-            $msg['message'] .= ". $nonDeleteCount registro NO eliminado. Causa: asociado a otros registros";
+            $msg['message'] .= ". $nonDeleteCount registro NO eliminado. Causa/s: $nonDeleteReasons";
             $msg['type'] = 'warning';
         }
         elseif ($nonDeleteCount > 1)
         {
-            $msg['message'] .= ". $nonDeleteCount registros NO eliminados. Causa: asociados a otros registros";
+            $msg['message'] .= ". $nonDeleteCount registros NO eliminados. Causa/s: $nonDeleteReasons";
             $msg['type'] = 'warning';
         }
 

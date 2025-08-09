@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Security\Permission;
+namespace App\Actions\Security;
 
 use App\Models\Organization\Organization;
 use App\Models\Security\Permission;
@@ -9,7 +9,7 @@ use App\Support\DataExport\BasePdf;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\View;
 
-class ExportIndexToPdf extends BasePdf
+class ExportPermissionsToPdf extends BasePdf
 {
     public function __construct(
         protected string $orientation = 'L',

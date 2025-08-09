@@ -22,12 +22,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useConfirmAction, useRequestActions } from '@/composables';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { ActivityLog, BreadcrumbItem, Can, PaginatedCollection, Permission, Role, SearchFilter, User } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { EllipsisIcon, KeySquare, LoaderCircle, Plus } from 'lucide-vue-next';
+import { ArrowLeftIcon, EllipsisIcon, KeySquare, LoaderCircleIcon, PlusIcon } from 'lucide-vue-next';
 import { watch } from 'vue';
 import Roles from './partials/Roles.vue';
 import Usuarios from './partials/Usuarios.vue';
@@ -52,7 +53,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, requestCreate, requestAction, requestEdit, requestingCreate, resourceID } = useRequestActions('permissions');
+const { action, requestState, requestAction, resourceID } = useRequestActions('permissions');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription } = useConfirmAction();
 
 watch(action, () => {
@@ -86,43 +87,57 @@ watch(action, () => {
             </CardHeader>
             <CardContent>
               <p class="text-sm font-medium">Permite definir el Menú</p>
-              <p class="text-muted-foreground text-sm">{{ permission.set_menu }}</p>
+              <p class="text-sm text-muted-foreground">{{ permission.set_menu ? 'SÍ' : 'NO' }}</p>
               <br />
               <p class="text-sm font-medium">Creado</p>
-              <p class="text-muted-foreground text-sm">{{ permission.created_at_human }}</p>
+              <p class="text-sm text-muted-foreground">{{ permission.created_at_human }}</p>
               <br />
               <p class="text-sm font-medium">Modificado</p>
-              <p class="text-muted-foreground text-sm">{{ permission.updated_at_human }}</p>
+              <p class="text-sm text-muted-foreground">{{ permission.updated_at_human }}</p>
             </CardContent>
           </Card>
         </div>
         <div class="col-span-3">
-          <div class="flex items-center justify-end pb-3">
-            <DropdownMenu>
-              <DropdownMenuTrigger as-child>
-                <Button variant="outline" :disabled="resourceID !== null">
-                  <EllipsisIcon v-if="resourceID === null" />
-                  <LoaderCircle v-else class="animate-spin" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuGroup>
-                  <DropdownMenuItem @click="requestEdit(props.permission.id, { preserveState: false })">
-                    <span>Editar</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem @click="action = 'destroy'">
-                    <span>Eliminar</span>
-                  </DropdownMenuItem>
-                </DropdownMenuGroup>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button v-if="can.create" class="ml-3" @click="requestCreate" :disabled="requestingCreate">
-              <LoaderCircle v-if="requestingCreate" class="h-4 w-4 animate-spin" />
-              <Plus v-else class="mr-2 h-4 w-4" />
-              Nuevo
-            </Button>
+          <div class="flex items-center justify-between pb-3">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger as-child>
+                  <Button variant="secondary" @click="requestAction({ operation: 'read_all' })" :disabled="requestState.readAll">
+                    <LoaderCircleIcon v-if="requestState.readAll" class="h-4 w-4 animate-spin" />
+                    <ArrowLeftIcon v-else class="mr-2 h-4 w-4" />
+                    Regresar
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent> Regresar al listado de permisos </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <div class="flex items-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button variant="outline" :disabled="resourceID !== null">
+                    <EllipsisIcon v-if="resourceID === null" />
+                    <LoaderCircleIcon v-else class="animate-spin" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuGroup>
+                    <DropdownMenuItem @click="requestAction({ operation: 'edit', data: { id: permission.id }, options: { preserveState: false } })">
+                      <span>Editar</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem @click="action = 'destroy'">
+                      <span>Eliminar</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button v-if="can.create" class="ml-3" @click="requestAction({ operation: 'create' })" :disabled="requestState.create">
+                <LoaderCircleIcon v-if="requestState.create" class="h-4 w-4 animate-spin" />
+                <PlusIcon v-else class="mr-2 h-4 w-4" />
+                Nuevo
+              </Button>
+            </div>
           </div>
           <Tabs default-value="roles" class="w-auto">
             <TabsList class="grid w-full grid-cols-3">
@@ -151,7 +166,7 @@ watch(action, () => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel @click="action = null">Cancelar</AlertDialogCancel>
-            <AlertDialogAction :class="alertActionCss" @click="requestAction(permission.id, { preserveState: false })">
+            <AlertDialogAction :class="alertActionCss" @click="requestAction({ data: { id: permission.id }, options: { preserveState: false } })">
               {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>

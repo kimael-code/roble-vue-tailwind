@@ -39,7 +39,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { action, resourceID, requestState, requestAction, requestRead, requestEdit, requestCreate } = useRequestActions('permissions');
+const { action, resourceID, requestState, requestAction } = useRequestActions('permissions');
 const { alertOpen, alertAction, alertActionCss, alertTitle, alertDescription, alertData } = useConfirmAction();
 const showPdf = ref(false);
 const showAdvancedFilters = ref(false);
@@ -181,9 +181,9 @@ function handleAdvancedSearch() {
         :is-loading-dropdown="requestState.batchDestroy"
         @batch-destroy="handleBatchAction('batch_destroy')"
         @search="(s) => (globalFilter = s)"
-        @new="requestCreate"
-        @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
-        @update="(row) => (requestEdit(row.id), (processingRowId = row.id))"
+        @new="requestAction({ operation: 'create' })"
+        @read="(row) => (requestAction({ operation: 'read', data: { id: row.id } }), (processingRowId = row.id))"
+        @update="(row) => (requestAction({ operation: 'edit', data: { id: row.id } }), (processingRowId = row.id))"
         @destroy="(row) => handleAction('destroy', row)"
         @export="showPdf = true"
         @advanced-search="handleAdvancedSearch"
@@ -197,7 +197,7 @@ function handleAdvancedSearch() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel @click="((action = null), (processingRowId = null))">Cancelar</AlertDialogCancel>
-            <AlertDialogAction :class="alertActionCss" @click="requestAction(alertData, { preserveState: false })">
+            <AlertDialogAction :class="alertActionCss" @click="requestAction({ data: alertData, options: { preserveState: false } })">
               {{ alertAction }}
             </AlertDialogAction>
           </AlertDialogFooter>

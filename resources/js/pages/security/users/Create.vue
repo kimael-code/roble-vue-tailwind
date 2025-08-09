@@ -17,7 +17,7 @@ import { BreadcrumbItem, Employee, OrganizationalUnit, Pagination, Permission, R
 import { Head, router, WhenVisible } from '@inertiajs/vue3';
 import { watchDebounced } from '@vueuse/core';
 import { useForm } from 'laravel-precognition-vue-inertia';
-import { LoaderCircle, Search, UserIcon } from 'lucide-vue-next';
+import { LoaderCircleIcon, Search, UserIcon } from 'lucide-vue-next';
 import { computed, ref, watch } from 'vue';
 import CardPerson from './partials/CardPerson.vue';
 
@@ -322,11 +322,11 @@ function handleExternalPerson() {
           </CardContent>
           <CardFooter class="flex justify-between px-6 pb-6">
             <Button variant="outline" :disabled="buttonCancel" @click="index">
-              <LoaderCircle v-if="buttonCancel" class="h-4 w-4 animate-spin" />
+              <LoaderCircleIcon v-if="buttonCancel" class="h-4 w-4 animate-spin" />
               Cancelar
             </Button>
             <Button :disabled="buttonCancel || form.processing" @click="submit">
-              <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
+              <LoaderCircleIcon v-if="form.processing" class="h-4 w-4 animate-spin" />
               Guardar
             </Button>
           </CardFooter>

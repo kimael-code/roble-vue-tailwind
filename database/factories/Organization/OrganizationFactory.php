@@ -31,6 +31,6 @@ class OrganizationFactory extends Factory
      */
     public function disabled(): Factory
     {
-        return $this->state(fn(array $attributes) => ['disabled_at' => now()->toIso8601String()]);
+        return $this->state(fn(array $attributes) => ['disabled_at' => now()]);
     }
 }

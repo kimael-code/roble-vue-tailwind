@@ -29,7 +29,7 @@ const breadcrumbs: BreadcrumbItem[] = [
   },
 ];
 
-const { requestRead, requestState } = useRequestActions('activity-logs');
+const { requestAction, requestState } = useRequestActions('activity-logs');
 const showPdf = ref(false);
 const showAdvancedFilters = ref(false);
 const advancedSearchApplied = ref(false);
@@ -134,7 +134,7 @@ function handleAdvancedSearch() {
         :table="table"
         :is-advanced-search="advancedSearchApplied"
         @search="(s) => (globalFilter = s)"
-        @read="(row) => (requestRead(row.id), (processingRowId = row.id))"
+        @read="(row) => (requestAction({ operation: 'read', data: { id: row.id } }), (processingRowId = row.id))"
         @export="showPdf = true"
         @advanced-search="handleAdvancedSearch"
       />

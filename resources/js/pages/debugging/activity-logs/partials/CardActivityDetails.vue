@@ -19,40 +19,52 @@ const props = defineProps<{
   log: ActivityLog;
 }>();
 
-const cardTitle = computed(() => {
+const cardHeader = computed(() => {
+  const data: {
+    css: string;
+    description: string | null;
+    title: string;
+  } = {
+    css: '',
+    description: '',
+    title: '',
+  };
+
   switch (props.log.event) {
     case 'authenticated':
-      return 'AUTHENTICATED';
+      data.css = 'text-primary';
+      data.description = 'Datos técnicos de la petición';
+      data.title = 'AUTHENTICATED';
+      break;
     case 'authorized':
-      return 'AUTHORIZED';
+      data.css = 'text-primary';
+      data.description = 'Datos técnicos de los objetos procesados en la autorización';
+      data.title = 'AUTHORIZED';
+      break;
     case 'created':
-      return 'CREATED';
+      data.css = 'text-green-500';
+      data.description = props.log.subject_type;
+      data.title = 'CREATED';
+      break;
     case 'updated':
-      return 'UPDATED';
+      data.css = 'text-green-500';
+      data.description = props.log.subject_type;
+      data.title = 'UPDATED';
+      break;
     case 'deleted':
-      return 'DELETED';
+      data.css = 'text-red-500';
+      data.description = props.log.subject_type;
+      data.title = 'DELETED';
+      break;
 
     default:
-      return 'Evento';
+      data.css = '';
+      data.description = 'Detalle del evento.';
+      data.title = 'Evento';
+      break;
   }
-});
 
-const cardDescription = computed(() => {
-  switch (props.log.event) {
-    case 'authenticated':
-      return 'Datos técnicos de la petición';
-    case 'authorized':
-      return 'Datos técnicos de los objetos procesados en la autorización';
-    case 'created':
-      return props.log.subject_type;
-    case 'updated':
-      return props.log.subject_type;
-    case 'deleted':
-      return props.log.subject_type;
-
-    default:
-      return 'Detalle del evento.';
-  }
+  return data;
 });
 
 const authorizedObjects = computed(() => {
@@ -117,8 +129,8 @@ function compareObjects(obj1: GenericModel, obj2: GenericModel) {
 <template>
   <Card>
     <CardHeader>
-      <CardTitle>{{ cardTitle }}</CardTitle>
-      <CardDescription>{{ cardDescription }}</CardDescription>
+      <CardTitle :class="cardHeader.css">{{ cardHeader.title }}</CardTitle>
+      <CardDescription>{{ cardHeader.description }}</CardDescription>
     </CardHeader>
     <CardContent v-if="log.event === 'created'">
       <Table>
@@ -167,11 +179,11 @@ function compareObjects(obj1: GenericModel, obj2: GenericModel) {
         <TableBody v-if="log.properties.attributes && log.properties.old">
           <TableRow v-for="(item, i) in compareObjects(log.properties.old, log.properties.attributes)" :key="i">
             <TableCell class="font-mono text-xs">{{ item.key }}</TableCell>
-            <TableCell class="text-muted-foreground font-mono text-xs text-right" :class="{ 'bg-red-100 font-medium text-red-700': !item.areEqual }">
+            <TableCell class="text-right font-mono text-xs text-muted-foreground" :class="{ 'bg-red-100 font-medium text-red-700': !item.areEqual }">
               {{ item.value1 !== undefined ? item.value1 : 'N/A' }}
             </TableCell>
             <TableCell
-              class="text-muted-foreground font-mono text-xs"
+              class="font-mono text-xs text-muted-foreground"
               :class="{ 'bg-green-100 font-medium text-green-700': !item.areEqual, 'text-muted-foreground': item.areEqual }"
             >
               {{ item.value2 !== undefined ? item.value2 : 'N/A' }}
@@ -184,14 +196,14 @@ function compareObjects(obj1: GenericModel, obj2: GenericModel) {
       <div class="grid w-full items-center gap-4">
         <div class="space-y-1">
           <p class="text-sm leading-none font-medium">Propiedades de los Registros:</p>
-          <pre class="text-muted-foreground text-xs text-pretty">{{ authorizedObjects }}</pre>
+          <pre class="text-xs text-pretty text-muted-foreground">{{ authorizedObjects }}</pre>
         </div>
       </div>
     </CardContent>
     <CardContent v-else>
       <div class="grid w-full items-center gap-4">
         <div class="space-y-1">
-          <pre class="text-muted-foreground text-xs text-pretty">{{ log.properties.request }}</pre>
+          <pre class="text-xs text-pretty text-muted-foreground">{{ log.properties.request }}</pre>
         </div>
       </div>
     </CardContent>
