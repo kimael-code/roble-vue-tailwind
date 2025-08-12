@@ -29,7 +29,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { ActivityLog, BreadcrumbItem, Can, Organization, OrganizationalUnit, PaginatedCollection, SearchFilter } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { ArrowLeftIcon, Building, EllipsisIcon, LoaderCircleIcon, PlusIcon } from 'lucide-vue-next';
+import { ArrowLeftIcon, Building, EllipsisIcon, LoaderCircleIcon, PencilIcon, PlusIcon, Trash2Icon } from 'lucide-vue-next';
 import { watch } from 'vue';
 import OrganizationalUnits from './partials/OrganizationalUnits.vue';
 
@@ -137,9 +137,11 @@ watch(action, () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuItem @click="requestAction({ operation: 'edit', data: { id: organization.id }, options: { preserveState: false } })">
+                      <PencilIcon />
                       <span>Editar</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="action = 'destroy'">
+                    <DropdownMenuItem class="text-red-600 transition-colors focus:bg-accent focus:text-accent-foreground" @click="action = 'destroy'">
+                      <Trash2Icon class="text-red-600" />
                       <span>Eliminar</span>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>

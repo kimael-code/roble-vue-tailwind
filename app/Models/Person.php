@@ -79,8 +79,8 @@ class Person extends BaseModel
             {
                 $query->where(function (Builder $query) use ($term)
                 {
-                    $query->where('names', 'ilike', "%$term%")
-                        ->orWhere('surnames', 'ilike', "%$term%");
+                    $query->whereRaw('unaccent(names) ilike unaccent(?)', ["%$term%"])
+                        ->orWhereRaw('unaccent(surnames) ilike unaccent(?)', ["%$term%"]);
                 });
             })
             ->when(empty($filters) ?? null, function (Builder $query)

@@ -47,12 +47,12 @@ class PermissionPolicy
     {
         if ($permission->roles->isNotEmpty())
         {
-            return Response::deny('There are roles having this permission.');
+            return Response::deny(__('There are roles having this permission.'));
         }
 
         if ($permission->users->isNotEmpty())
         {
-            return Response::deny('There are users having this permission.');
+            return Response::deny(__('There are users having this permission.'));
         }
 
         return $user->can('delete permissions') ? true : null;

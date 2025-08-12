@@ -21,7 +21,7 @@ class CreateUser
         {
             $user->name = $inputs['name'];
             $user->email = $inputs['email'];
-            $user->password = $inputs['id_card'] ?: Hash::make('12345678');
+            $user->password = $inputs['id_card'] ? Hash::make($inputs['id_card']) : Hash::make('12345678');
             $user->remember_token = Str::random();
             $user->is_external = $inputs['is_external'];
             $user->save();

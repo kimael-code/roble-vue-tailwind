@@ -69,7 +69,7 @@ class OrganizationPolicy
 
         if (!$ThereIsOtherActiveOrganization)
         {
-            return Response::deny('You cannot delete the only active Organization');
+            return Response::deny(__('You cannot delete the only active Organization'));
         }
 
         if ($organization->organizationalUnits->isNotEmpty())

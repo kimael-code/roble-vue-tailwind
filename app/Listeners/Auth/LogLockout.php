@@ -28,13 +28,13 @@ class LogLockout
             ->event('authenticated')
             ->causedBy($causer)
             ->withProperty('request', [
-                'ip_address'      => $event->request->ip(),
-                'user_agent'      => $event->request->header('user-agent'),
+                'ip_address' => $event->request->ip(),
+                'user_agent' => $event->request->header('user-agent'),
                 'user_agent_lang' => $event->request->header('accept-language'),
-                'referer'         => $event->request->header('referer'),
-                'http_method'     => $event->request->method(),
-                'request_url'     => $event->request->fullUrl(),
-                'credentials'     => $event->request->all(),
+                'referer' => $event->request->header('referer'),
+                'http_method' => $event->request->method(),
+                'request_url' => $event->request->fullUrl(),
+                'credentials' => $event->request->all(),
             ])
             ->withProperty('causer', User::with('person')->find($causer->id)->toArray() ?? '')
             ->log(__(':username: locked out', ['username' => $event->request->user()->name ?? '']));

@@ -144,7 +144,7 @@ function handlePermissionSelecction(permission: Permission) {
                   <InputError :message="form.errors.description" />
                 </div>
                 <div class="flex flex-col space-y-1.5">
-                  <Label class="is-required" for="guard_name">Autenticación</Label>
+                  <Label class="is-required" for="guard_name">Autentificación</Label>
                   <Input
                     id="guard_name"
                     v-model="form.guard_name"

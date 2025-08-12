@@ -13,11 +13,11 @@ return [
     |
     */
 
-    'created'   => 'registró',
-    'updated'   => 'editó',
-    'deleted'   => 'eliminó',
+    'created' => 'registró',
+    'updated' => 'editó',
+    'deleted' => 'eliminó',
     'f_deleted' => 'eliminó permanentemente',
-    'saved'     => "registró",
-    'restored'  => "restauró",
+    'saved' => "registró",
+    'restored' => "restauró",
 
 ];

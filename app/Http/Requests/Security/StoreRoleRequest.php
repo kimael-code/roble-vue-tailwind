@@ -28,4 +28,19 @@ class StoreRoleRequest extends FormRequest
             'permissions' => ['required', 'array',],
         ];
     }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'name' => 'Nombre',
+            'description' => 'Descripción',
+            'guard_name' => 'Autentificación',
+            'permissions' => 'Permisos',
+        ];
+    }
 }

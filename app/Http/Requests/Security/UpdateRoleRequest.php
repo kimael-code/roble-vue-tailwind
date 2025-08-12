@@ -29,4 +29,19 @@ class UpdateRoleRequest extends FormRequest
             'permissions' => ['nullable', 'array',],
         ];
     }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'name' => 'Nombre',
+            'description' => 'Descripción',
+            'guard_name' => 'Autentificación',
+            'permissions' => 'Permisos',
+        ];
+    }
 }

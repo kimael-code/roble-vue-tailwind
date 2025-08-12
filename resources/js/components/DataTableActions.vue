@@ -16,14 +16,14 @@ import {
 import { Can } from '@/types';
 import {
   EllipsisIcon,
-  Eye,
-  FileDown,
+  EyeIcon,
+  FileDownIcon,
   LoaderCircleIcon,
-  Pencil,
+  PencilIcon,
   RotateCcwIcon,
   ToggleLeftIcon,
   ToggleRightIcon,
-  Trash2,
+  Trash2Icon,
   XIcon,
 } from 'lucide-vue-next';
 import { ref } from 'vue';
@@ -71,15 +71,15 @@ const menuIsOpen = ref(false);
       <DropdownMenuSeparator />
       <DropdownMenuGroup>
         <DropdownMenuItem v-if="can.read" @click="$emit('read', row)">
-          <Eye />
+          <EyeIcon />
           <span>Ver</span>
         </DropdownMenuItem>
         <DropdownMenuItem v-if="can.update" @click="$emit('update', row)">
-          <Pencil />
+          <PencilIcon />
           <span>Editar</span>
         </DropdownMenuItem>
         <DropdownMenuItem v-if="can.export" @click="$emit('export', row)">
-          <FileDown />
+          <FileDownIcon />
           <span>Exportar</span>
         </DropdownMenuItem>
       </DropdownMenuGroup>
@@ -117,7 +117,7 @@ const menuIsOpen = ref(false);
                 :disabled="row?.deleted_at ? true : false"
                 @click="$emit('destroy', row)"
               >
-                <Trash2 class="text-red-600" />
+                <Trash2Icon class="text-red-600" />
                 <span>Eliminar</span>
               </DropdownMenuItem>
               <DropdownMenuItem

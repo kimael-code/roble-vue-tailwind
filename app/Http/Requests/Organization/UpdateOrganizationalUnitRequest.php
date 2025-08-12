@@ -30,4 +30,21 @@ class UpdateOrganizationalUnitRequest extends FormRequest
             'organizational_unit_id' => ['nullable', 'numeric', 'integer', 'exists:organizational_units,id'],
         ];
     }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'organization_id' => 'Ente',
+            'name' => 'Nombre',
+            'code' => 'Código',
+            'acronym' => 'Acrónimo',
+            'floor' => 'Piso',
+            'organizational_unit_id' => 'Unidad Administrativa de Adscripción',
+        ];
+    }
 }

@@ -28,7 +28,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { ActivityLog, BreadcrumbItem, Can, OrganizationalUnit, PaginatedCollection, SearchFilter } from '@/types';
 import { Head } from '@inertiajs/vue3';
-import { ArrowLeftIcon, EllipsisIcon, LoaderCircleIcon, PlusIcon, Workflow } from 'lucide-vue-next';
+import { ArrowLeftIcon, EllipsisIcon, LoaderCircleIcon, PencilIcon, PlusIcon, Trash2Icon, Workflow } from 'lucide-vue-next';
 import { watch } from 'vue';
 import CardOrganization from './partials/CardOrganization.vue';
 import OrganizationalUnits from './partials/OrganizationalUnits.vue';
@@ -74,7 +74,7 @@ watch(action, () => {
 <template>
   <AppLayout :breadcrumbs>
     <Head title="Unidades Administrativas: Ver" />
-    <ContentLayout :title="organizationalUnit.name" :description="`${organizationalUnit.acronym}`">
+    <ContentLayout :title="organizationalUnit.name" :description="`${organizationalUnit.acronym ?? '-'}`">
       <template #icon>
         <Workflow />
       </template>
@@ -133,9 +133,11 @@ watch(action, () => {
                     <DropdownMenuItem
                       @click="requestAction({ operation: 'edit', data: { id: organizationalUnit.id }, options: { preserveState: false } })"
                     >
+                      <PencilIcon />
                       <span>Editar</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem @click="action = 'destroy'">
+                    <DropdownMenuItem class="text-red-600 transition-colors focus:bg-accent focus:text-accent-foreground" @click="action = 'destroy'">
+                      <Trash2Icon class="text-red-600" />
                       <span>Eliminar</span>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
