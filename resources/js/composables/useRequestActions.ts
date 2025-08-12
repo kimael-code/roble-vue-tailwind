@@ -1,5 +1,5 @@
 import { OperationType } from '@/types';
-import { useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 /**
@@ -44,7 +44,6 @@ export function useRequestActions(resourceName: string) {
 
   const action = ref<OperationType>(null);
   const resourceID = ref<number | string | null>(null);
-  const request = useForm({});
   const requestState = ref({
     create: false,
     read: false,
@@ -112,7 +111,7 @@ export function useRequestActions(resourceName: string) {
   function requestCreate(options?: RequestOptions) {
     requestState.value.create = false;
 
-    request.get(route(`${resourceName}.create`), {
+    router.visit(route(`${resourceName}.create`), {
       ...options,
       onStart: () => (requestState.value.create = true),
       onFinish: () => {
@@ -127,7 +126,7 @@ export function useRequestActions(resourceName: string) {
     requestState.value.read = false;
     resourceID.value = id;
 
-    request.get(route(`${resourceName}.show`, id), {
+    router.visit(route(`${resourceName}.show`, id), {
       ...options,
       onStart: () => (requestState.value.read = true),
       onFinish: () => {
@@ -142,7 +141,7 @@ export function useRequestActions(resourceName: string) {
     requestState.value.readAll = false;
     resourceID.value = null;
 
-    request.get(route(`${resourceName}.index`), {
+    router.visit(route(`${resourceName}.index`), {
       ...options,
       onStart: () => (requestState.value.readAll = true),
       onFinish: () => {
@@ -157,7 +156,7 @@ export function useRequestActions(resourceName: string) {
     requestState.value.edit = false;
     resourceID.value = id;
 
-    request.get(route(`${resourceName}.edit`, id), {
+    router.visit(route(`${resourceName}.edit`, id), {
       ...options,
       onStart: () => (requestState.value.edit = true),
       onFinish: () => {
@@ -172,8 +171,9 @@ export function useRequestActions(resourceName: string) {
     requestState.value.destroy = false;
     resourceID.value = id;
 
-    request.delete(route(`${resourceName}.destroy`, id), {
+    router.visit(route(`${resourceName}.destroy`, id), {
       ...options,
+      method: 'delete',
       onStart: () => (requestState.value.destroy = true),
       onFinish: () => {
         requestState.value.destroy = false;
@@ -187,8 +187,9 @@ export function useRequestActions(resourceName: string) {
     requestState.value.forceDestroy = false;
     resourceID.value = id;
 
-    request.delete(route(`${resourceName}.force-destroy`, id), {
+    router.visit(route(`${resourceName}.force-destroy`, id), {
       ...options,
+      method: 'delete',
       onStart: () => (requestState.value.forceDestroy = true),
       onFinish: () => {
         requestState.value.forceDestroy = false;
@@ -202,59 +203,60 @@ export function useRequestActions(resourceName: string) {
     requestState.value.batchActivate = false;
     resourceID.value = null;
 
-    request
-      .transform((data) => ({ ...data, ...selectedRows }))
-      .post(route('batch-activation', { resource: resourceName }), {
-        ...options,
-        onStart: () => (requestState.value.batchActivate = true),
-        onFinish: () => {
-          requestState.value.batchActivate = false;
-          action.value = null;
-          resourceID.value = null;
-        },
-      });
+    router.visit(route('batch-activation', { resource: resourceName }), {
+      ...options,
+      method: 'post',
+      data: selectedRows,
+      onStart: () => (requestState.value.batchActivate = true),
+      onFinish: () => {
+        requestState.value.batchActivate = false;
+        action.value = null;
+        resourceID.value = null;
+      },
+    });
   }
 
   function requestBatchDeactivate(selectedRows: { [x: string]: boolean }, options?: RequestOptions) {
     requestState.value.batchDeactivate = false;
     resourceID.value = null;
 
-    request
-      .transform((data) => ({ ...data, ...selectedRows }))
-      .post(route('batch-deactivation', { resource: resourceName }), {
-        ...options,
-        onStart: () => (requestState.value.batchDeactivate = true),
-        onFinish: () => {
-          requestState.value.batchDeactivate = false;
-          action.value = null;
-          resourceID.value = null;
-        },
-      });
+    router.visit(route('batch-deactivation', { resource: resourceName }), {
+      ...options,
+      method: 'post',
+      data: selectedRows,
+      onStart: () => (requestState.value.batchDeactivate = true),
+      onFinish: () => {
+        requestState.value.batchDeactivate = false;
+        action.value = null;
+        resourceID.value = null;
+      },
+    });
   }
 
   function requestBatchDestroy(selectedRows: { [x: string]: boolean }, options?: RequestOptions) {
     requestState.value.batchDestroy = false;
     resourceID.value = null;
 
-    request
-      .transform((data) => ({ ...data, ...selectedRows }))
-      .post(route('batch-deletion', { resource: resourceName }), {
-        ...options,
-        onStart: () => (requestState.value.batchDestroy = true),
-        onFinish: () => {
-          requestState.value.batchDestroy = false;
-          action.value = null;
-          resourceID.value = null;
-        },
-      });
+    router.visit(route('batch-deletion', { resource: resourceName }), {
+      ...options,
+      method: 'post',
+      data: selectedRows,
+      onStart: () => (requestState.value.batchDestroy = true),
+      onFinish: () => {
+        requestState.value.batchDestroy = false;
+        action.value = null;
+        resourceID.value = null;
+      },
+    });
   }
 
   function requestRestore(id: number | string, options?: RequestOptions) {
     requestState.value.restore = false;
     resourceID.value = id;
 
-    request.put(route(`${resourceName}.restore`, id), {
+    router.visit(route(`${resourceName}.restore`, id), {
       ...options,
+      method: 'put',
       onStart: () => (requestState.value.restore = true),
       onFinish: () => {
         requestState.value.restore = false;
@@ -268,8 +270,9 @@ export function useRequestActions(resourceName: string) {
     requestState.value.enable = false;
     resourceID.value = id;
 
-    request.put(route(`${resourceName}.enable`, id), {
+    router.visit(route(`${resourceName}.enable`, id), {
       ...options,
+      method: 'put',
       onStart: () => (requestState.value.enable = true),
       onFinish: () => {
         requestState.value.enable = false;
@@ -283,8 +286,9 @@ export function useRequestActions(resourceName: string) {
     requestState.value.disable = false;
     resourceID.value = id;
 
-    request.put(route(`${resourceName}.disable`, id), {
+    router.visit(route(`${resourceName}.disable`, id), {
       ...options,
+      method: 'put',
       onStart: () => (requestState.value.disable = true),
       onFinish: () => {
         requestState.value.disable = false;
@@ -296,19 +300,8 @@ export function useRequestActions(resourceName: string) {
 
   return {
     action,
-    request,
     resourceID,
     requestState,
     requestAction,
-    // requestCreate,
-    // requestRead,
-    // requestReadAll,
-    // requestEdit,
-    // requestDestroy,
-    // requestForceDestroy,
-    // requestBatchDestroy,
-    // requestRestore,
-    // requestEnable,
-    // requestDisable,
   };
 }

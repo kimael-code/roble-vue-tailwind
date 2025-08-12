@@ -14,7 +14,7 @@ const show = computed(() => props.items.some((it) => it.hasPermission === true))
 
 <template>
   <SidebarGroup v-if="show" class="px-2 py-0">
-    <SidebarGroupLabel>Depuración</SidebarGroupLabel>
+    <SidebarGroupLabel>Monitoreo</SidebarGroupLabel>
     <SidebarMenu>
       <template v-for="item in items" :key="item.title">
         <SidebarMenuItem v-if="item.hasPermission">

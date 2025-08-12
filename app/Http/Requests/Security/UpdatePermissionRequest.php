@@ -23,7 +23,7 @@ class UpdatePermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'        => [
+            'name' => [
                 'required',
                 'string',
                 'lowercase',
@@ -31,8 +31,23 @@ class UpdatePermissionRequest extends FormRequest
                 Rule::unique('permissions')->ignore($this->permission),
             ],
             'description' => ['required', 'string', 'lowercase', 'max:255',],
-            'guard_name'  => ['required', 'string', 'lowercase' , 'regex:/^(web)$/',],
-            'set_menu'    => ['nullable', 'boolean',],
+            'guard_name' => ['required', 'string', 'lowercase', 'regex:/^(web)$/',],
+            'set_menu' => ['nullable', 'boolean',],
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'name' => 'Nombre',
+            'description' => 'Descripción',
+            'guard_name' => 'Autentificación',
+            'set_menu' => 'Define menú',
         ];
     }
 }

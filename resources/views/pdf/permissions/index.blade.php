@@ -1,4 +1,4 @@
-@inject('exporter', 'App\Actions\Security\Permission\ExportIndexToPdf')
+@inject('exporter', 'App\Actions\Security\ExportPermissionsToPdf')
 
 <table cellpadding="1" cellspacing="0" style="border-collapse: collapse;">
     @foreach ($permissions as $permission)

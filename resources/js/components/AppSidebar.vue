@@ -63,7 +63,7 @@ const debugNavItems: NavItem[] = [
     hasPermission: page.props.auth?.menu.includes('read any activity trace') || page.props.auth?.user?.roles?.some((r) => r.name === 'Superusuario'),
   },
   {
-    title: 'Logs',
+    title: 'Depuración',
     href: '/log-files',
     icon: Bug,
     hasPermission: page.props.auth?.menu.includes('read any system log') || page.props.auth?.user?.roles?.some((r) => r.name === 'Superusuario'),

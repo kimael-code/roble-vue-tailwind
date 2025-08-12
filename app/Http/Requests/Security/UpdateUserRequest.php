@@ -46,4 +46,28 @@ class UpdateUserRequest extends FormRequest
             'permissions' => ['nullable', 'array',],
         ];
     }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'name' => 'Nombre',
+            'email' => 'Correo Electrónico',
+            'is_external' => 'Usuario Externo',
+            'id_card' => 'Nro. de CI',
+            'names' => 'Nombres',
+            'surnames' => 'Apellidos',
+            'phones' => 'Teléfonos',
+            'emails' => 'Correos Electrónicos',
+            'position' => 'Cargo',
+            'staff_type' => 'Personal',
+            'ou_names' => 'Unidad Administrativa',
+            'roles' => 'Roles',
+            'permissions' => 'Permisos Directos',
+        ];
+    }
 }

@@ -12,6 +12,13 @@ use Spatie\Activitylog\Models\Activity;
 class ActivityLog extends Activity
 {
     /**
+     * The storage format of the model's date columns.
+     *
+     * @var string
+     */
+    protected $dateFormat = 'Y-m-d H:i:s.u';
+
+    /**
      * The accessors to append to the model's array form.
      *
      * @var array

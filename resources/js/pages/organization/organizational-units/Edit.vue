@@ -30,6 +30,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 const buttonCancel = ref(false);
+const organizationName = ref(props.organizationalUnit.organization.name);
 
 type OrganizationalUnitForm = {
   organization_id: string;
@@ -83,13 +84,13 @@ function index() {
                   <Label class="is-required" for="organization_id">Ente</Label>
                   <Input
                     id="organization_id"
-                    :value="organizationalUnit.organization.name"
+                    v-model="organizationName"
                     type="text"
                     maxlength="255"
                     autocomplete="on"
                     placeholder="ej.: Dirección de Tecnología"
                     required
-                    disabled
+                    readonly
                   />
                   <InputError :message="form.errors.organization_id" />
                 </div>
@@ -125,14 +126,8 @@ function index() {
                 </div>
                 <div class="flex flex-col space-y-1.5">
                   <Label for="organizational_unit_id">Unidad Administrativa de Adscripción</Label>
-                  <Select
-                    id="organizational_unit_id"
-                    v-model="form.organizational_unit_id"
-                    required
-                    autofocus
-                    @update:model-value="form.validate('organizational_unit_id')"
-                  >
-                    <SelectTrigger>
+                  <Select v-model="form.organizational_unit_id" required autofocus @update:model-value="form.validate('organizational_unit_id')">
+                    <SelectTrigger id="organizational_unit_id">
                       <SelectValue placeholder="Seleccione Unidad Administrativa de Adscripción" />
                     </SelectTrigger>
                     <SelectContent>

@@ -45,4 +45,20 @@ class UpdateOrganizationRequest extends FormRequest
             'disabled' => ['nullable', 'boolean', new DeactivatableOrganization($this->organization),]
         ];
     }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'rif' => 'RIF',
+            'name' => 'Nombre',
+            'acronym' => 'Acrónimo',
+            'address' => 'Dirección',
+            'logo_path' => 'Logo',
+        ];
+    }
 }
