@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Props\Debugging;
+namespace App\Http\Props\Monitoring;
 
-use App\Http\Resources\Debugging\ActivityLogCollection;
-use App\Models\Debugging\ActivityLog;
+use App\Http\Resources\Monitoring\ActivityLogCollection;
+use App\Models\Monitoring\ActivityLog;
 use App\Models\User;
 use App\Support\UserAgent;
 use Illuminate\Support\Facades\Auth;

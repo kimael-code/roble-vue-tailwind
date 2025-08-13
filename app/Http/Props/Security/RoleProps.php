@@ -2,11 +2,11 @@
 
 namespace App\Http\Props\Security;
 
-use App\Http\Resources\Debugging\ActivityLogCollection;
+use App\Http\Resources\Monitoring\ActivityLogCollection;
 use App\Http\Resources\Security\PermissionCollection;
 use App\Http\Resources\Security\RoleCollection;
 use App\Http\Resources\Security\UserCollection;
-use App\Models\Debugging\ActivityLog;
+use App\Models\Monitoring\ActivityLog;
 use App\Models\Security\Permission;
 use App\Models\Security\Role;
 use App\Models\User;

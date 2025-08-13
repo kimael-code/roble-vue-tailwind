@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Debugging;
+namespace App\Actions\Monitoring;
 
 use App\Support\Logs\Logfile;
 use Illuminate\Support\Facades\Storage;

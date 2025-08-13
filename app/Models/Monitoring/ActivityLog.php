@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Debugging;
+namespace App\Models\Monitoring;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;

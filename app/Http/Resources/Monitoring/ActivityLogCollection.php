@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Debugging;
+namespace App\Http\Resources\Monitoring;
 
 use App\Http\Resources\BaseCollection;
 use Illuminate\Http\Request;
