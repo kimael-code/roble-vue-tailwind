@@ -83,5 +83,6 @@ class SysadmiRolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'export activity traces', 'description' => __('export activity traces')])->assignRole([$sysadminRole,]);
         // permisos para gestionar los 'dashboards' del sistema
         Permission::create(['name' => 'read sysadmin dashboard', 'description' => __('read sysadmin dashboard')])->assignRole([$sysadminRole,]);
+        Permission::create(['name' => 'manage maintenance mode', 'description' => __('manage maintenance mode'), 'set_menu' => true]);
     }
 }
