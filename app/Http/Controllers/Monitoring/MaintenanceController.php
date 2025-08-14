@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Monitoring;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Monitoring\ToggleMaintenanceModeRequest;
 use Illuminate\Support\Facades\Artisan;
 use Inertia\Inertia;
 
@@ -16,13 +16,8 @@ class MaintenanceController extends Controller
         ]);
     }
 
-    public function toggle(Request $request)
+    public function toggle(ToggleMaintenanceModeRequest $request)
     {
-        if ($request->user()->cannot('manage maintenance mode'))
-        {
-            abort(403);
-        }
-
         if (app()->isDownForMaintenance())
         {
             Artisan::call('up');
@@ -35,9 +30,7 @@ class MaintenanceController extends Controller
         }
 
         Artisan::call('down', [
-            '--secret' => $request->input('secret') ?: null,
-            '--refresh' => $request->input('refresh') ?: 25,
-            '--retry' => $request->input('retry') ?: 120,
+            '--secret' => $request->safe()->secret ?: null,
         ]);
 
         return back()->with('message', [

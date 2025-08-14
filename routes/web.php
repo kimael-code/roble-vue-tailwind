@@ -49,7 +49,7 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
             ->middleware('can: manage maintenance mode');
         Route::post('maintenance-mode/toggle', 'toggle')
             ->name('maintenance.toggle')
-            ->middleware('can: manage maintenance mode');
+            ->middleware(['can: manage maintenance mode', HandlePrecognitiveRequests::class]);
     });
 
     Route::resource('activity-logs', ActivityLogController::class)->only(['index', 'show',]);
