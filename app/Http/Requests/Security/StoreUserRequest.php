@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Security;
 
+use App\Rules\RoleSuperuser;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreUserRequest extends FormRequest
@@ -33,7 +34,7 @@ class StoreUserRequest extends FormRequest
             'position'    => ['nullable', 'string', 'max:255'],
             'staff_type'  => ['nullable', 'string', 'max:255'],
             'ou_names'    => ['nullable', 'array',],
-            'roles'       => ['nullable', 'array',],
+            'roles'       => ['nullable', 'array', new RoleSuperuser],
             'permissions' => ['nullable', 'array',],
         ];
     }

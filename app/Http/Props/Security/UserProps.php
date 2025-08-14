@@ -68,6 +68,7 @@ class UserProps
         $permissions = Permission::filter(Request::only(['search']))
             ->paginate($perPage, page: $page);
         $roles = Role::filter(Request::only(['search']))
+            // ->superuserFilter()
             ->paginate($perPage, page: $page);
         $ous = OrganizationalUnit::active()->filter(Request::only(['search']))
             ->paginate($perPage, page: $page);
@@ -133,6 +134,7 @@ class UserProps
         $permissions = Permission::filter(Request::only(['search']))
             ->paginate($perPage, page: $page);
         $roles = Role::filter(Request::only(['search']))
+            ->superuserFilter()
             ->paginate($perPage, page: $page);
         $ous = OrganizationalUnit::active()->filter(Request::only(['search']))
             ->paginate($perPage, page: $page);
@@ -151,4 +153,3 @@ class UserProps
         ];
     }
 }
-
