@@ -34,8 +34,13 @@ class UserPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, User $model): bool|null
+    public function update(User $user, User $model): Response|bool|null
     {
+        if ($model->id === 1)
+        {
+            return Response::deny(__('The root user cannot be updated.'));
+        }
+
         return $user->can('update users') ? true : null;
     }
 
@@ -44,22 +49,17 @@ class UserPolicy
      */
     public function delete(User $user, User $model): Response|bool|null
     {
-        $sysAdminRole = __('Systems Administrator');
-        $sysadminsCount = User::withTrashed()->with('roles')->get()->filter(
-            fn($user) => $user->roles->where('name', $sysAdminRole)->toArray()
-        )->count();
+        if ($model->id === 1)
+        {
+            return Response::deny(__('The root user cannot be deleted.'));
+        }
 
         $superuserRole = __('Superuser');
         $superusersCount = User::withTrashed()->with('roles')->get()->filter(
             fn($user) => $user->roles->where('name', $superuserRole)->toArray()
         )->count();
 
-        if ($sysadminsCount === 1 && $model->hasRole($sysAdminRole) && $superusersCount === 0)
-        {
-            return Response::deny(__('This is the only user with Systems Administrator permissions.'));
-        }
-
-        if ($superusersCount === 1 && $model->hasRole($superuserRole) && $sysadminsCount === 0)
+        if ($superusersCount === 1 && $model->hasRole($superuserRole))
         {
             return Response::deny(__('This is the only user with Superuser permissions.'));
         }
@@ -85,22 +85,17 @@ class UserPolicy
      */
     public function forceDelete(User $user, User $model): Response|bool|null
     {
-        $sysAdminRole = __('Systems Administrator');
-        $sysadminsCount = User::withTrashed()->with('roles')->get()->filter(
-            fn($user) => $user->roles->where('name', $sysAdminRole)->toArray()
-        )->count();
+        if ($model->id === 1)
+        {
+            return Response::deny(__('The root user cannot be deleted.'));
+        }
 
         $superuserRole = __('Superuser');
         $superusersCount = User::withTrashed()->with('roles')->get()->filter(
             fn($user) => $user->roles->where('name', $superuserRole)->toArray()
         )->count();
 
-        if ($sysadminsCount === 1 && $model->hasRole($sysAdminRole) && $superusersCount === 0)
-        {
-            return Response::deny(__('This is the only user with Systems Administrator permissions.'));
-        }
-
-        if ($superusersCount === 1 && $model->hasRole($superuserRole) && $sysadminsCount === 0)
+        if ($superusersCount === 1 && $model->hasRole($superuserRole))
         {
             return Response::deny(__('This is the only user with Superuser permissions.'));
         }
@@ -126,22 +121,17 @@ class UserPolicy
      */
     public function disable(User $user, User $model): Response|bool|null
     {
-        $sysAdminRole = __('Systems Administrator');
-        $sysadminsCount = User::with('roles')->get()->filter(
-            fn($user) => $user->roles->where('name', $sysAdminRole)->toArray()
-        )->count();
+        if ($model->id === 1)
+        {
+            return Response::deny(__('The root user cannot be deactivated.'));
+        }
 
         $superuserRole = __('Superuser');
         $superusersCount = User::withTrashed()->with('roles')->get()->filter(
             fn($user) => $user->roles->where('name', $superuserRole)->toArray()
         )->count();
 
-        if ($sysadminsCount === 1 && $model->hasRole($sysAdminRole) && $superusersCount === 0)
-        {
-            return Response::deny(__('This is the only user with Systems Administrator permissions.'));
-        }
-
-        if ($superusersCount === 1 && $model->hasRole($superuserRole) && $sysadminsCount === 0)
+        if ($superusersCount === 1 && $model->hasRole($superuserRole))
         {
             return Response::deny(__('This is the only user with Superuser permissions.'));
         }

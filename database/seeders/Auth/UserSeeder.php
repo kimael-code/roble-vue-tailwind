@@ -27,14 +27,6 @@ class UserSeeder extends Seeder
                 'is_password_set' => false,
                 'role' => __('Superuser'),
             ],
-            [
-                'name' => 'admin',
-                'email' => 'admin@company.com',
-                'password' => Hash::make('admin'),
-                'remember_token' => Str::random(),
-                'is_password_set' => false,
-                'role' => __('Systems Administrator'),
-            ],
         ];
 
         $devUsers = [
@@ -62,7 +54,7 @@ class UserSeeder extends Seeder
             {
                 array_push($users, $devUser);
             }
-            unset($users[0], $users[1]);
+            unset($users[0]);
         }
 
         foreach ($users as $user)
