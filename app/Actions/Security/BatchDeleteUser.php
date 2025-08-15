@@ -24,16 +24,6 @@ class BatchDeleteUser
                 continue;
             }
 
-            $sysAdminRole = __('Systems Administrator');
-            $sysadminsCount = User::withTrashed()->with('roles')->get()->filter(
-                fn($user) => $user->roles->where('name', $sysAdminRole)->toArray()
-            )->count();
-
-            $superuserRole = __('Superuser');
-            $superusersCount = User::withTrashed()->with('roles')->get()->filter(
-                fn($user) => $user->roles->where('name', $superuserRole)->toArray()
-            )->count();
-
             $user = User::find($id);
 
             if ($user->is(auth()->user()))
@@ -42,17 +32,11 @@ class BatchDeleteUser
                 $nonDeleteReasons .= $nonDeleteCount > 1 ? ', ' : '';
                 $nonDeleteReasons .= 'usted no puede eliminar su propia cuenta';
             }
-            elseif ($sysadminsCount === 1 && $superusersCount === 0 && $user->hasRole($sysAdminRole))
+            elseif ($user->id === 1)
             {
                 $nonDeleteCount += 1;
                 $nonDeleteReasons .= $nonDeleteCount > 1 ? ', ' : '';
-                $nonDeleteReasons .= 'única cuenta de administrador de sistemas';
-            }
-            elseif ($sysadminsCount === 0 && $superusersCount === 1 && $user->hasRole($sysAdminRole))
-            {
-                $nonDeleteCount += 1;
-                $nonDeleteReasons .= $nonDeleteCount > 1 ? ', ' : '';
-                $nonDeleteReasons .= 'única cuenta de administrador de sistemas';
+                $nonDeleteReasons .= 'root no es eliminable';
             }
             else
             {

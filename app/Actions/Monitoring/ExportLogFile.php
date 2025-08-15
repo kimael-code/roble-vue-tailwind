@@ -4,11 +4,11 @@ namespace App\Actions\Monitoring;
 
 use App\Support\Logs\Logfile;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ExportLogFile
 {
-    public static function handle(string $file): StreamedResponse
+    public static function handle(string $file): BinaryFileResponse
     {
         $logfile = new Logfile();
 
@@ -19,6 +19,6 @@ class ExportLogFile
             $fileBeingDownloaded = $logfile->relativePaths()[$file];
         }
 
-        return Storage::disk('logs')->download($fileBeingDownloaded);
+        return response()->download(Storage::disk('logs')->path($fileBeingDownloaded));
     }
 }
