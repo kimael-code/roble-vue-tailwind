@@ -73,6 +73,7 @@
   "There are users who belong to this administrative unit": "Existen usuarios que pertenecen a esta unidad administrativa.",
   "There are roles having this permission.": "Existen roles que tienen este permiso asociado.",
   "There are users having this permission.": "Existen usuarios que tienen otorgado este permiso.",
+  "The superuser role can only be assigned by another superuser.": "El rol superusuario solo puede ser asignado por otro superusuario.",
   "Service Unavailable": "Servicio No Disponible",
   "Maintenance mode disabled": "Modo de mantenimiento desactivado",
   "Maintenance mode enabled": "Modo de mantenimiento activado",
