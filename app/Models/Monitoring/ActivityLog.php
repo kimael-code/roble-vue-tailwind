@@ -3,6 +3,7 @@
 namespace App\Models\Monitoring;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -79,7 +80,8 @@ class ActivityLog extends Activity
         return $this->morphTo()->withTrashed();
     }
 
-    public function scopeFilter(Builder $query, array $filters): void
+    #[Scope]
+    protected function filter(Builder $query, array $filters): void
     {
         $query
             ->when(empty($filters) ?? null, function (Builder $query)

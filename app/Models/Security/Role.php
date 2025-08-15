@@ -110,7 +110,7 @@ class Role extends SpatieRole
     }
 
     #[Scope]
-    public function superuserFilter(Builder $query): void
+    protected function superuser(Builder $query): void
     {
         $query->when(!auth()->user()->hasRole(__('Superuser')), function (Builder $query)
         {
@@ -118,7 +118,8 @@ class Role extends SpatieRole
         });
     }
 
-    public function scopeFilter(Builder $query, array $filters): void
+    #[Scope]
+    protected function filter(Builder $query, array $filters): void
     {
         $query
             ->when(empty($filters) ?? null, function (Builder $query)

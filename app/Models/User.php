@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Organization\OrganizationalUnit;
 use App\Observers\Security\UserObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -79,7 +80,8 @@ class User extends Authenticatable
         return $this->belongsToMany(OrganizationalUnit::class)->withTimestamps();
     }
 
-    public function scopeFilter(Builder $query, array $filters): void
+    #[Scope]
+    protected function filter(Builder $query, array $filters): void
     {
         $query
             ->when(empty($filters) ?? null, function (Builder $query)
