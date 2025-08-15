@@ -2,11 +2,11 @@
 
 namespace App\Http\Props\Security;
 
-use App\Http\Resources\Debugging\ActivityLogCollection;
+use App\Http\Resources\Monitoring\ActivityLogCollection;
 use App\Http\Resources\Security\PermissionCollection;
 use App\Http\Resources\Security\RoleCollection;
 use App\Http\Resources\Security\UserCollection;
-use App\Models\Debugging\ActivityLog;
+use App\Models\Monitoring\ActivityLog;
 use App\Models\Organization\OrganizationalUnit;
 use App\Models\Security\Permission;
 use App\Models\Security\Role;
@@ -68,6 +68,7 @@ class UserProps
         $permissions = Permission::filter(Request::only(['search']))
             ->paginate($perPage, page: $page);
         $roles = Role::filter(Request::only(['search']))
+            ->superuser()
             ->paginate($perPage, page: $page);
         $ous = OrganizationalUnit::active()->filter(Request::only(['search']))
             ->paginate($perPage, page: $page);
@@ -133,6 +134,7 @@ class UserProps
         $permissions = Permission::filter(Request::only(['search']))
             ->paginate($perPage, page: $page);
         $roles = Role::filter(Request::only(['search']))
+            ->superuser()
             ->paginate($perPage, page: $page);
         $ous = OrganizationalUnit::active()->filter(Request::only(['search']))
             ->paginate($perPage, page: $page);
@@ -151,4 +153,3 @@ class UserProps
         ];
     }
 }
-

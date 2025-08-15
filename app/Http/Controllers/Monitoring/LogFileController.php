@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Debugging;
+namespace App\Http\Controllers\Monitoring;
 
-use App\Actions\Debugging\DeleteLogFile;
-use App\Actions\Debugging\ExportLogFile;
+use App\Actions\Monitoring\DeleteLogFile;
+use App\Actions\Monitoring\ExportLogFile;
 use App\Http\Controllers\Controller;
-use App\Http\Props\Debugging\LogFileProps;
+use App\Http\Props\Monitoring\LogFileProps;
 use Inertia\Inertia;
 
 class LogFileController extends Controller
 {
     public function index()
     {
-        return Inertia::render('debugging/log-files/Index', LogFileProps::index());
+        return Inertia::render('monitoring/log-files/Index', LogFileProps::index());
     }
 
     public function export(string $file)

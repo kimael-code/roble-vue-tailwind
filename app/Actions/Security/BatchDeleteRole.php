@@ -26,7 +26,7 @@ class BatchDeleteRole
 
             $role = Role::find($id);
 
-            if ($role->id === 0 || $role->name === __('Superuser'))
+            if ($role->id === 1)
             {
                 $nonDeleteCount += 1;
                 $nonDeleteReasons .= $nonDeleteCount > 1 ? ', ' : '';

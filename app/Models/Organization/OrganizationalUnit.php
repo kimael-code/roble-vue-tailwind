@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use App\Models\User;
 use App\Observers\Organization\OrganizationalUnitObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -99,12 +100,14 @@ class OrganizationalUnit extends BaseModel
         return $this->hasMany(self::class)->whereNull('disabled_at');
     }
 
-    public function scopeActive(Builder $query): Builder
+    #[Scope]
+    protected function active(Builder $query): Builder
     {
         return $query->whereNull('disabled_at');
     }
 
-    public function scopeFilter(Builder $query, array $filters): void
+    #[Scope]
+    protected function filter(Builder $query, array $filters): void
     {
         $query
             ->when($filters['search'] ?? null, function (Builder $query, string $term)

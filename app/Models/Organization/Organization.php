@@ -5,6 +5,7 @@ namespace App\Models\Organization;
 use App\Models\BaseModel;
 use App\Observers\Organization\OrganizationObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -100,12 +101,14 @@ class Organization extends BaseModel
         return $this->hasMany(OrganizationalUnit::class)->whereNull('disabled_at');
     }
 
-    public function scopeActive(Builder $query): void
+    #[Scope]
+    protected function active(Builder $query): void
     {
         $query->whereNull('disabled_at');
     }
 
-    public function scopeFilter(Builder $query, array $filters): void
+    #[Scope]
+    protected function filter(Builder $query, array $filters): void
     {
         $query
             ->when(empty($filters) ?? null, function (Builder $query)

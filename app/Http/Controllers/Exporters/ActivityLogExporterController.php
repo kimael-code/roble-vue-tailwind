@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Exporters;
 
-use App\Actions\Debugging\ExportActivityLogsToPdf;
+use App\Actions\Monitoring\ExportActivityLogsToPdf;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 

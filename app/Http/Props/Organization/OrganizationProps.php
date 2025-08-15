@@ -2,10 +2,10 @@
 
 namespace App\Http\Props\Organization;
 
-use App\Http\Resources\Debugging\ActivityLogCollection;
+use App\Http\Resources\Monitoring\ActivityLogCollection;
 use App\Http\Resources\Organization\OrganizationalUnitCollection;
 use App\Http\Resources\Organization\OrganizationCollection;
-use App\Models\Debugging\ActivityLog;
+use App\Models\Monitoring\ActivityLog;
 use App\Models\Organization\Organization;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;

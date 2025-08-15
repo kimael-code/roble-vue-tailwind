@@ -5,6 +5,7 @@ namespace App\Models\Security;
 use App\Models\User;
 use App\Observers\Security\PermissionObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -128,7 +129,8 @@ class Permission extends SpatiePermission
             ->put('causer', User::with('person')->find(auth()->user()->id)->toArray());
     }
 
-    public function scopeFilter(Builder $query, array $filters): void
+    #[Scope]
+    protected function filter(Builder $query, array $filters): void
     {
         $query
             ->when(empty($filters) ?? null, function (Builder $query)

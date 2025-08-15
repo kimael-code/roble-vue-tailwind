@@ -5,8 +5,9 @@ use App\Http\Controllers\{
     BatchDeactivationController,
     BatchDeletionController,
     DashboardController,
-    Debugging\ActivityLogController,
-    Debugging\LogFileController,
+    Monitoring\ActivityLogController,
+    Monitoring\LogFileController,
+    Monitoring\MaintenanceController,
     NotificationController,
     Organization\OrganizationalUnitController,
     Organization\OrganizationController,
@@ -23,9 +24,9 @@ Route::get('/', fn() => Inertia::render('Welcome'))->name('home');
 Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
 {
     Route::get('dashboard', DashboardController::class)->name('dashboard');
-    Route::post('/batch-activation/{resource}', BatchActivationController::class)->name('batch-activation');
-    Route::post('/batch-deactivation/{resource}', BatchDeactivationController::class)->name('batch-deactivation');
-    Route::post('/batch-deletion/{resource}', BatchDeletionController::class)->name('batch-deletion');
+    Route::post('batch-activation/{resource}', BatchActivationController::class)->name('batch-activation');
+    Route::post('batch-deactivation/{resource}', BatchDeactivationController::class)->name('batch-deactivation');
+    Route::post('batch-deletion/{resource}', BatchDeletionController::class)->name('batch-deletion');
 
     Route::controller(NotificationController::class)->group(function ()
     {
@@ -39,6 +40,16 @@ Route::middleware(['auth', 'verified', 'password.set',])->group(function ()
         Route::get('log-files', 'index')->middleware('can:read any system log')->name('log-files.index');
         Route::get('log-files/{file}', 'export')->middleware('can:export system logs')->name('log-files.export');
         Route::delete('log-files/{file}', 'delete')->middleware('can:delete system logs')->name('log-files.destroy');
+    });
+
+    Route::controller(MaintenanceController::class)->group(function ()
+    {
+        Route::get('maintenance-mode', 'index')
+            ->name('maintenance.index')
+            ->middleware('can: manage maintenance mode');
+        Route::post('maintenance-mode/toggle', 'toggle')
+            ->name('maintenance.toggle')
+            ->middleware(['can: manage maintenance mode', HandlePrecognitiveRequests::class]);
     });
 
     Route::resource('activity-logs', ActivityLogController::class)->only(['index', 'show',]);

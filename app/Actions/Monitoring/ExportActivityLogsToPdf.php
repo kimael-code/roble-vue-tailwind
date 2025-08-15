@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Actions\Debugging;
+namespace App\Actions\Monitoring;
 
-use App\Models\Debugging\ActivityLog;
+use App\Models\Monitoring\ActivityLog;
 use App\Models\Organization\Organization;
 use App\Support\DataExport\BasePdf;
 use Illuminate\Support\Arr;

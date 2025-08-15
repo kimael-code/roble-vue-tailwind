@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Debugging;
+namespace App\Http\Controllers\Monitoring;
 
 use App\Http\Controllers\Controller;
-use App\Http\Props\Debugging\ActivityLogProps;
-use App\Models\Debugging\ActivityLog;
+use App\Http\Props\Monitoring\ActivityLogProps;
+use App\Models\Monitoring\ActivityLog;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
@@ -17,7 +17,7 @@ class ActivityLogController extends Controller
     {
         Gate::authorize('viewAny', ActivityLog::class);
 
-        return Inertia::render('debugging/activity-logs/Index', ActivityLogProps::index());
+        return Inertia::render('monitoring/activity-logs/Index', ActivityLogProps::index());
     }
 
     /**
@@ -27,6 +27,6 @@ class ActivityLogController extends Controller
     {
         Gate::authorize('view', $activityLog);
 
-        return Inertia::render('debugging/activity-logs/Show', ActivityLogProps::show($activityLog));
+        return Inertia::render('monitoring/activity-logs/Show', ActivityLogProps::show($activityLog));
     }
 }

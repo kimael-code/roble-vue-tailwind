@@ -35,8 +35,13 @@ class RolePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Role $role): bool|null
+    public function update(User $user, Role $role): Response|bool|null
     {
+        if ($role->id === 1)
+        {
+            return Response::deny(__('The Superuser role cannot be updated.'));
+        }
+
         return $user->can('update roles') ? true : null;
     }
 
@@ -45,7 +50,7 @@ class RolePolicy
      */
     public function delete(User $user, Role $role): Response|bool|null
     {
-        if ($role->id === 0 || $role->name === __('Superuser'))
+        if ($role->id === 1)
         {
             return Response::deny(__('The Superuser role cannot be deleted.'));
         }

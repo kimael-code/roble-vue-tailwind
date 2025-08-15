@@ -2,9 +2,9 @@
 
 namespace App\Http\Props\Organization;
 
-use App\Http\Resources\Debugging\ActivityLogCollection;
+use App\Http\Resources\Monitoring\ActivityLogCollection;
 use App\Http\Resources\Organization\OrganizationalUnitCollection;
-use App\Models\Debugging\ActivityLog;
+use App\Models\Monitoring\ActivityLog;
 use App\Models\Organization\Organization;
 use App\Models\Organization\OrganizationalUnit;
 use Illuminate\Database\Eloquent\Builder;

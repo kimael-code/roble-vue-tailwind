@@ -6,6 +6,9 @@ use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
+/**
+ * @deprecated la implementación de un superusuario hace innecesario un sysadmin.
+ */
 class SoleSystemAdministrator implements ValidationRule
 {
     public function __construct(

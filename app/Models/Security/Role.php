@@ -4,6 +4,7 @@ namespace App\Models\Security;
 
 use App\Observers\Security\RoleObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -108,7 +109,17 @@ class Role extends SpatieRole
             ->put('causer', \App\Models\User::with('person')->find(auth()->user()->id)->toArray());
     }
 
-    public function scopeFilter(Builder $query, array $filters): void
+    #[Scope]
+    protected function superuser(Builder $query): void
+    {
+        $query->when(!auth()->user()->hasRole(__('Superuser')), function (Builder $query)
+        {
+            $query->where('id', '<>', 1);
+        });
+    }
+
+    #[Scope]
+    protected function filter(Builder $query, array $filters): void
     {
         $query
             ->when(empty($filters) ?? null, function (Builder $query)
