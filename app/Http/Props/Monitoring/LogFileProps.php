@@ -12,10 +12,10 @@ class LogFileProps
     {
         return [
             'create' => false,
-            'read' => Auth::user()->can('read system log') || Auth::user()->hasRole(__('Superuser')),
+            'read' => Auth::user()->can('read system log'),
             'update' => false,
-            'delete' => Auth::user()->can('delete system logs') || Auth::user()->hasRole(__('Superuser')),
-            'export' => Auth::user()->can('export system logs') || Auth::user()->hasRole(__('Superuser')),
+            'delete' => Auth::user()->can('delete system logs'),
+            'export' => Auth::user()->can('export system logs'),
         ];
     }
 

@@ -16,10 +16,10 @@ class ActivityLogProps
     {
         return [
             'create' => false,
-            'read' => Auth::user()->can('read activity trace') || Auth::user()->hasRole(__('Superuser')),
+            'read' => Auth::user()->can('read activity trace'),
             'update' => false,
             'delete' => false,
-            'export' => Auth::user()->can('export activity traces') || Auth::user()->hasRole(__('Superuser')),
+            'export' => Auth::user()->can('export activity traces'),
         ];
     }
 
@@ -63,7 +63,10 @@ class ActivityLogProps
                 'updated',
                 'deleted',
                 'authenticated',
-                'authorized'
+                'authorized',
+                'restored',
+                'enabled',
+                'disabled'
             ]),
             'logNames' => Inertia::lazy(fn() => [
                 __('Security/Users'),
@@ -72,6 +75,8 @@ class ActivityLogProps
                 __('Organization/Organizations'),
                 __('Organization/Administrative Units'),
                 __('Authentication'),
+                __('Settings/Password'),
+                __('Settings/Profile'),
             ]),
             'logs' => new ActivityLogCollection(
                 ActivityLog::filter($filtersOnly)
