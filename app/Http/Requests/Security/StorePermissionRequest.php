@@ -22,8 +22,8 @@ class StorePermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'lowercase', 'max:255', 'unique:permissions',],
-            'description' => ['required', 'string', 'lowercase', 'max:255',],
+            'name' => ['required', 'string', 'lowercase', 'max:255', 'doesnt_end_with:.', 'unique:permissions',],
+            'description' => ['required', 'string', 'lowercase', 'max:255', 'doesnt_end_with:.',],
             'guard_name' => ['required', 'string', 'lowercase', 'regex:/^(web)$/',],
             'set_menu' => ['nullable', 'boolean',],
         ];

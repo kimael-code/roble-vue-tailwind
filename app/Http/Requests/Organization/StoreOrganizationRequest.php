@@ -34,7 +34,6 @@ class StoreOrganizationRequest extends FormRequest
             'acronym' => ['nullable', 'string', 'max:20',],
             'address' => ['nullable', 'string', 'max:2000'],
             'logo_path' => [
-                ...$this->isPrecognitive() ? [] : ['required'],
                 'image',
                 'mimes:png',
                 'max:512',

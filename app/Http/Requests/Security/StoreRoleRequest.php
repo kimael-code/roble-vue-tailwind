@@ -21,12 +21,21 @@ class StoreRoleRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => ['required', 'string', 'max:255', 'unique:roles'],
-            'description' => ['required', 'string', 'max:255', 'lowercase'],
+        $rules = [
+            'name' => ['required', 'string', 'max:255', 'doesnt_end_with:.', 'unique:roles',],
+            'description' => ['required', 'string', 'max:255', 'lowercase', 'doesnt_end_with:.',],
             'guard_name' => ['required', 'string', 'max:255',],
-            'permissions' => ['required', 'array',],
+            'permissions' => ['nullable', 'array'],
         ];
+
+        // Solo validar la existencia de los permisos si el array no está vacío
+        // esto evita que aparezca el mensaje de validación si permissions está vacío
+        if (!empty($this->permissions))
+        {
+            $rules['permissions.*'] = ['exists:permissions,description'];
+        }
+
+        return $rules;
     }
 
     /**
@@ -42,5 +51,24 @@ class StoreRoleRequest extends FormRequest
             'guard_name' => 'Autentificación',
             'permissions' => 'Permisos',
         ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        $messages = [];
+
+        // establecer este mensaje solo cuando permissions no esté vacío
+        // esto evita que aparezca el mensaje de validación
+        if (!empty($this->permissions))
+        {
+            $messages['permissions.*'] = 'Algunos permisos seleccionados no existen.';
+        }
+
+        return $messages;
     }
 }

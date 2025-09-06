@@ -9,13 +9,6 @@ use Illuminate\Validation\Rule;
 class UpdateUserRequest extends FormRequest
 {
     /**
-     * Indicates if the validator should stop on the first rule failure.
-     *
-     * @var bool
-     */
-    protected $stopOnFirstFailure = true;
-
-    /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
@@ -30,9 +23,9 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => ['required', 'string', 'max:255',],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($this->user),],
+        $rules = [
+            'name' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($this->user),],
+            'email' => ['required', 'email', 'max:255',],
             'is_external' => ['required', 'boolean',],
             'id_card' => ['required_if_accepted:is_external', 'nullable', 'string', 'max:8', 'regex:/^[0-9]*$/' ,Rule::unique('people')->ignore($this->input('id_card'), 'id_card'),],
             'names' => ['required_if_accepted:is_external', 'nullable', 'string', 'max:255',],
@@ -45,6 +38,21 @@ class UpdateUserRequest extends FormRequest
             'roles' => ['nullable', 'array', new RoleSuperuser,],
             'permissions' => ['nullable', 'array',],
         ];
+
+        if (!empty($this->ou_names))
+        {
+            $rules['ou_names.*'] = ['exists:organizational_units,name'];
+        }
+        if (!empty($this->roles))
+        {
+            $rules['roles.*'] = ['exists:roles,name'];
+        }
+        if (!empty($this->permissions))
+        {
+            $rules['permissions.*'] = ['exists:permissions,description'];
+        }
+
+        return $rules;
     }
 
     /**
@@ -69,5 +77,30 @@ class UpdateUserRequest extends FormRequest
             'roles' => 'Roles',
             'permissions' => 'Permisos Directos',
         ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        $messages = [];
+
+        if (!empty($this->ou_names))
+        {
+            $messages['ou_names.*'] = 'Algunas unidades administrativas seleccionadas no existen.';
+        }
+        if (!empty($this->roles))
+        {
+            $messages['roles.*'] = 'Algunos roles seleccionados no existen.';
+        }
+        if (!empty($this->permissions))
+        {
+            $messages['permissions.*'] = 'Algunos permisos seleccionados no existen.';
+        }
+
+        return $messages;
     }
 }
