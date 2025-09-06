@@ -75,7 +75,7 @@ class UserPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, User $model): bool
+    public function restore(User $user, User $model): bool|null
     {
         return $user->can('restore users') ? true : null;
     }
@@ -111,7 +111,7 @@ class UserPolicy
     /**
      * Determine whether the user can enable the model.
      */
-    public function enable(User $user, User $model): bool
+    public function enable(User $user, User $model): bool|null
     {
         return $user->can('activate users') ? true : null;
     }
