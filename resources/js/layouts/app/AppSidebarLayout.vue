@@ -3,6 +3,7 @@ import AppContent from '@/components/AppContent.vue';
 import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
+import useStringUtils from '@/composables/useStringUtils';
 import type { BreadcrumbItemType, NotificationData } from '@/types';
 import { router, usePage } from '@inertiajs/vue3';
 import { useEchoModel } from '@laravel/echo-vue';
@@ -21,11 +22,12 @@ withDefaults(defineProps<Props>(), {
 
 const page = usePage();
 const { channel } = useEchoModel('App.Models.User', page.props.auth.user.id);
+const { removeEndDot } = useStringUtils();
 const flashMessage = page.props.flash.message;
 
 channel().notification((n: NotificationData) => {
-  toast(n.causer, {
-    description: `${n.message}, ${DateTime.fromISO(n?.timestamp).toRelative()}`,
+  toast.info(n.causer, {
+    description: `${removeEndDot(n.message)}, ${DateTime.fromISO(n?.timestamp).toRelative()}`,
   });
 });
 watchImmediate(
