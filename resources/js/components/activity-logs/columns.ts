@@ -1,8 +1,6 @@
 import DataTableActions from '@/components/DataTableActions.vue';
-import { Button } from '@/components/ui/button';
 import { ActivityLog, Can } from '@/types';
 import { createColumnHelper } from '@tanstack/vue-table';
-import { ChevronDown, ChevronsUpDown, ChevronUp } from 'lucide-vue-next';
 import { h, ref } from 'vue';
 
 const columnHelper = createColumnHelper<ActivityLog>();
@@ -34,27 +32,12 @@ export const columns = [
     enableSorting: false,
     enableHiding: false,
   }),
+  columnHelper.accessor('causer.name', {
+    header: 'Usuario',
+    cell: (info) => h('div', info.getValue()),
+  }),
   columnHelper.accessor('description', {
-    header: ({ column }) => {
-      const isSorted = column.getIsSorted();
-      const isSortedDesc = column.getIsSorted() === 'desc';
-
-      return h(
-        Button,
-        {
-          variant: isSorted ? 'default' : 'ghost',
-          class: 'ml-auto',
-        },
-        () => [
-          'Nombre',
-          isSorted
-            ? isSortedDesc
-              ? h(ChevronDown, { class: 'ml-2 h-4 w-4' })
-              : h(ChevronUp, { class: 'ml-2 h-4 w-4' })
-            : h(ChevronsUpDown, { class: 'ml-2 h-4 w-4' }),
-        ],
-      );
-    },
+    header: 'Nombre',
     cell: (info) => h('div', info.getValue()),
   }),
   columnHelper.accessor('created_at_human', {

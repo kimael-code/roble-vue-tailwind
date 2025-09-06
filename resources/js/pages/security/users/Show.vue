@@ -186,69 +186,85 @@ watch(action, () => {
             </TooltipProvider>
             <div class="flex items-center">
               <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                  <Button variant="outline" :disabled="resourceID !== null">
-                    <EllipsisIcon v-if="resourceID === null" />
-                    <LoaderCircleIcon v-else class="animate-spin" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem
-                      v-if="can.update"
-                      @click="requestAction({ operation: 'edit', data: { id: user.id }, options: { preserveState: false } })"
-                    >
-                      <PencilIcon />
-                      <span>Editar</span>
-                    </DropdownMenuItem>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger as-child>
+                      <DropdownMenuTrigger as-child>
+                        <Button variant="outline" :disabled="resourceID !== null">
+                          <EllipsisIcon v-if="resourceID === null" />
+                          <LoaderCircleIcon v-else class="animate-spin" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent> Editar, exportar y otras acciones </TooltipContent>
+                    <DropdownMenuContent>
+                      <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem
+                          v-if="can.update"
+                          class="flex items-center gap-2"
+                          @click="requestAction({ operation: 'edit', data: { id: user.id }, options: { preserveState: false } })"
+                        >
+                          <PencilIcon />
+                          <span>Editar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuSub v-if="can.activate || can.deactivate">
+                          <DropdownMenuSubTrigger>
+                            <span>Activación</span>
+                          </DropdownMenuSubTrigger>
+                          <DropdownMenuPortal>
+                            <DropdownMenuSubContent>
+                              <DropdownMenuItem v-if="can.activate" :disabled="user.disabled_at === null" @click="action = 'enable'">
+                                <ToggleRightIcon />
+                                <span>Activar</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem v-if="can.deactivate" :disabled="user.disabled_at !== null" @click="action = 'disable'">
+                                <ToggleLeftIcon />
+                                <span>Desactivar</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuSubContent>
+                          </DropdownMenuPortal>
+                        </DropdownMenuSub>
 
-                    <DropdownMenuSub v-if="can.activate || can.deactivate">
-                      <DropdownMenuSubTrigger>
-                        <span>Activación</span>
-                      </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                          <DropdownMenuItem v-if="can.activate" :disabled="user.disabled_at === null" @click="action = 'enable'">
-                            <ToggleRightIcon />
-                            <span>Activar</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem v-if="can.deactivate" :disabled="user.disabled_at !== null" @click="action = 'disable'">
-                            <ToggleLeftIcon />
-                            <span>Desactivar</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
-
-                    <DropdownMenuSub v-if="can.restore || can.delete || can.f_delete">
-                      <DropdownMenuSubTrigger> Eliminación </DropdownMenuSubTrigger>
-                      <DropdownMenuPortal>
-                        <DropdownMenuSubContent>
-                          <DropdownMenuItem v-if="can.restore" :disabled="!user.deleted_at" @click="action = 'restore'">
-                            <RotateCcwIcon />
-                            <span>Restaurar</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem v-if="can.delete" :disabled="user.deleted_at ? true : false" @click="action = 'destroy'">
-                            <Trash2Icon />
-                            <span>Eliminar</span>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem v-if="can.f_delete" :disabled="!user.deleted_at" @click="action = 'force_destroy'">
-                            <XIcon />
-                            <span>Eliminar permanentemente</span>
-                          </DropdownMenuItem>
-                        </DropdownMenuSubContent>
-                      </DropdownMenuPortal>
-                    </DropdownMenuSub>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
+                        <DropdownMenuSub v-if="can.restore || can.delete || can.f_delete">
+                          <DropdownMenuSubTrigger> Eliminación </DropdownMenuSubTrigger>
+                          <DropdownMenuPortal>
+                            <DropdownMenuSubContent>
+                              <DropdownMenuItem v-if="can.restore" :disabled="!user.deleted_at" @click="action = 'restore'">
+                                <RotateCcwIcon />
+                                <span>Restaurar</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem v-if="can.delete" :disabled="user.deleted_at ? true : false" @click="action = 'destroy'">
+                                <Trash2Icon />
+                                <span>Eliminar</span>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem v-if="can.f_delete" :disabled="!user.deleted_at" @click="action = 'force_destroy'">
+                                <XIcon />
+                                <span>Eliminar permanentemente</span>
+                              </DropdownMenuItem>
+                            </DropdownMenuSubContent>
+                          </DropdownMenuPortal>
+                        </DropdownMenuSub>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </Tooltip>
+                </TooltipProvider>
               </DropdownMenu>
-              <Button v-if="can.create" class="ml-3" @click="requestAction({ operation: 'create' })" :disabled="requestState.create">
-                <LoaderCircleIcon v-if="requestState.create" class="h-4 w-4 animate-spin" />
-                <PlusIcon v-else class="mr-2 h-4 w-4" />
-                Nuevo
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger as-child>
+                    <Button v-if="can.create" class="ml-3" @click="requestAction({ operation: 'create' })" :disabled="requestState.create">
+                      <LoaderCircleIcon v-if="requestState.create" class="h-4 w-4 animate-spin" />
+                      <PlusIcon v-else class="mr-2 h-4 w-4" />
+                      Nuevo
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Crear nuevo registro</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
           <Tabs default-value="roles" class="w-auto">

@@ -8,7 +8,7 @@ import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { BreadcrumbItem, Notification, Pagination } from '@/types';
 import { Head, router, WhenVisible } from '@inertiajs/vue3';
-import { Bell, CheckIcon, HourglassIcon } from 'lucide-vue-next';
+import { Bell, CalendarClockIcon, CheckIcon } from 'lucide-vue-next';
 import { DateTime } from 'luxon';
 
 router.reload();
@@ -66,8 +66,8 @@ function markAllAsRead() {
             <h4 class="text-sm font-semibold">{{ notification.data?.causer }}</h4>
             <p class="text-sm">{{ notification.data?.message }}</p>
             <div class="flex items-center pt-2">
-              <HourglassIcon class="mr-2 h-4 w-4 opacity-70" />
-              <span class="text-muted-foreground text-xs"> {{ DateTime.fromISO(notification.data?.timestamp).toRelative() }} </span>
+              <CalendarClockIcon class="mr-2 h-4 w-4 opacity-70" />
+              <span class="text-xs text-muted-foreground"> {{ DateTime.fromISO(notification.data?.timestamp).toRelative() }} </span>
               <Badge v-if="!notification.read_at" class="ml-0.5">no leída</Badge>
             </div>
           </div>

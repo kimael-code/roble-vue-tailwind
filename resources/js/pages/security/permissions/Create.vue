@@ -61,7 +61,7 @@ function index() {
              <CardDescription>Los campos con asterisco rojo son requeridos.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form @submit.prevent="submit">
+            <form @submit.prevent="submit" @keyup.enter.prevent="submit" @keyup.esc="index">
               <div class="grid w-full items-center gap-4">
                 <div class="flex flex-col space-y-1.5">
                   <Label class="is-required" for="name">Nombre</Label>
@@ -114,11 +114,11 @@ function index() {
             </form>
           </CardContent>
           <CardFooter class="flex justify-between px-6 pb-6">
-            <Button variant="outline" :disabled="buttonCancel" @click="index">
+            <Button variant="outline" :disabled="buttonCancel" @click="index" @keyup.esc="index" @keyup.enter="index">
               <LoaderCircleIcon v-if="buttonCancel" class="h-4 w-4 animate-spin" />
               Cancelar
             </Button>
-            <Button :disabled="buttonCancel || form.processing" @click="submit">
+            <Button :disabled="buttonCancel || form.processing" @click="submit" @keyup.esc="index" @keyup.enter="submit">
               <LoaderCircleIcon v-if="form.processing" class="h-4 w-4 animate-spin" />
               Guardar
             </Button>

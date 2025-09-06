@@ -15,12 +15,13 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import TabsContent from '@/components/ui/tabs/TabsContent.vue';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/AppLayout.vue';
 import ContentLayout from '@/layouts/ContentLayout.vue';
 import { BreadcrumbItem, Can, SearchFilter } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
 import { FlexRender } from '@tanstack/vue-table';
-import { BugIcon, FileDownIcon, FileX2Icon } from 'lucide-vue-next';
+import { BugIcon, FileDownIcon, ShredderIcon } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 interface LogContent {
@@ -95,16 +96,32 @@ function deleteLog() {
         </TabsList>
         <TabsContent v-for="(logFile, i) in logFiles" :value="logFile" :key="i">
           <div class="flex items-center justify-between px-2 py-4">
-            <div class="text-muted-foreground mr-3 text-sm">{{ `${logs.length || 0} entradas` }}</div>
+            <div class="mr-3 text-sm text-muted-foreground">{{ `${logs.length || 0} entradas` }}</div>
             <div class="flex items-center">
-              <Button variant="destructive" v-if="can && can.delete" class="ml-3" @click="handleConfirm(logFile)">
-                <FileX2Icon class="mr-2 h-4 w-4" />
-                Eliminar
-              </Button>
-              <Button v-if="can && can.export" class="ml-3" @click="download(logFile)">
-                <FileDownIcon class="mr-2 h-4 w-4" />
-                Descargar
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger as-child>
+                    <Button variant="destructive" v-if="can && can.delete" class="ml-3" @click="handleConfirm(logFile)">
+                      <ShredderIcon class="mr-2 h-4 w-4" />
+                      Eliminar
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>El archivo será eliminado permanentemente. Conviene de descargalo antes de eliminarlo.</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger as-child>
+                    <Button v-if="can && can.export" class="ml-3" @click="download(logFile)">
+                      <FileDownIcon class="mr-2 h-4 w-4" />
+                      Descargar
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Guardar una copia del archivo en este dispositivo. La marca de tiempo es prefijada al nombre del archivo.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
           <br />

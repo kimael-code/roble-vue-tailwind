@@ -3,6 +3,7 @@ import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
 import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
+import { useRememberScroll } from '@/composables/useRememberScroll';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Bug, Building, Construction, FolderGit2, KeySquare, LayoutGrid, LogsIcon, User, Users, Workflow } from 'lucide-vue-next';
@@ -11,6 +12,7 @@ import NavCompany from './NavCompany.vue';
 import NavDebug from './NavDebug.vue';
 import NavSecurity from './NavSecurity.vue';
 
+const { scrollable, handleScroll } = useRememberScroll('sidebar-scroll');
 const page = usePage();
 
 const mainNavItems: NavItem[] = [
@@ -99,7 +101,7 @@ const footerNavItems: NavItem[] = [
       </SidebarMenu>
     </SidebarHeader>
 
-    <SidebarContent>
+    <SidebarContent ref="scrollable" @scroll="handleScroll">
       <NavMain :items="mainNavItems" />
       <NavCompany :items="companyNavItems" />
       <NavSecurity :items="securityNavItems" />

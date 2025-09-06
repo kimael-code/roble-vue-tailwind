@@ -2,7 +2,7 @@
 import { getInitials } from '@/composables/useInitials';
 import { router, usePage } from '@inertiajs/vue3';
 import { useEchoModel } from '@laravel/echo-vue';
-import { BellRingIcon, HourglassIcon } from 'lucide-vue-next';
+import { BellRingIcon, CalendarClockIcon } from 'lucide-vue-next';
 import { DateTime } from 'luxon';
 import { computed, ref } from 'vue';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -46,7 +46,7 @@ router.reload();
         <div class="grid gap-4">
           <div class="space-y-2">
             <h4 class="leading-none font-medium">Notificaciones</h4>
-            <ScrollArea>
+            <ScrollArea class="h-80">
               <div
                 v-for="(notification, i) in unreadNotifications"
                 class="mb-2 flex cursor-pointer justify-normal space-x-4 rounded-md transition-colors duration-200 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -61,7 +61,7 @@ router.reload();
                   <h4 class="text-sm font-semibold">{{ notification.data?.causer }}</h4>
                   <p class="text-sm">{{ notification.data?.message }}</p>
                   <div class="flex items-center pt-2">
-                    <HourglassIcon class="mr-2 h-4 w-4 opacity-70" />
+                    <CalendarClockIcon class="mr-2 h-4 w-4 opacity-70" />
                     <span class="text-xs text-muted-foreground"> {{ DateTime.fromISO(notification.data?.timestamp).toRelative() }} </span>
                   </div>
                 </div>

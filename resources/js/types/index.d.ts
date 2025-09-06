@@ -187,9 +187,10 @@ export interface Organization {
   address: string | null;
   created_at: string | null;
   updated_at: string | null;
+  disabled_at: string | null;
   created_at_human: string | null;
   updated_at_human: string | null;
-  disabled_at: string | null;
+  disabled_at_human: string | null;
   status: string;
   organizational_units?: Array<OrganizationalUnit>;
   active_organizational_units?: Array<OrganizationalUnit>;

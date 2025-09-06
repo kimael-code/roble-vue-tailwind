@@ -49,7 +49,7 @@ const { requestState, requestAction } = useRequestActions('activity-logs');
               <p class="text-sm font-medium">Marca de tiempo</p>
               <p class="text-sm text-muted-foreground">{{ log.created_at_human ?? '-' }}</p>
               <br />
-              <p class="text-sm font-medium">Dir. IP</p>
+              <p class="text-sm font-medium">Dirección IP</p>
               <p class="font-mono text-sm text-muted-foreground">{{ log.properties.request.ip_address }}</p>
               <br />
               <p class="text- text-sm font-medium">Ruta HTTP Solicitada</p>

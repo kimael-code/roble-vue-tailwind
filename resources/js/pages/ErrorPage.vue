@@ -2,7 +2,6 @@
 import AppLogo from '@/components/AppLogo.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { router } from '@inertiajs/vue3';
 import { ArrowLeft } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -39,11 +38,7 @@ const reason = computed(() => {
 });
 
 function goBack() {
-  if (props.status === 500) {
-    window.history.back();
-  } else {
-    router.reload();
-  }
+  window.history.back();
 }
 </script>
 

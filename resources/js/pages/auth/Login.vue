@@ -84,10 +84,10 @@ const submit = () => {
                 </Button>
             </div>
 
-            <div class="text-center text-sm text-muted-foreground">
+            <!-- <div class="text-center text-sm text-muted-foreground">
                 ¿No tiene cuenta de usuario?
                 <TextLink :href="route('register')" :tabindex="5">Regístrese</TextLink>
-            </div>
+            </div> -->
         </form>
     </AuthBase>
 </template>
