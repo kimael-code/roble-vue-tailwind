@@ -40,8 +40,7 @@ class BatchDeactivateUser
             }
             else
             {
-                $user->disabled_at = now();
-                $user->save();
+                DisableUser::handle($user);
                 $deactivateCount += 1;
             }
         }
