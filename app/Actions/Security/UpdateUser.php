@@ -22,12 +22,34 @@ class UpdateUser
             $user->email = $inputs['email'];
             $user->is_external = $inputs['is_external'];
 
-            if ($user->isDirty())
+            $user->save();
+
+            if ($user->wasChanged())
             {
                 self::$notify = true;
-            }
 
-            $user->save();
+                activity(__('Security/Users'))
+                ->causedBy(auth()->user())
+                ->performedOn($user)
+                ->event('updated')
+                ->withProperties([
+                    'attributes' => $user->getChanges(),
+                    'old' => $user->getPrevious(),
+                    'request' => [
+                        'ip_address' => request()->ip(),
+                        'user_agent' => request()->header('user-agent'),
+                        'user_agent_lang' => request()->header('accept-language'),
+                        'referer' => request()->header('referer'),
+                        'http_method' => request()->method(),
+                        'request_url' => request()->fullUrl(),
+                    ],
+                    'causer' => User::with('person')->find(auth()->user()->id)->toArray(),
+                ])
+                ->log(__('updated user [:modelName] [:modelEmail]', [
+                    'modelName' => $user->name,
+                    'modelEmail' => $user->email,
+                ]));
+            }
 
             self::removeRoles($user, $inputs['roles']);
             self::assignRoles($user, $inputs['roles']);
@@ -94,8 +116,7 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__(':username: unassigned the [:role] role to user [:user]', [
-                        'username' => $authUser->name,
+                    ->log(__('unassigned role [:role] to user [:user]', [
                         'role' => $role->name,
                         'user' => $user->name,
                     ]));
@@ -134,8 +155,7 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__(':username: assigned the [:role] role to user [:user]', [
-                        'username' => $authUser->name,
+                    ->log(__('assigned role [:role] to user [:user]', [
                         'role' => $role->name,
                         'user' => $user->name,
                     ]));
@@ -172,8 +192,7 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__(':username: revoked the [:permission] permission from the [:user] user', [
-                        'username' => $authUser->name,
+                    ->log(__('revoked permission [:permission] to user [:user]', [
                         'permission' => $permission->description,
                         'user' => $user->name,
                     ]));
@@ -212,8 +231,7 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__(':username: granted the [:permission] permission to user [:user]', [
-                        'username' => $authUser->name,
+                    ->log(__('granted permission [:permission] to user [:user]', [
                         'permission' => $permission->description,
                         'user' => $user->name,
                     ]));
@@ -252,8 +270,7 @@ class UpdateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__(':username: disassociated user [:user] from the administrative unit [:ou]', [
-                        'username' => $authUser->name,
+                    ->log(__('disassociated user [:user] from administrative unit [:ou]', [
                         'user' => $user->name,
                         'ou' => $ou->name,
                     ]));
@@ -279,7 +296,7 @@ class UpdateUser
                         ->performedOn($user)
                         ->event('updated')
                         ->withProperties([
-                            __('deactivated_user') => $user,
+                            __('disabled_user') => $user,
                             __('in_administrative_unit') => $ou,
                             'causer' => User::with('person')->find($authUser->id)->toArray(),
                             'request' => [
@@ -291,8 +308,7 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__(':username: deactivated user [:user] in the administrative unit [:ou]', [
-                            'username' => $authUser->name,
+                        ->log(__('disabled user [:user] in administrative unit [:ou]', [
                             'user' => $user->name,
                             'ou' => $ou->name,
                         ]));
@@ -326,8 +342,7 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__(':username: associated user [:user] with the administrative unit [:ou]', [
-                            'username' => $authUser->name,
+                        ->log(__('associated user [:user] with administrative unit [:ou]', [
                             'user' => $user->name,
                             'ou' => $ou->name,
                         ]));
@@ -342,7 +357,7 @@ class UpdateUser
                         ->performedOn($user)
                         ->event('updated')
                         ->withProperties([
-                            __('activated_user') => $user,
+                            __('enabled_user') => $user,
                             __('in_administrative_unit') => $ou,
                             'causer' => User::with('person')->find($authUser->id)->toArray(),
                             'request' => [
@@ -354,8 +369,7 @@ class UpdateUser
                                 'request_url' => request()->fullUrl(),
                             ]
                         ])
-                        ->log(__(':username: activated user [:user] in the administrative unit [:ou]', [
-                            'username' => $authUser->name,
+                        ->log(__('enabled user [:user] in administrative unit [:ou]', [
                             'user' => $user->name,
                             'ou' => $ou->name,
                         ]));

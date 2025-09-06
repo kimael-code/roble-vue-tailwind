@@ -34,6 +34,6 @@ class LogVerified
                 'request_url' => request()->fullUrl(),
             ])
             ->withProperty('causer', User::with('person')->find($event->user->id)->toArray())
-            ->log(__(':username: was verified', ['username' => $event->user->name]));
+            ->log(__('was verified'));
     }
 }

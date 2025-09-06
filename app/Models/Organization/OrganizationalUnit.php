@@ -56,11 +56,7 @@ class OrganizationalUnit extends BaseModel
      *
      * @var array<int, string>
      */
-    protected $appends = [
-        'status',
-        'created_at_human',
-        'updated_at_human',
-    ];
+    protected $appends = ['status',];
 
     protected function status(): Attribute
     {
@@ -143,18 +139,5 @@ class OrganizationalUnit extends BaseModel
             {
                 $query->latest();
             });
-    }
-
-    public function getActivityLogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logAll()
-            ->useLogName(__('Organization/Administrative Units'))
-            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model [:modelName]', [
-                'username' => auth()->user()->name,
-                'event' => __($eventName),
-                'model' => __($this->traceObjectName),
-                'modelName' => $this?->name,
-            ]));
     }
 }

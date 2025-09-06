@@ -36,6 +36,6 @@ class LogPasswordSet
                 'request_url' => request()->fullUrl(),
             ])
             ->withProperty('causer', User::with('person')->find($event->user->id)->toArray())
-            ->log(__(':username: set their own password', ['username' => $event->user->name]));
+            ->log(__('set their own password'));
     }
 }

@@ -35,6 +35,6 @@ class LogOtherDeviceLogout
                 'guard_name' => $event->guard,
             ])
             ->withProperty('causer', User::with('person')->find($event->user->id)->toArray())
-            ->log(__(':username: logged out from other device', ['username' => $event->user->name]));
+            ->log(__('logged out from other device'));
     }
 }
