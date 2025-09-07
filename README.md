@@ -1,6 +1,6 @@
 # ROBLE Vue-Tailwind
 
-Starter kit for developing monolithic web applications based on Laravel, Inertia.js, Vue.js, and Tailwind CSS.
+Starter kit for developing monolithic web applications based on Laravel, Inertia.js, Vue.js, and Tailwind CSS (with PostgreSQL as database).
 
 ## Made with
 
@@ -12,13 +12,21 @@ Starter kit for developing monolithic web applications based on Laravel, Inertia
 
 ## Users
 
-Several users are created depending on the value of the `APP_ENV` variable:
+Default users are created depending on the value of the `APP_ENV` variable:
 
 - for local environment only:
-  - `admin.dev` with password `12345678`
+  - `root.dev`:
+    - password `12345678`
+    - role `Superuser`
+  - `admin.dev`:
+    - password `12345678`
+    - role `Systems Administrator`
 - for any other environment:
-  - `root`with password `root`
-  - `admin` with password `admin`
+  - `root`:
+    - password `root`
+    - role `Superuser`
+
+`root.dev` and `root` are read-only users, they cannot be updated neither deleted. These users act like the root user on unix/unix-like operating systems: they have full access to any route, however, they are not allowed to bypass the defines policies of the system.
 
 ## Getting started in Local Environment (`localhost`) using Docker & Laravel Sail
 
@@ -92,7 +100,7 @@ Several users are created depending on the value of the `APP_ENV` variable:
     sail npm run build
     ```
 
-10. Oper your favorite web browser and go to <http://localhost>.
+10. Open your favorite web browser and go to <http://localhost>.
 
 ## Getting started in Local Environment (`localhost`) using Laravel Herd
 
