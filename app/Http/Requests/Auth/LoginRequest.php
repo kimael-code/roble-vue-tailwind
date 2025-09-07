@@ -33,6 +33,19 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'name' => 'Nombre de usuario',
+            'password' => 'Contraseña',
+        ];
+    }
+
+    /**
      * Attempt to authenticate the request's credentials.
      *
      * @throws \Illuminate\Validation\ValidationException

@@ -9,7 +9,9 @@ class Inspiring extends IlluminateInspiring
 {
     public static function quotes()
     {
-        if (app()->getLocale() != 'es_VE')
+        $fallbackLocale = explode('_', app()->getLocale())[0];
+
+        if ($fallbackLocale != 'es')
         {
             return parent::quotes();
         }
