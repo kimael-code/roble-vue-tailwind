@@ -37,7 +37,6 @@ class UpdateOrganizationRequest extends FormRequest
             'acronym' => ['nullable', 'string', 'max:20',],
             'address' => ['nullable', 'string', 'max:2000'],
             'logo_path' => [
-                ...$this->isPrecognitive() ? [] : ['required'],
                 ...Storage::disk('public')->exists($this->logo_path ?? '') ? [] : ['image'],
                 ...Storage::disk('public')->exists($this->logo_path ?? '') ? [] : ['mimes:png'],
                 ...Storage::disk('public')->exists($this->logo_path ?? '') ? [] : ['max:512'],

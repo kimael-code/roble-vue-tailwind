@@ -25,6 +25,7 @@ class LogPasswordReset
         activity(__('Authentication'))
             ->event('authenticated')
             ->causedBy($event->user)
+            ->performedOn($event->user)
             ->withProperty('request', [
                 'ip_address' => request()->ip(),
                 'user_agent' => request()->header('user-agent'),
@@ -34,6 +35,6 @@ class LogPasswordReset
                 'request_url' => request()->fullUrl(),
             ])
             ->withProperty('causer', User::with('person')->find($event->user->id)->toArray())
-            ->log(__(':username: reset their password', ['username' => $event->user->name]));
+            ->log(__('reset their password'));
     }
 }

@@ -55,12 +55,7 @@ class Organization extends BaseModel
      *
      * @var array<int, string>
      */
-    protected $appends = [
-        'logo_url',
-        'status',
-        'created_at_human',
-        'updated_at_human',
-    ];
+    protected $appends = ['logo_url', 'status'];
 
     protected function logoUrl(): Attribute
     {
@@ -76,19 +71,6 @@ class Organization extends BaseModel
         return Attribute::make(
             get: fn(mixed $value, array $attributes) => isset($attributes['disabled_at']) ? 'INACTIVO' : 'ACTIVO'
         );
-    }
-
-    public function getActivityLogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logAll()
-            ->useLogName(__('Organization/Organizations'))
-            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model [:modelName]', [
-                'username' => auth()->user()->name,
-                'event' => __($eventName),
-                'model' => __($this->traceObjectName),
-                'modelName' => $this?->name,
-            ]));
     }
 
     public function organizationalUnits(): HasMany

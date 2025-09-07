@@ -31,9 +31,7 @@ return new class extends Migration
                 ->comment('Siglas o acrónimo del nombre de la unidad organizativa (o unidad administrativa).');
             $table->string('floor', 5)
                 ->nullable()
-                ->comment('
-                  Ubicación espacial (en formato abreviado, por ejemplo: PA) de la unidad organizativa (o unidad administrativa) en la infraestructura física del ente u organización.'
-                );
+                ->comment('Ubicación espacial (en formato abreviado, por ejemplo: PA) de la unidad organizativa (o unidad administrativa) en la infraestructura física del ente u organización.');
             $table->timestamps(6);
             $table->timestamp('disabled_at', 6)
                 ->nullable()

@@ -28,6 +28,27 @@ class UserObserver
      */
     public function deleted(User $user): void
     {
+        activity(__('Security/Users'))
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->event('deleted')
+            ->withProperties([
+                'old' => $user->toArray(),
+                'request' => [
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->header('user-agent'),
+                    'user_agent_lang' => request()->header('accept-language'),
+                    'referer' => request()->header('referer'),
+                    'http_method' => request()->method(),
+                    'request_url' => request()->fullUrl(),
+                ],
+                'causer' => User::with('person')->find(auth()->user()->id)->toArray(),
+            ])
+            ->log(__('deleted user [:modelName] [:modelEmail]', [
+                'modelName' => $user->name,
+                'modelEmail' => $user->email,
+            ]));
+
         session()->flash('message', [
             'message' => "({$user->name})",
             'title' => __('DELETED!'),
@@ -58,6 +79,27 @@ class UserObserver
      */
     public function restored(User $user): void
     {
+        activity(__('Security/Users'))
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->event('restored')
+            ->withProperties([
+                'attributes' => $user->toArray(),
+                'request' => [
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->header('user-agent'),
+                    'user_agent_lang' => request()->header('accept-language'),
+                    'referer' => request()->header('referer'),
+                    'http_method' => request()->method(),
+                    'request_url' => request()->fullUrl(),
+                ],
+                'causer' => User::with('person')->find(auth()->user()->id)->toArray(),
+            ])
+            ->log(__('restored user [:modelName] [:modelEmail]', [
+                'modelName' => $user->name,
+                'modelEmail' => $user->email,
+            ]));
+
         session()->flash('message', [
             'message' => "({$user->name})",
             'title' => __('RESTORED!'),
@@ -89,6 +131,27 @@ class UserObserver
      */
     public function forceDeleted(User $user): void
     {
+        activity(__('Security/Users'))
+            ->causedBy(auth()->user())
+            ->performedOn($user)
+            ->event('deleted')
+            ->withProperties([
+                'old' => $user->toArray(),
+                'request' => [
+                    'ip_address' => request()->ip(),
+                    'user_agent' => request()->header('user-agent'),
+                    'user_agent_lang' => request()->header('accept-language'),
+                    'referer' => request()->header('referer'),
+                    'http_method' => request()->method(),
+                    'request_url' => request()->fullUrl(),
+                ],
+                'causer' => User::with('person')->find(auth()->user()->id)->toArray(),
+            ])
+            ->log(__('eliminó permanentemente el usuario [:modelName] [:modelEmail]', [
+                'modelName' => $user->name,
+                'modelEmail' => $user->email,
+            ]));
+
         session()->flash('message', [
             'message' => "({$user->name})",
             'title' => __('HARD DELETED!'),

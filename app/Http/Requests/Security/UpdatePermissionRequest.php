@@ -28,9 +28,10 @@ class UpdatePermissionRequest extends FormRequest
                 'string',
                 'lowercase',
                 'max:255',
+                'doesnt_end_with:.',
                 Rule::unique('permissions')->ignore($this->permission),
             ],
-            'description' => ['required', 'string', 'lowercase', 'max:255',],
+            'description' => ['required', 'string', 'lowercase', 'max:255', 'doesnt_end_with:.',],
             'guard_name' => ['required', 'string', 'lowercase', 'regex:/^(web)$/',],
             'set_menu' => ['nullable', 'boolean',],
         ];

@@ -18,23 +18,35 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $users = [
+        $users = App::environment('local')
+            ? $this->getDevUsers()
+            : $this->getProductionUsers();
+
+        $this->createUsers($users);
+    }
+
+    protected function getProductionUsers(): array
+    {
+        return [
             [
                 'name' => 'root',
                 'email' => 'root@company.com',
                 'password' => Hash::make('root'),
-                'remember_token' => Str::random(),
+                'remember_token' => Str::random(60),
                 'is_password_set' => false,
                 'role' => __('Superuser'),
             ],
         ];
+    }
 
-        $devUsers = [
+    protected function getDevUsers(): array
+    {
+        return [
             [
                 'name' => 'root.dev',
                 'email' => 'root.dev@example.com',
                 'password' => Hash::make('12345678'),
-                'remember_token' => Str::random(),
+                'remember_token' => Str::random(60),
                 'is_password_set' => true,
                 'role' => __('Superuser'),
             ],
@@ -42,21 +54,15 @@ class UserSeeder extends Seeder
                 'name' => 'admin.dev',
                 'email' => 'admin.dev@example.com',
                 'password' => Hash::make('12345678'),
-                'remember_token' => Str::random(),
+                'remember_token' => Str::random(60),
                 'is_password_set' => true,
                 'role' => __('Systems Administrator'),
             ],
         ];
+    }
 
-        if (App::environment('local'))
-        {
-            foreach ($devUsers as $devUser)
-            {
-                array_push($users, $devUser);
-            }
-            unset($users[0]);
-        }
-
+    protected function createUsers(array $users): void
+    {
         foreach ($users as $user)
         {
             $createdUser = User::create([
@@ -66,6 +72,7 @@ class UserSeeder extends Seeder
                 'remember_token' => $user['remember_token'],
                 'is_password_set' => $user['is_password_set'],
             ]);
+
             $createdUser->assignRole($user['role']);
         }
     }

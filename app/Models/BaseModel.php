@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Traits\MergesAppends;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -12,6 +13,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 class BaseModel extends Model
 {
     use LogsActivity;
+    use MergesAppends;
 
     /**
      * The storage format of the model's date columns.
@@ -91,8 +93,7 @@ class BaseModel extends Model
     {
         return LogOptions::defaults()
             ->logAll()
-            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model [:modelName]', [
-                'username' => auth()->user()->name,
+            ->setDescriptionForEvent(fn(string $eventName) => __(':event :model [:modelName]', [
                 'event' => __($eventName),
                 'model' => __($this->traceObjectName),
                 'modelName' => $this?->name ?? $this?->title ?? '',

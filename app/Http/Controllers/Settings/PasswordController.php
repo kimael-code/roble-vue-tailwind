@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -33,6 +34,23 @@ class PasswordController extends Controller
         $request->user()->update([
             'password' => Hash::make($validated['password']),
         ]);
+
+        activity(__('Settings/Password'))
+            ->causedBy(auth()->user())
+            ->performedOn($request->user())
+            ->event('updated')
+            ->withProperties([
+                'request' => [
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->header('user-agent'),
+                    'user_agent_lang' => $request->header('accept-language'),
+                    'referer' => $request->header('referer'),
+                    'http_method' => $request->method(),
+                    'request_url' => $request->fullUrl(),
+                ],
+                'causer' => User::with('person')->find(auth()->user()->id)->toArray(),
+            ])
+            ->log(__('updated their own password'));
 
         return back();
     }

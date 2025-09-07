@@ -106,22 +106,51 @@ function index() {
                     required
                     autofocus
                     @change="form.validate('name')"
+                    @keyup.enter.prevent="submit"
+                    @keyup.esc="index"
                   />
                   <InputError :message="form.errors.name" />
                 </div>
                 <div class="flex flex-col space-y-1.5">
                   <Label for="acronym">Acrónimo</Label>
-                  <Input id="acronym" v-model="form.acronym" type="text" maxlength="20" placeholder="ej.: ACME" @change="form.validate('acronym')" />
+                  <Input
+                    id="acronym"
+                    v-model="form.acronym"
+                    type="text"
+                    maxlength="20"
+                    placeholder="ej.: ACME"
+                    @change="form.validate('acronym')"
+                    @keyup.enter.prevent="submit"
+                    @keyup.esc="index"
+                  />
                   <InputError :message="form.errors.acronym" />
                 </div>
                 <div class="flex flex-col space-y-1.5">
                   <Label for="code">Código</Label>
-                  <Input id="code" v-model="form.code" type="text" maxlength="20" placeholder="ej.: 000000009999" @change="form.validate('code')" />
+                  <Input
+                    id="code"
+                    v-model="form.code"
+                    type="text"
+                    maxlength="20"
+                    placeholder="ej.: 000000009999"
+                    @change="form.validate('code')"
+                    @keyup.enter.prevent="submit"
+                    @keyup.esc="index"
+                  />
                   <InputError :message="form.errors.code" />
                 </div>
                 <div class="flex flex-col space-y-1.5">
                   <Label for="floor">Piso</Label>
-                  <Input id="floor" v-model="form.floor" type="text" maxlength="5" placeholder="ej.: PB" @change="form.validate('floor')" />
+                  <Input
+                    id="floor"
+                    v-model="form.floor"
+                    type="text"
+                    maxlength="5"
+                    placeholder="ej.: PB"
+                    @change="form.validate('floor')"
+                    @keyup.enter.prevent="submit"
+                    @keyup.esc="index"
+                  />
                   <InputError :message="form.errors.floor" />
                 </div>
                 <div class="flex flex-col space-y-1.5">
@@ -145,11 +174,11 @@ function index() {
             </form>
           </CardContent>
           <CardFooter class="flex justify-between px-6 pb-6">
-            <Button variant="outline" :disabled="buttonCancel" @click="index">
+            <Button variant="outline" :disabled="buttonCancel" @click="index" @keyup.esc="index" @keyup.enter="index">
               <LoaderCircleIcon v-if="buttonCancel" class="h-4 w-4 animate-spin" />
               Cancelar
             </Button>
-            <Button :disabled="buttonCancel || form.processing" @click="submit">
+            <Button :disabled="buttonCancel || form.processing" @click="submit" @keyup.esc="index" @keyup.enter="submit">
               <LoaderCircleIcon v-if="form.processing" class="h-4 w-4 animate-spin" />
               Guardar
             </Button>

@@ -55,19 +55,6 @@ class Person extends BaseModel
         ];
     }
 
-    public function getActivityLogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logAll()
-            ->useLogName(__('Security/Users'))
-            ->setDescriptionForEvent(fn(string $eventName) => __(':username: :event :model [:modelName]', [
-                'username' => auth()->user()->name,
-                'event' => __($eventName),
-                'model' => __($this->traceObjectName),
-                'modelName' => "{$this?->names} {$this?->surnames}",
-            ]));
-    }
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

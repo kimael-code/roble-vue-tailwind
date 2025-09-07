@@ -23,15 +23,15 @@ class UserProps
     private static function getPermissions(): array
     {
         return [
-            'create' => Auth::user()->can('create new users') || Auth::user()->hasRole(__('Superuser')),
-            'read' => Auth::user()->can('read user') || Auth::user()->hasRole(__('Superuser')),
-            'update' => Auth::user()->can('update users') || Auth::user()->hasRole(__('Superuser')),
-            'delete' => Auth::user()->can('delete users') || Auth::user()->hasRole(__('Superuser')),
-            'f_delete' => Auth::user()->can('force delete users') || Auth::user()->hasRole(__('Superuser')),
-            'export' => Auth::user()->can('export users') || Auth::user()->hasRole(__('Superuser')),
-            'restore' => Auth::user()->can('restore users') || Auth::user()->hasRole(__('Superuser')),
-            'activate' => Auth::user()->can('activate users') || Auth::user()->hasRole(__('Superuser')),
-            'deactivate' => Auth::user()->can('deactivate users') || Auth::user()->hasRole(__('Superuser')),
+            'create' => Auth::user()->can('create new users'),
+            'read' => Auth::user()->can('read user'),
+            'update' => Auth::user()->can('update users'),
+            'delete' => Auth::user()->can('delete users'),
+            'f_delete' => Auth::user()->can('force delete users'),
+            'export' => Auth::user()->can('export users'),
+            'restore' => Auth::user()->can('restore users'),
+            'activate' => Auth::user()->can('activate users'),
+            'deactivate' => Auth::user()->can('deactivate users'),
         ];
     }
 
@@ -115,7 +115,7 @@ class UserProps
             'logs' => fn() => new ActivityLogCollection(
                 ActivityLog::filter(Request::only(['search']))
                     ->whereHasMorph(
-                        'subject',
+                        'causer',
                         User::class,
                         fn(Builder $query) => $query->where('id', $user->id)
                     )

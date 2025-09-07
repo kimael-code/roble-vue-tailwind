@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 class ActionHandledOnModel extends Notification implements ShouldQueue
 {
@@ -18,9 +19,9 @@ class ActionHandledOnModel extends Notification implements ShouldQueue
      */
     public function __construct(
         public Authenticatable|User $causer,
-        public array  $subjectData,
+        public array $subjectData,
         public string $eventType,
-        public array  $routingData,
+        public array $routingData,
     ) {}
 
     /**
@@ -52,11 +53,11 @@ class ActionHandledOnModel extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'causer'    => $this->causer->name,
-            'message'   => "{$this->subjectData['type']} [{$this->subjectData['name']}] ".__($this->eventType),
-            'photoUrl'  => $this->causer->profile_photo_url,
+            'causer' => $this->causer->name,
+            'message' => Str::ucfirst(__($this->eventType)) . " {$this->subjectData['type']} <{$this->subjectData['name']}>.",
+            'photoUrl' => $this->causer->profile_photo_url,
             'timestamp' => $this->subjectData['timestamp'],
-            'url'       => $this->urlResolver(),
+            'url' => $this->urlResolver(),
         ];
     }
 

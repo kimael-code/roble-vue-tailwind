@@ -83,6 +83,27 @@ const form = useForm('put', route('users.update', props.user.id), <formUser>{
   permissions: permissionNames.value,
 });
 
+const ouNamesError = computed(() => {
+  const errors = Object.entries(form.errors)
+    .filter(([key]) => key.startsWith('ou_names.'))
+    .map(([, value]) => value);
+  return errors.length ? errors[0] : form.errors.ou_names || '';
+});
+
+const rolesError = computed(() => {
+  const errors = Object.entries(form.errors)
+    .filter(([key]) => key.startsWith('roles.'))
+    .map(([, value]) => value);
+  return errors.length ? errors[0] : form.errors.roles || '';
+});
+
+const permissionsError = computed(() => {
+  const errors = Object.entries(form.errors)
+    .filter(([key]) => key.startsWith('permissions.'))
+    .map(([, value]) => value);
+  return errors.length ? errors[0] : form.errors.permissions || '';
+});
+
 function submit() {
   form
     .transform((data) => ({
@@ -162,7 +183,7 @@ function handleOUSelection(ou: OrganizationalUnit) {
             <CardDescription>Los campos con asterisco rojo son requeridos.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form @submit.prevent="submit">
+            <form @submit.prevent="submit" @keyup.enter.prevent="submit">
               <div class="grid w-full items-center gap-4">
                 <div class="flex flex-col space-y-1.5">
                   <Label class="is-required" for="name">Nombre de Usuario</Label>
@@ -262,7 +283,7 @@ function handleOUSelection(ou: OrganizationalUnit) {
                 </div>
                 <br />
                 <div class="5 flex flex-col space-y-1">
-                  <Label for="ou_names">Unidad Administrativa</Label>
+                  <Label for="ou_names">Unidades Administrativas</Label>
                   <TagsInput id="ou_names" v-model="form.ou_names">
                     <TagsInputItem v-for="ou_name in form.ou_names" :key="ou_name" :value="ou_name">
                       <TagsInputItemText />
@@ -270,7 +291,7 @@ function handleOUSelection(ou: OrganizationalUnit) {
                     </TagsInputItem>
                     <TagsInputInput placeholder="Unidades Administrativas seleccionados..." @click="openSheetOUs = true" />
                   </TagsInput>
-                  <InputError :message="form.errors.ou_names" />
+                  <InputError :message="ouNamesError" />
                 </div>
                 <div class="5 flex flex-col space-y-1">
                   <Label for="roles">Roles</Label>
@@ -281,7 +302,7 @@ function handleOUSelection(ou: OrganizationalUnit) {
                     </TagsInputItem>
                     <TagsInputInput placeholder="Roles seleccionados..." @click="openSheetRoles = true" />
                   </TagsInput>
-                  <InputError :message="form.errors.roles" />
+                  <InputError :message="rolesError" />
                 </div>
                 <div class="5 flex flex-col space-y-1">
                   <Label for="permissions">Permisos Directos</Label>
@@ -292,17 +313,17 @@ function handleOUSelection(ou: OrganizationalUnit) {
                     </TagsInputItem>
                     <TagsInputInput placeholder="Permisos seleccionados..." @click="openSheetPermissions = true" />
                   </TagsInput>
-                  <InputError :message="form.errors.permissions" />
+                  <InputError :message="permissionsError" />
                 </div>
               </div>
             </form>
           </CardContent>
           <CardFooter class="flex justify-between px-6 pb-6">
-            <Button variant="outline" :disabled="buttonCancel" @click="index">
+            <Button variant="outline" :disabled="buttonCancel" @click="index" @keyup.esc="index" @keyup.enter="index">
               <LoaderCircleIcon v-if="buttonCancel" class="h-4 w-4 animate-spin" />
               Cancelar
             </Button>
-            <Button :disabled="buttonCancel || form.processing" @click="submit">
+            <Button :disabled="buttonCancel || form.processing" @click="submit" @keyup.esc="index" @keyup.enter="submit">
               <LoaderCircleIcon v-if="form.processing" class="h-4 w-4 animate-spin" />
               Guardar
             </Button>

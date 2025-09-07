@@ -35,6 +35,6 @@ class LogLogout
                 'guard_name' => $event->guard,
             ])
             ->withProperty('causer', User::with('person')->find($event->user->id)->toArray())
-            ->log(__(':username: logged out', ['username' => $event->user->name]));
+            ->log(__('logged out'));
     }
 }

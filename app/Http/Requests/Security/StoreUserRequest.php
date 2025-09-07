@@ -22,21 +22,36 @@ class StoreUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name'        => ['required', 'string', 'max:255',],
-            'email'       => ['required', 'email', 'max:255', 'unique:users',],
+        $rules = [
+            'name' => ['required', 'string', 'max:255', 'unique:users',],
+            'email' => ['required', 'email', 'max:255',],
             'is_external' => ['required', 'boolean',],
-            'id_card'     => ['required_if_accepted:is_external', 'nullable', 'string', 'max:8', 'unique:people'],
-            'names'       => ['required_if_accepted:is_external', 'nullable', 'string', 'max:255',],
-            'surnames'    => ['required_if_accepted:is_external', 'nullable', 'string', 'max:255',],
-            'phones'      => ['nullable', 'string', 'regex:/\+?\(?[\d\s\-\.]{7,}\d/'],
-            'emails'      => ['nullable', 'string', 'regex:/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/'],
-            'position'    => ['nullable', 'string', 'max:255'],
-            'staff_type'  => ['nullable', 'string', 'max:255'],
-            'ou_names'    => ['nullable', 'array',],
-            'roles'       => ['nullable', 'array', new RoleSuperuser],
+            'id_card' => ['required_if_accepted:is_external', 'nullable', 'string', 'max:8', 'unique:people'],
+            'names' => ['required_if_accepted:is_external', 'nullable', 'string', 'max:255',],
+            'surnames' => ['required_if_accepted:is_external', 'nullable', 'string', 'max:255',],
+            'phones' => ['nullable', 'string', 'regex:/\+?\(?[\d\s\-\.]{7,}\d/'],
+            'emails' => ['nullable', 'string', 'regex:/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/'],
+            'position' => ['nullable', 'string', 'max:255'],
+            'staff_type' => ['nullable', 'string', 'max:255'],
+            'ou_names' => ['nullable', 'array',],
+            'roles' => ['nullable', 'array', new RoleSuperuser],
             'permissions' => ['nullable', 'array',],
         ];
+
+        if (!empty($this->ou_names))
+        {
+            $rules['ou_names.*'] = ['exists:organizational_units,name'];
+        }
+        if (!empty($this->roles))
+        {
+            $rules['roles.*'] = ['exists:roles,name'];
+        }
+        if (!empty($this->permissions))
+        {
+            $rules['permissions.*'] = ['exists:permissions,description'];
+        }
+
+        return $rules;
     }
 
     /**
@@ -61,5 +76,30 @@ class StoreUserRequest extends FormRequest
             'roles' => 'Roles',
             'permissions' => 'Permisos Directos',
         ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        $messages = [];
+
+        if (!empty($this->ou_names))
+        {
+            $messages['ou_names.*'] = 'Algunas unidades administrativas seleccionadas no existen.';
+        }
+        if (!empty($this->roles))
+        {
+            $messages['roles.*'] = 'Algunos roles seleccionados no existen.';
+        }
+        if (!empty($this->permissions))
+        {
+            $messages['permissions.*'] = 'Algunos permisos seleccionados no existen.';
+        }
+
+        return $messages;
     }
 }

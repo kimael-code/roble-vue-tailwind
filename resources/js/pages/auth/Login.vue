@@ -28,7 +28,7 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthBase title="Inicie sesión en su cuenta" description="Ingrese su usuario y contraseña a continuación para iniciar sesión">
+    <AuthBase title="Iniciar Sesión" description="Ingrese sus credenciales a continuación para acceder">
         <Head title="Iniciar Sesión" />
 
         <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
@@ -84,10 +84,10 @@ const submit = () => {
                 </Button>
             </div>
 
-            <div class="text-center text-sm text-muted-foreground">
+            <!-- <div class="text-center text-sm text-muted-foreground">
                 ¿No tiene cuenta de usuario?
                 <TextLink :href="route('register')" :tabindex="5">Regístrese</TextLink>
-            </div>
+            </div> -->
         </form>
     </AuthBase>
 </template>

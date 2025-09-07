@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import { Badge, type BadgeVariants } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
@@ -19,8 +19,8 @@ const props = defineProps<{
 const { chartOptionsUsers } = useChartOptionsUsers(props.data.users.labels);
 const { chartOptionsRoles } = useChartOptionsRoles(props.data.roles.labels);
 
-const badgeVariant = (size: number) => {
-  let variant = 'secondary';
+const badgeVariant = (size: number): BadgeVariants['variant'] => {
+  let variant: BadgeVariants['variant'] = 'secondary';
 
   if (size >= 17476266) variant = 'default';
   if (size >= 52428800) variant = 'destructive';
@@ -102,7 +102,6 @@ const badgeVariant = (size: number) => {
         <CardContent>
           <ScrollArea>
             <div v-for="(l, i) in data.logSizes" :key="i">
-              <!-- @vue-expect-error -->
               <Badge :variant="badgeVariant(l[i].sizeRaw)">{{ `${l[i].logName}: ${l[i].sizeHuman}` }}</Badge>
               <Separator class="my-2" />
             </div>

@@ -45,10 +45,10 @@ class SysadmiRolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'read any role', 'description' => __('read any role'), 'set_menu' => true]);
         Permission::create(['name' => 'read role', 'description' => __('read role')]);
         Permission::create(['name' => 'update roles', 'description' => __('update roles')]);
-        Permission::create(['name' => 'delete roles', 'description' => __('eliminar cualquier rol')]);
-        Permission::create(['name' => 'export roles', 'description' => __('exportar datos de roles a archivo')]);
+        Permission::create(['name' => 'delete roles', 'description' => __('delete roles')]);
+        Permission::create(['name' => 'export roles', 'description' => __('export roles')]);
         // permisos para gestionar los permisos
-        Permission::create(['name' => 'create new permissions', 'description' => __('crear nuevos permisos')]);
+        Permission::create(['name' => 'create new permissions', 'description' => __('create new permissions')]);
         Permission::create(['name' => 'read any permission', 'description' => __('read any permission'), 'set_menu' => true]);
         Permission::create(['name' => 'read permission', 'description' => __('read permission')]);
         Permission::create(['name' => 'update permissions', 'description' => __('update permissions')]);

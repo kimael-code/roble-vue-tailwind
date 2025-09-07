@@ -17,7 +17,7 @@ class OrganizationFactory extends Factory
     public function definition(): array
     {
         return [
-            'rif' => fake()->taxpayerIdentificationNumber('-'),
+            'rif' => app()->getLocale() == 'es_VE' ? fake()->taxpayerIdentificationNumber('-') : fake()->ein(),
             'name' => fake()->company(),
             'logo_path' => '',
             'acronym' => fake()->companySuffix(),

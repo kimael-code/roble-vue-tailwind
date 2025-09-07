@@ -16,8 +16,8 @@ class UpdateRole
     {
         DB::transaction(function () use ($inputs, $role)
         {
-            $role->name        = $inputs['name'];
-            $role->guard_name  = $inputs['guard_name'];
+            $role->name = $inputs['name'];
+            $role->guard_name = $inputs['guard_name'];
             $role->description = $inputs['description'];
             $role->save();
 
@@ -43,9 +43,9 @@ class UpdateRole
 
         foreach ($role->permissions as $permission)
         {
-            if ($assignedPermissions->doesntContain($permission->name))
+            if ($assignedPermissions->doesntContain($permission))
             {
-                $role->revokePermissionTo($permission->name);
+                $role->revokePermissionTo($permission);
 
                 activity(__('Security/Roles'))
                     ->causedBy($authUser)
@@ -53,7 +53,7 @@ class UpdateRole
                     ->event('authorized')
                     ->withProperties([
                         __('revoked_permission') => $permission,
-                        __('from_role') => $role,
+                        __('to_role') => $role,
                         'causer' => User::with('person')->find($authUser->id)->toArray(),
                         'request' => [
                             'ip_address' => request()->ip(),
@@ -64,8 +64,7 @@ class UpdateRole
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__(':username: revoked the [:permission] permission from the [:role] role', [
-                        'username' => $authUser->name,
+                    ->log(__('revoked permission [:permission] to role [:role]', [
                         'permission' => $permission->description,
                         'role' => $role->name,
                     ]));
@@ -80,9 +79,9 @@ class UpdateRole
 
         foreach ($assignedPermissions as $assignedPermission)
         {
-            if ($role->permissions->doesntContain($assignedPermission->name))
+            if ($role->permissions->doesntContain($assignedPermission))
             {
-                $role->givePermissionTo($assignedPermission->name);
+                $role->givePermissionTo($assignedPermission);
 
                 activity(__('Security/Roles'))
                     ->causedBy($authUser)
@@ -101,8 +100,7 @@ class UpdateRole
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__(':username: granted the [:permission] permission to role [:role]', [
-                        'username' => $authUser->name,
+                    ->log(__('granted permission [:permission] to role [:role]', [
                         'permission' => $assignedPermission->description,
                         'role' => $role->name,
                     ]));

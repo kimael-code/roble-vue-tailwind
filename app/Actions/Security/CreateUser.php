@@ -21,10 +21,34 @@ class CreateUser
         {
             $user->name = $inputs['name'];
             $user->email = $inputs['email'];
-            $user->password = $inputs['id_card'] ? Hash::make($inputs['id_card']) : Hash::make('12345678');
+            $user->password = $inputs['id_card'] ? Hash::make($inputs['id_card']) : Hash::make($inputs['name']);
             $user->remember_token = Str::random();
             $user->is_external = $inputs['is_external'];
             $user->save();
+
+            $event = 'created';
+            activity(__('Security/Users'))
+                ->causedBy(auth()->user())
+                ->performedOn($user)
+                ->event($event)
+                ->withProperties([
+                    'attributes' => $user->toArray(),
+                    'request' => [
+                        'ip_address' => request()->ip(),
+                        'user_agent' => request()->header('user-agent'),
+                        'user_agent_lang' => request()->header('accept-language'),
+                        'referer' => request()->header('referer'),
+                        'http_method' => request()->method(),
+                        'request_url' => request()->fullUrl(),
+                    ],
+                    'causer' => User::with('person')->find(auth()->user()->id)->toArray(),
+                ])
+                ->log(__(':event :model [:modelName] [:modelEmail]', [
+                    'event' => __($event),
+                    'model' => $user->traceObjectName,
+                    'modelName' => $user->name,
+                    'modelEmail' => $user->email,
+                ]));
 
             self::assignRoles($user, $inputs['roles']);
             self::givePermissions($user, $inputs['permissions']);
@@ -61,8 +85,7 @@ class CreateUser
                         'request_url' => request()->fullUrl(),
                     ]
                 ])
-                ->log(__(':username: assigned the role [:rolename] to user [:user]', [
-                    'username' => $authUser->name,
+                ->log(__('assigned role [:rolename] to user [:user]', [
                     'rolename' => $role->name,
                     'user' => $user->name,
                 ]));
@@ -94,8 +117,7 @@ class CreateUser
                         'request_url' => request()->fullUrl(),
                     ]
                 ])
-                ->log(__(':username: granted the [:permission] permission to user [:user]', [
-                    'username' => $authUser->name,
+                ->log(__('granted permission [:permission] to user [:user]', [
                     'permission' => $permission->description,
                     'user' => $user->name,
                 ]));
@@ -125,8 +147,6 @@ class CreateUser
             foreach ($inputs['ou_names'] as $ouName)
             {
                 $ou = OrganizationalUnit::where(DB::raw('LOWER(name)'), '=', DB::raw("LOWER('" . $ouName . "')"))->first();
-                if (!$ou)
-                    $ou = OrganizationalUnit::where('name', 'NO DEFINIDA')->first();
 
                 $user->organizationalUnits()->attach($ou);
 
@@ -149,8 +169,7 @@ class CreateUser
                             'request_url' => request()->fullUrl(),
                         ]
                     ])
-                    ->log(__(':username: associated user [:user] with the administrative unit [:ou]', [
-                        'username' => $authUser->name,
+                    ->log(__('associated user [:user] with administrative unit [:ou]', [
                         'user' => $user->name,
                         'ou' => $ou->name,
                     ]));

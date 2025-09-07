@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -29,13 +30,38 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        abort(403, __('Not allowed. Contact Technical Support if you need to update your information.'));
+
         $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
+        if ($request->user()->isDirty('email'))
+        {
             $request->user()->email_verified_at = null;
         }
 
         $request->user()->save();
+
+        if ($request->user()->wasChanged())
+        {
+            activity(__('Settings/Profile'))
+                ->causedBy(auth()->user())
+                ->performedOn($request->user())
+                ->event('updated')
+                ->withProperties([
+                    'attributes' => $request->user()->getChanges(),
+                    'old' => $request->user()->getPrevious(),
+                    'request' => [
+                        'ip_address' => request()->ip(),
+                        'user_agent' => request()->header('user-agent'),
+                        'user_agent_lang' => request()->header('accept-language'),
+                        'referer' => request()->header('referer'),
+                        'http_method' => request()->method(),
+                        'request_url' => request()->fullUrl(),
+                    ],
+                    'causer' => User::with('person')->find(auth()->user()->id)->toArray(),
+                ])
+                ->log('updated their profile information');
+        }
 
         return to_route('profile.edit');
     }

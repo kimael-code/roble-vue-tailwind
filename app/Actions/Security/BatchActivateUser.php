@@ -40,9 +40,7 @@ class BatchActivateUser
             }
             else
             {
-                $user->disabled_at = null;
-                $user->deleted_at = null;
-                $user->save();
+                EnableUser::handle($user);
                 $activateCount += 1;
             }
         }

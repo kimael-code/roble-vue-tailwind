@@ -16,7 +16,7 @@ import { Head, router, WhenVisible } from '@inertiajs/vue3';
 import { watchDebounced } from '@vueuse/core';
 import { useForm } from 'laravel-precognition-vue-inertia';
 import { LoaderCircleIcon, Search, Users } from 'lucide-vue-next';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps<{
   filters: { [index: string]: string | undefined };
@@ -53,6 +53,13 @@ const form = useForm('put', route('roles.update', props.role.id), <formRole>{
   description: props.role.description,
   guard_name: props.role.guard_name,
   permissions: props.rolePermissions,
+});
+
+const permissionsError = computed(() => {
+  const errors = Object.entries(form.errors)
+    .filter(([key]) => key.startsWith('permissions.'))
+    .map(([, value]) => value);
+  return errors.length ? errors[0] : form.errors.permissions || '';
 });
 
 function submit() {
@@ -112,7 +119,7 @@ function handlePermissionSelecction(permission: Permission) {
             <CardDescription>Los campos con asterisco rojo son requeridos.</CardDescription>
           </CardHeader>
           <CardContent>
-            <form @submit.prevent="submit">
+            <form @submit.prevent="submit" @keyup.enter.prevent="submit" @keyup.esc="index">
               <div class="grid w-full items-center gap-4">
                 <div class="flex flex-col space-y-1.5">
                   <Label class="is-required" for="name">Nombre</Label>
@@ -160,22 +167,22 @@ function handlePermissionSelecction(permission: Permission) {
                   <Label for="permissions">Permisos</Label>
                   <TagsInput id="permissions" v-model="form.permissions">
                     <TagsInputItem v-for="permission in form.permissions" :key="permission" :value="permission">
-                      <TagsInputItemText />
+                      <TagsInputItemText class="first-letter:uppercase" />
                       <TagsInputItemDelete />
                     </TagsInputItem>
-                    <TagsInputInput placeholder="Permisos seleccionados..." @click="openSheet = true" />
+                    <TagsInputInput placeholder="Permisos seleccionados..." @click="openSheet = true" @keyup.enter.prevent="submit" />
                   </TagsInput>
-                  <InputError :message="form.errors.permissions" />
+                  <InputError :message="permissionsError" />
                 </div>
               </div>
             </form>
           </CardContent>
           <CardFooter class="flex justify-between px-6 pb-6">
-            <Button variant="outline" :disabled="buttonCancel" @click="index">
+            <Button variant="outline" :disabled="buttonCancel" @click="index" @keyup.esc="index" @keyup.enter="index">
               <LoaderCircleIcon v-if="buttonCancel" class="h-4 w-4 animate-spin" />
               Cancelar
             </Button>
-            <Button :disabled="buttonCancel || form.processing" @click="submit">
+            <Button :disabled="buttonCancel || form.processing" @click="submit" @keyup.esc="index" @keyup.enter="submit">
               <LoaderCircleIcon v-if="form.processing" class="h-4 w-4 animate-spin" />
               Guardar
             </Button>
@@ -193,7 +200,7 @@ function handlePermissionSelecction(permission: Permission) {
             <div class="relative w-full max-w-sm items-center p-4">
               <Input id="search" type="text" placeholder="Buscar..." class="pl-10" v-model="search" />
               <span class="absolute inset-y-0 start-0 flex items-center justify-center px-5">
-                <Search class="text-muted-foreground size-6" />
+                <Search class="size-6 text-muted-foreground" />
               </span>
             </div>
             <ScrollArea class="m-3 h-75 rounded-md border">
@@ -205,7 +212,7 @@ function handlePermissionSelecction(permission: Permission) {
                       :model-value="form.permissions.includes(permission.description)"
                       @update:model-value="handlePermissionSelecction(permission)"
                     />
-                    <span>{{ permission.description }}</span>
+                    <span class="first-letter:uppercase">{{ permission.description }}</span>
                   </Label>
                   <Separator class="my-2" />
                 </div>

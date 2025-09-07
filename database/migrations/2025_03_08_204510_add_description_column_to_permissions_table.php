@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('permissions', function (Blueprint $table)
         {
             $table->string('description')
-                ->nullable()
                 ->comment('Nombre (o descripción) traducida del permiso.');
         });
     }

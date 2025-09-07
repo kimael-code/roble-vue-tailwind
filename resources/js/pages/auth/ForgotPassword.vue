@@ -22,7 +22,7 @@ const submit = () => {
 </script>
 
 <template>
-    <AuthLayout title="Contraseña olvidada" description="Ingrese su correo electrónico para recibir un enlace de restablecimiento de contraseña">
+    <AuthLayout title="Contraseña olvidada" description="Ingrese su dirección de correo electrónico para recibir un enlace de restablecimiento de contraseña">
         <Head title="Contraseña olvidada" />
 
         <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">

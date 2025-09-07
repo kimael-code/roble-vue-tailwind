@@ -1,5 +1,3 @@
-@inject('exporter', 'App\Actions\Security\Role\ExportIndexToPdf')
-
 <style>
     .td-header-no-border {
         font-family: dejavusans;

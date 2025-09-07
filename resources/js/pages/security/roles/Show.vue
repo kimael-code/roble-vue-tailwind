@@ -110,32 +110,56 @@ watch(action, () => {
             </TooltipProvider>
             <div class="flex items-center">
               <DropdownMenu>
-                <DropdownMenuTrigger as-child>
-                  <Button variant="outline" :disabled="resourceID !== null">
-                    <EllipsisIcon v-if="resourceID === null" />
-                    <LoaderCircleIcon v-else class="animate-spin" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuGroup>
-                    <DropdownMenuItem @click="requestAction({ operation: 'edit', data: { id: role.id }, options: { preserveState: false } })">
-                      <PencilIcon />
-                      <span>Editar</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem class="text-red-600 transition-colors focus:bg-accent focus:text-accent-foreground" @click="action = 'destroy'">
-                      <Trash2Icon class="text-red-600" />
-                      <span>Eliminar</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuGroup>
-                </DropdownMenuContent>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger as-child>
+                      <DropdownMenuTrigger as-child>
+                        <Button variant="outline" :disabled="resourceID !== null">
+                          <EllipsisIcon v-if="resourceID === null" />
+                          <LoaderCircleIcon v-else class="animate-spin" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent> Editar, exportar y otras acciones </TooltipContent>
+                    <DropdownMenuContent>
+                      <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuGroup>
+                        <DropdownMenuItem
+                          v-if="can.update"
+                          class="flex items-center gap-2"
+                          @click="requestAction({ operation: 'edit', data: { id: role.id }, options: { preserveState: false } })"
+                        >
+                          <PencilIcon />
+                          <span>Editar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          v-if="can.delete"
+                          class="text-red-600 transition-colors focus:bg-accent focus:text-accent-foreground"
+                          @click="action = 'destroy'"
+                        >
+                          <Trash2Icon class="text-red-600" />
+                          <span>Eliminar</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuGroup>
+                    </DropdownMenuContent>
+                  </Tooltip>
+                </TooltipProvider>
               </DropdownMenu>
-              <Button v-if="can.create" class="ml-3" @click="requestAction({ operation: 'create' })" :disabled="requestState.create">
-                <LoaderCircleIcon v-if="requestState.create" class="h-4 w-4 animate-spin" />
-                <PlusIcon v-else class="mr-2 h-4 w-4" />
-                Nuevo
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger as-child>
+                    <Button v-if="can.create" class="ml-3" @click="requestAction({ operation: 'create' })" :disabled="requestState.create">
+                      <LoaderCircleIcon v-if="requestState.create" class="h-4 w-4 animate-spin" />
+                      <PlusIcon v-else class="mr-2 h-4 w-4" />
+                      Nuevo
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Crear nuevo registro</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
           <Tabs default-value="permissions" class="w-auto">

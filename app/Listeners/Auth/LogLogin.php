@@ -36,6 +36,6 @@ class LogLogin
                 'remembered' => $event->remember,
             ])
             ->withProperty('causer', User::with('person')->find($event->user->id)->toArray())
-            ->log(__(':username: logged in', ['username' => $event->user->name]));
+            ->log(__('logged in'));
     }
 }

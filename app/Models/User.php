@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Organization\OrganizationalUnit;
+use App\Notifications\ResetPassword;
 use App\Observers\Security\UserObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -139,5 +140,15 @@ class User extends Authenticatable
                     $query->whereNotNull($status);
                 }
             });
+    }
+
+    /**
+     * Envía al usuario el correo electrónico de restableciemiento de contraseña.
+     * @param string $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPassword($token));
     }
 }
