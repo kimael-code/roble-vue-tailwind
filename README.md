@@ -1,6 +1,6 @@
 # ROBLE Vue-Tailwind
 
-Starter kit for developing monolithic web applications based on Laravel, Inertia.js, Vue.js, and Tailwind CSS (with PostgreSQL as database).
+Starter kit for developing monolithic web applications based on Laravel, Inertia.js, Vue.js, and Tailwind CSS (with PostgreSQL as the database).
 
 ## Made with
 
@@ -12,9 +12,9 @@ Starter kit for developing monolithic web applications based on Laravel, Inertia
 
 ## Users
 
-Default users are created depending on the value of the `APP_ENV` variable:
+Default users are created depending on the value of the `APP_ENV` variable.
 
-- for local environment only:
+- For local environment only:
   - `root.dev`:
     - password `12345678`
     - role `Superuser`
@@ -26,7 +26,7 @@ Default users are created depending on the value of the `APP_ENV` variable:
     - password `root`
     - role `Superuser`
 
-`root.dev` and `root` are read-only users, they cannot be updated neither deleted. These users act like the root user on unix/unix-like operating systems: they have full access to any route, however, they are not allowed to bypass the defines policies of the system.
+The `root.dev` and `root` users are read-only; they cannot be updated or deleted. These users act like the root user on Unix/Unix-like operating systems: they have full access to any route, but they are not allowed to bypass the system's defined policies.
 
 ## Getting started in Local Environment (`localhost`) using Docker & Laravel Sail
 
@@ -37,19 +37,19 @@ Default users are created depending on the value of the `APP_ENV` variable:
 - Internet connection
 - Shell alias configured to use Laravel Sail (<https://laravel.com/docs/12.x/sail#configuring-a-shell-alias>)
 
-1. Clone this repo
+1. Clone this repo:
 
     ```sh
     git clone https://github.com/kimael-code/roble-vue-tailwind.git
     ```
 
-2. Go to the root project folder and create the `.env` file
+2. Go to the root project folder and create the `.env` file:
 
     ```sh
     cd roble-vue-tailwind && cp .env.example .env
     ```
 
-3. Set the credentials for Laravel Reverb
+3. Set the credentials for **Laravel Reverb**:
 
     ```env
     REVERB_APP_ID=my-reverb-app-id
@@ -61,7 +61,7 @@ Default users are created depending on the value of the `APP_ENV` variable:
     *To generate random numbers*: <https://www.random.org/integers>  
     *To generate random strings*: <https://www.random.org/strings>
 
-4. Install Composer dependencies
+4. Install Composer dependencies:
 
     ```sh
     docker run --rm --interactive --tty \
@@ -70,31 +70,31 @@ Default users are created depending on the value of the `APP_ENV` variable:
     composer install --ignore-platform-reqs
     ```
 
-5. Start the containers (*it's necessary to configure a shell alias*)
+5. Start the containers (*it's necessary to configure a shell alias*):
 
     ```sh
     sail up -d
     ```
 
-6. Create the app encryption key
+6. Create the app encryption key:
 
     ```sh
     sail artisan key:generate
     ```
 
-7. Run database migrations and seeders
+7. Run database migrations and seeders:
 
     ```sh
     sail artisan migrate:fresh --seed
     ```
 
-8. Install Node dependencies
+8. Install Node dependencies:
 
     ```sh
     sail npm i
     ```
 
-9. Build Node dependencies
+9. Build Node dependencies:
 
     ```sh
     sail npm run build
@@ -109,25 +109,25 @@ Default users are created depending on the value of the `APP_ENV` variable:
 - Laravel Herd
 - PostgreSQL with pgAdmin or any other universal database tool
 
-1. Clone this repo inside Herd folder
+1. Clone this repo inside Herd folder:
 
     ```sh
     git clone https://github.com/kimael-code/roble-vue-tailwind.git
     ```
 
-2. Go to the root project folder and create the `.env` file
+2. Go to the root project folder and create the `.env` file:
 
     ```sh
     cd roble-vue-tailwind && cp .env.example .env
     ```
 
-3. Set values ​​for database connection environment variables
+3. Set values ​​for database connection environment variables:
     - `DB_HOST=localhost`.
     - `DB_USERNAME=postgres`.
     - `DB_PASSWORD=your_postgres_user_password`.  
     *You need to set the values of these variables according to your PostgreSQL installation and configurations (port, user, password, etc.)*
 
-4. Set the credentials for Laravel Reverb
+4. Set the credentials for **Laravel Reverb**:
 
     ```env
     REVERB_APP_ID=my-reverb-app-id
@@ -139,37 +139,37 @@ Default users are created depending on the value of the `APP_ENV` variable:
     *To generate random numbers*: <https://www.random.org/integers>  
     *To generate random strings*: <https://www.random.org/strings>
 
-5. Install Composer dependencies
+5. Install Composer dependencies:
 
     ```sh
     composer install --ignore-platform-reqs
     ```
 
-6. Create the app encryption key
+6. Create the app encryption key:
 
     ```sh
     php artisan key:generate
     ```
 
-7. Run database migrations and seeders
+7. Run database migrations and seeders:
 
     ```sh
     php artisan migrate:fresh --seed
     ```
 
-8. Install Node dependencies
+8. Install Node dependencies:
 
     ```sh
     npm i
     ```
 
-9. Build Node dependencies
+9. Build Node dependencies:
 
     ```sh
     npm run build
     ```
 
-10. Run the app
+10. Run the app:
 
     ```sh
     herd open
