@@ -74,6 +74,7 @@
   "There are roles having this permission.": "Existen roles que tienen este permiso asociado.",
   "There are users having this permission.": "Existen usuarios que tienen otorgado este permiso.",
   "The superuser role can only be assigned by another superuser.": "El rol superusuario solo puede ser asignado por otro superusuario.",
+  "There must be at least one active Organization.": "Debe haber al menos una organización activa.",
 
   "Service Unavailable": "Servicio No Disponible",
   "Maintenance mode disabled": "Modo de mantenimiento desactivado",
