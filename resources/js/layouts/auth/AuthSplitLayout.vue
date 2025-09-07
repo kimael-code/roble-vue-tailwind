@@ -29,6 +29,12 @@ defineProps<{
         </div>
         <div class="lg:p-8">
             <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
+                <div class="lg:hidden">
+                  <Link :href="route('home')" class="flex items-center text-lg font-medium">
+                    <AppLogoIcon class="mr-2 size-8 fill-current text-primary" />
+                    <span class="text-foreground">{{ name }}</span>
+                  </Link>
+                </div>
                 <div class="flex flex-col space-y-2 text-center">
                     <h1 class="text-xl font-medium tracking-tight" v-if="title">{{ title }}</h1>
                     <p class="text-sm text-muted-foreground" v-if="description">{{ description }}</p>
