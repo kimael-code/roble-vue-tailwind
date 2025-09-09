@@ -26,6 +26,6 @@ class AppServiceProvider extends ServiceProvider
         // ningún usuario, ni siquiera superusuarios, pueden pasar por alto
         // las políticas definidas. Por lo que la verificación del rol
         // Superusuario se ejecuta luego de haberse ejecutado las políticas
-        Gate::after(fn(User $user) => $user->hasRole(__('Superuser')));
+        Gate::after(fn(User $user) => $user->hasRole(1));
     }
 }

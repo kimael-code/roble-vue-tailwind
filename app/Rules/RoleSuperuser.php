@@ -14,7 +14,7 @@ class RoleSuperuser implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (in_array(__('Superuser'), $value) && !auth()->user()->hasRole(__('Superuser')))
+        if (in_array(__('Superuser'), $value) && !auth()->user()->hasRole(1))
         {
             $fail('The superuser role can only be assigned by another superuser.')->translate();
         }

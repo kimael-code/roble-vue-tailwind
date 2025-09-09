@@ -54,12 +54,11 @@ class UserPolicy
             return Response::deny(__('The root user cannot be deleted.'));
         }
 
-        $superuserRole = __('Superuser');
         $superusersCount = User::withTrashed()->with('roles')->get()->filter(
-            fn($user) => $user->roles->where('name', $superuserRole)->toArray()
+            fn($user) => $user->roles->where('id', 1)->toArray()
         )->count();
 
-        if ($superusersCount === 1 && $model->hasRole($superuserRole))
+        if ($superusersCount === 1 && $model->hasRole(1))
         {
             return Response::deny(__('This is the only user with Superuser permissions.'));
         }
@@ -90,12 +89,11 @@ class UserPolicy
             return Response::deny(__('The root user cannot be deleted.'));
         }
 
-        $superuserRole = __('Superuser');
         $superusersCount = User::withTrashed()->with('roles')->get()->filter(
-            fn($user) => $user->roles->where('name', $superuserRole)->toArray()
+            fn($user) => $user->roles->where('id', 1)->toArray()
         )->count();
 
-        if ($superusersCount === 1 && $model->hasRole($superuserRole))
+        if ($superusersCount === 1 && $model->hasRole(1))
         {
             return Response::deny(__('This is the only user with Superuser permissions.'));
         }
@@ -126,12 +124,11 @@ class UserPolicy
             return Response::deny(__('The root user cannot be deactivated.'));
         }
 
-        $superuserRole = __('Superuser');
         $superusersCount = User::withTrashed()->with('roles')->get()->filter(
-            fn($user) => $user->roles->where('name', $superuserRole)->toArray()
+            fn($user) => $user->roles->where('id', 1)->toArray()
         )->count();
 
-        if ($superusersCount === 1 && $model->hasRole($superuserRole))
+        if ($superusersCount === 1 && $model->hasRole(1))
         {
             return Response::deny(__('This is the only user with Superuser permissions.'));
         }
