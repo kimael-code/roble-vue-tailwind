@@ -92,10 +92,12 @@ class BaseModel extends Model
     public function getActivityLogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->useLogName(__($this->traceLogName))
             ->logAll()
+            ->logOnlyDirty()
             ->setDescriptionForEvent(fn(string $eventName) => __(':event :model [:modelName]', [
                 'event' => __($eventName),
-                'model' => __($this->traceObjectName),
+                'model' => __($this->traceModelType),
                 'modelName' => $this?->name ?? $this?->title ?? '',
             ]));
     }

@@ -45,7 +45,7 @@ class CreateUser
                 ])
                 ->log(__(':event :model [:modelName] [:modelEmail]', [
                     'event' => __($event),
-                    'model' => $user->traceObjectName,
+                    'model' => $user->traceModelType,
                     'modelName' => $user->name,
                     'modelEmail' => $user->email,
                 ]));

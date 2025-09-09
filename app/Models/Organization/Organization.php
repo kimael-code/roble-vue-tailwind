@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Activitylog\LogOptions;
 
 #[ObservedBy([OrganizationObserver::class])]
 class Organization extends BaseModel
@@ -23,7 +22,13 @@ class Organization extends BaseModel
      * Nombre usado para trazar el tipo de objeto.
      * @var string
      */
-    protected $traceObjectName = 'organization';
+    protected $traceModelType = 'organization';
+
+    /**
+     * Nombre usado para trazar el nombre del log.
+     * @var string
+     */
+    protected $traceLogName = 'Organization/Organizations';
 
     /**
      * The attributes that are mass assignable.

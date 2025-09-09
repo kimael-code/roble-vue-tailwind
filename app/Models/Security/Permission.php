@@ -27,7 +27,13 @@ class Permission extends SpatiePermission
      * Nombre usado para trazar el tipo de objeto.
      * @var string
      */
-    protected $traceObjectName = 'permission';
+    protected $traceModelType = 'permission';
+
+    /**
+     * Nombre usado para trazar el nombre del log.
+     * @var string
+     */
+    protected $traceLogName = 'Security/Permissions';
 
     /**
      * The storage format of the model's date columns.
@@ -89,14 +95,14 @@ class Permission extends SpatiePermission
             get: fn(mixed $value, array $attributes) => match (true)
             {
                 Str::contains($attributes['name'], 'create') => 'CREATE',
-                Str::contains($attributes['name'], 'read') => 'READ',
+                Str::contains($attributes['name'], 'read') => 'SELECT',
                 Str::contains($attributes['name'], 'update') => 'UPDATE',
                 Str::contains($attributes['name'], 'delete') => 'DELETE',
-                Str::contains($attributes['name'], 'export') => 'COPY',
+                Str::contains($attributes['name'], 'export') => 'SELECT',
                 Str::contains($attributes['name'], 'activate') => 'UPDATE',
                 Str::contains($attributes['name'], 'deactivate') => 'UPDATE',
                 Str::contains($attributes['name'], 'restore') => 'UPDATE',
-                default => 'Desconocida',
+                default => __('NOT APPLICABLE'),
             }
         );
     }
@@ -105,10 +111,10 @@ class Permission extends SpatiePermission
     {
         return LogOptions::defaults()
             ->logAll()
-            ->useLogName(__('Security/Permissions'))
+            ->useLogName(__($this->traceLogName))
             ->setDescriptionForEvent(fn(string $eventName) => __(':event :model [:modelName] [:modelDescription]', [
                 'event' => __($eventName),
-                'model' => __($this->traceObjectName),
+                'model' => __($this->traceModelType),
                 'modelName' => $this->name,
                 'modelDescription' => $this?->description,
             ]));

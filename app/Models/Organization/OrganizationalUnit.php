@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Spatie\Activitylog\LogOptions;
 
 #[ObservedBy([OrganizationalUnitObserver::class])]
 class OrganizationalUnit extends BaseModel
@@ -25,7 +24,13 @@ class OrganizationalUnit extends BaseModel
      * Nombre usado para trazar el tipo de objeto.
      * @var string
      */
-    protected $traceObjectName = 'administrative unit';
+    protected $traceModelType = 'administrative unit';
+
+    /**
+     * Nombre usado para trazar el nombre del log.
+     * @var string
+     */
+    protected $traceLogName = 'Organization/Administrative Units';
 
     /**
      * The attributes that are mass assignable.

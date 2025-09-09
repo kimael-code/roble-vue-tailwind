@@ -25,7 +25,13 @@ class Role extends SpatieRole
      * Nombre usado para trazar el tipo de objeto.
      * @var string
      */
-    protected $traceObjectName = 'role';
+    protected $traceModelType = 'role';
+
+    /**
+     * Nombre usado para trazar el nombre del log.
+     * @var string
+     */
+    protected $traceLogName = 'Security/Roles';
 
     /**
      * The storage format of the model's date columns.
@@ -85,10 +91,10 @@ class Role extends SpatieRole
     {
         return LogOptions::defaults()
             ->logAll()
-            ->useLogName(__('Security/Roles'))
+            ->useLogName(__($this->traceLogName))
             ->setDescriptionForEvent(fn(string $eventName) => __(':event :model [:modelName] [:modelDescription]', [
                 'event' => __($eventName),
-                'model' => __($this->traceObjectName),
+                'model' => __($this->traceModelType),
                 'modelName' => $this->name,
                 'modelDescription' => $this?->description,
             ]));
